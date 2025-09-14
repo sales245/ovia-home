@@ -226,9 +226,20 @@ const Header = ({ language, setLanguage }) => {
                 value={language}
                 onChange={(e) => setLanguage(e.target.value)}
                 className="appearance-none bg-transparent border border-gray-300 rounded px-3 py-1 text-sm focus:outline-none focus:border-gray-500"
+                style={{ direction: language === 'ar' ? 'rtl' : 'ltr' }}
               >
-                <option value="en">EN</option>
-                <option value="tr">TR</option>
+                <option value="en">English</option>
+                <option value="tr">Türkçe</option>
+                <option value="de">Deutsch</option>
+                <option value="fr">Français</option>
+                <option value="it">Italiano</option>
+                <option value="es">Español</option>
+                <option value="pl">Polski</option>
+                <option value="ru">Русский</option>
+                <option value="bg">Български</option>
+                <option value="el">Ελληνικά</option>
+                <option value="pt">Português</option>
+                <option value="ar">العربية</option>
               </select>
               <Globe size={14} className="absolute right-1 top-1/2 transform -translate-y-1/2 pointer-events-none text-gray-500" />
             </div>
