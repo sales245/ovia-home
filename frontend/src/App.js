@@ -34,7 +34,7 @@ function App() {
   }, []);
 
   return (
-    <div className="App">
+    <div className="App" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       <BrowserRouter>
         <Header language={language} setLanguage={setLanguage} />
         <main className="min-h-screen">
