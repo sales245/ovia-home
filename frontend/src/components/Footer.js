@@ -1,48 +1,51 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Mail, MessageCircle, Instagram, MapPin, Phone } from 'lucide-react';
-
-const translations = {
-  en: {
-    company: 'Company',
-    home: 'Home',
-    products: 'Products',
-    about: 'About Us',
-    contact: 'Contact',
-    customerPanel: 'Customer Panel',
-    contactInfo: 'Contact Information',
-    address: 'Address',
-    addressText: 'Denizli, Turkey',
-    email: 'Email',
-    phone: 'Phone',
-    followUs: 'Follow Us',
-    certificates: 'Certificates',
-    paymentMethods: 'Payment Methods',
-    allRightsReserved: 'All rights reserved.',
-    madeWith: 'Made with quality Turkish craftsmanship'
-  },
-  tr: {
-    company: 'Şirket',
-    home: 'Ana Sayfa',
-    products: 'Ürünler',
-    about: 'Hakkımızda',
-    contact: 'İletişim',
-    customerPanel: 'Müşteri Paneli',
-    contactInfo: 'İletişim Bilgileri',
-    address: 'Adres',
-    addressText: 'Denizli, Türkiye',
-    email: 'E-posta',
-    phone: 'Telefon',
-    followUs: 'Bizi Takip Edin',
-    certificates: 'Sertifikalar',
-    paymentMethods: 'Ödeme Yöntemleri',
-    allRightsReserved: 'Tüm hakları saklıdır.',
-    madeWith: 'Kaliteli Türk el sanatlarıyla yapılmıştır'
-  }
-};
+import { translations } from '../translations';
 
 const Footer = ({ language }) => {
-  const t = translations[language];
+  const t = translations[language] || translations.en;
+
+  // Footer-specific translations
+  const footerTranslations = {
+    company: {
+      en: 'Company', tr: 'Şirket', de: 'Unternehmen', fr: 'Entreprise', 
+      it: 'Azienda', es: 'Empresa', pl: 'Firma', ru: 'Компания', 
+      bg: 'Компания', el: 'Εταιρεία', pt: 'Empresa', ar: 'الشركة'
+    },
+    addressText: {
+      en: 'Denizli, Turkey', tr: 'Denizli, Türkiye', de: 'Denizli, Türkei', 
+      fr: 'Denizli, Turquie', it: 'Denizli, Turchia', es: 'Denizli, Turquía', 
+      pl: 'Denizli, Turcja', ru: 'Денизли, Турция', bg: 'Денизли, Турция', 
+      el: 'Ντενιζλί, Τουρκία', pt: 'Denizli, Turquia', ar: 'دنيزلي، تركيا'
+    },
+    followUs: {
+      en: 'Follow Us', tr: 'Bizi Takip Edin', de: 'Folgen Sie uns', 
+      fr: 'Suivez-nous', it: 'Seguici', es: 'Síguenos', pl: 'Obserwuj nas', 
+      ru: 'Подписывайтесь', bg: 'Последвайте ни', el: 'Ακολουθήστε μας', 
+      pt: 'Siga-nos', ar: 'تابعنا'
+    },
+    paymentMethods: {
+      en: 'Payment Methods', tr: 'Ödeme Yöntemleri', de: 'Zahlungsmethoden', 
+      fr: 'Modes de paiement', it: 'Metodi di pagamento', es: 'Métodos de pago', 
+      pl: 'Metody płatności', ru: 'Способы оплаты', bg: 'Начини на плащане', 
+      el: 'Τρόποι πληρωμής', pt: 'Métodos de pagamento', ar: 'طرق الدفع'
+    },
+    allRightsReserved: {
+      en: 'All rights reserved.', tr: 'Tüm hakları saklıdır.', de: 'Alle Rechte vorbehalten.', 
+      fr: 'Tous droits réservés.', it: 'Tutti i diritti riservati.', es: 'Todos los derechos reservados.', 
+      pl: 'Wszelkie prawa zastrzeżone.', ru: 'Все права защищены.', bg: 'Всички права запазени.', 
+      el: 'Όλα τα δικαιώματα διατηρούνται.', pt: 'Todos os direitos reservados.', ar: 'جميع الحقوق محفوظة.'
+    },
+    madeWith: {
+      en: 'Made with quality Turkish craftsmanship', tr: 'Kaliteli Türk el sanatlarıyla yapılmıştır', 
+      de: 'Mit hochwertiger türkischer Handwerkskunst gefertigt', fr: 'Fabriqué avec un savoir-faire turc de qualité', 
+      it: 'Realizzato con artigianato turco di qualità', es: 'Hecho con artesanía turca de calidad', 
+      pl: 'Wykonane z wysokiej jakości tureckim rzemiosłem', ru: 'Изготовлено с качественным турецким мастерством', 
+      bg: 'Направено с качествено турско майсторство', el: 'Φτιαγμένο με ποιοτική τουρκική χειροτεχνία', 
+      pt: 'Feito com artesanato turco de qualidade', ar: 'صنع بحرفية تركية عالية الجودة'
+    }
+  };
 
   const handleContactClick = (type) => {
     switch (type) {
@@ -66,7 +69,9 @@ const Footer = ({ language }) => {
         <div className="grid-4 pb-12">
           {/* Company */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">{t.company}</h3>
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">
+              {footerTranslations.company[language] || footerTranslations.company.en}
+            </h3>
             <ul className="space-y-2">
               <li>
                 <Link to="/" className="text-gray-600 hover:text-gray-800 transition-colors">
@@ -102,7 +107,7 @@ const Footer = ({ language }) => {
             <ul className="space-y-3">
               <li className="flex items-center space-x-2 text-gray-600">
                 <MapPin size={16} />
-                <span>{t.addressText}</span>
+                <span>{footerTranslations.addressText[language] || footerTranslations.addressText.en}</span>
               </li>
               <li className="flex items-center space-x-2">
                 <Mail size={16} />
@@ -138,7 +143,9 @@ const Footer = ({ language }) => {
 
           {/* Payment Methods */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">{t.paymentMethods}</h3>
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">
+              {footerTranslations.paymentMethods[language] || footerTranslations.paymentMethods.en}
+            </h3>
             <ul className="space-y-2 text-gray-600">
               <li>Credit Card</li>
               <li>Bank Transfer</li>
@@ -147,7 +154,9 @@ const Footer = ({ language }) => {
             </ul>
             
             <div className="mt-6">
-              <h4 className="text-sm font-semibold text-gray-800 mb-2">{t.followUs}</h4>
+              <h4 className="text-sm font-semibold text-gray-800 mb-2">
+                {footerTranslations.followUs[language] || footerTranslations.followUs.en}
+              </h4>
               <div className="flex space-x-3">
                 <button
                   onClick={() => handleContactClick('instagram')}
@@ -178,10 +187,10 @@ const Footer = ({ language }) => {
         {/* Bottom */}
         <div className="border-t border-gray-200 pt-8 flex flex-col md:flex-row justify-between items-center">
           <div className="text-gray-600 text-sm mb-4 md:mb-0">
-            © 2024 Ovia Home. {t.allRightsReserved}
+            © 2024 Ovia Home. {footerTranslations.allRightsReserved[language] || footerTranslations.allRightsReserved.en}
           </div>
           <div className="text-gray-600 text-sm">
-            {t.madeWith} 🇹🇷
+            {footerTranslations.madeWith[language] || footerTranslations.madeWith.en} 🇹🇷
           </div>
         </div>
       </div>

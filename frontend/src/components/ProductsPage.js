@@ -1,49 +1,7 @@
 import React, { useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { MessageCircle, Star, Award, Leaf } from 'lucide-react';
-
-const translations = {
-  en: {
-    ourProducts: 'Our Products',
-    allCategories: 'All Categories',
-    bathrobes: 'Bathrobes',
-    towels: 'Towels',
-    bedding: 'Bedding Sets',
-    homeDecor: 'Home Décor',
-    inquireNow: 'Inquire Now',
-    organicCotton: 'Organic Cotton',
-    premium: 'Premium',
-    certified: 'Certified',
-    sustainable: 'Sustainable',
-    productsDesc: 'Discover our comprehensive range of premium Turkish home textiles, crafted with traditional techniques and modern quality standards.',
-    contactForPricing: 'Contact for Wholesale Pricing',
-    productFeatures: 'Product Features',
-    qualityMaterials: 'Quality Materials',
-    expertCraftsmanship: 'Expert Craftsmanship',
-    certifiedSafe: 'Certified Safe',
-    sustainableProduction: 'Sustainable Production'
-  },
-  tr: {
-    ourProducts: 'Ürünlerimiz',
-    allCategories: 'Tüm Kategoriler',
-    bathrobes: 'Bornozlar',
-    towels: 'Havlular',
-    bedding: 'Yatak Takımları',
-    homeDecor: 'Ev Dekorasyonu',
-    inquireNow: 'Şimdi Sorgula',
-    organicCotton: 'Organik Pamuk',
-    premium: 'Premium',
-    certified: 'Sertifikalı',
-    sustainable: 'Sürdürülebilir',
-    productsDesc: 'Geleneksel teknikler ve modern kalite standartlarıyla üretilen kapsamlı premium Türk ev tekstilleri yelpazemizi keşfedin.',
-    contactForPricing: 'Toptan Fiyatlandırma İçin İletişime Geçin',
-    productFeatures: 'Ürün Özellikleri',
-    qualityMaterials: 'Kaliteli Malzemeler',
-    expertCraftsmanship: 'Uzman İşçilik',
-    certifiedSafe: 'Sertifikalı Güvenli',
-    sustainableProduction: 'Sürdürülebilir Üretim'
-  }
-};
+import { translations } from '../translations';
 
 const products = [
   {
@@ -115,7 +73,7 @@ const products = [
 const ProductsPage = ({ language }) => {
   const [searchParams] = useSearchParams();
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || 'all');
-  const t = translations[language];
+  const t = translations[language] || translations.en;
 
   const filteredProducts = selectedCategory === 'all' 
     ? products 
@@ -151,6 +109,34 @@ const ProductsPage = ({ language }) => {
     }
   };
 
+  // Badge translations
+  const badgeTranslations = {
+    organicCotton: {
+      en: 'Organic Cotton', tr: 'Organik Pamuk', de: 'Bio-Baumwolle', fr: 'Coton Bio', 
+      it: 'Cotone Organico', es: 'Algodón Orgánico', pl: 'Bawełna Organiczna', 
+      ru: 'Органический хлопок', bg: 'Органичен памук', el: 'Οργανικό Βαμβάκι', 
+      pt: 'Algodão Orgânico', ar: 'قطن عضوي'
+    },
+    premium: {
+      en: 'Premium', tr: 'Premium', de: 'Premium', fr: 'Premium', 
+      it: 'Premium', es: 'Premium', pl: 'Premium', 
+      ru: 'Премиум', bg: 'Премиум', el: 'Premium', 
+      pt: 'Premium', ar: 'مميز'
+    },
+    certified: {
+      en: 'Certified', tr: 'Sertifikalı', de: 'Zertifiziert', fr: 'Certifié', 
+      it: 'Certificato', es: 'Certificado', pl: 'Certyfikowany', 
+      ru: 'Сертифицированный', bg: 'Сертифициран', el: 'Πιστοποιημένο', 
+      pt: 'Certificado', ar: 'معتمد'
+    },
+    sustainable: {
+      en: 'Sustainable', tr: 'Sürdürülebilir', de: 'Nachhaltig', fr: 'Durable', 
+      it: 'Sostenibile', es: 'Sostenible', pl: 'Zrównoważony', 
+      ru: 'Устойчивый', bg: 'Устойчив', el: 'Βιώσιμο', 
+      pt: 'Sustentável', ar: 'مستدام'
+    }
+  };
+
   return (
     <div className="header-spacing">
       {/* Hero Section */}
@@ -159,7 +145,7 @@ const ProductsPage = ({ language }) => {
           <div className="text-center mb-16">
             <h1 className="mb-6">{t.ourProducts}</h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              {t.productsDesc}
+              {t.productsDesc || 'Discover our comprehensive range of premium Turkish home textiles, crafted with traditional techniques and modern quality standards.'}
             </p>
           </div>
 
@@ -173,7 +159,7 @@ const ProductsPage = ({ language }) => {
                   : 'bg-white text-gray-700 border border-gray-300 hover:border-amber-600'
               }`}
             >
-              {t.allCategories}
+              {t.allCategories || 'All Categories'}
             </button>
             <button
               onClick={() => setSelectedCategory('bathrobes')}
@@ -238,7 +224,7 @@ const ProductsPage = ({ language }) => {
                         className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${getBadgeColor(badge)}`}
                       >
                         {getBadgeIcon(badge)}
-                        {t[badge]}
+                        {badgeTranslations[badge]?.[language] || badgeTranslations[badge]?.en || badge}
                       </span>
                     ))}
                   </div>
@@ -258,7 +244,7 @@ const ProductsPage = ({ language }) => {
                 </ul>
                 
                 <div className="text-center text-sm text-gray-500 mb-4">
-                  {t.contactForPricing}
+                  {t.contactForPricing || 'Contact for Wholesale Pricing'}
                 </div>
                 
                 <Link
@@ -266,7 +252,7 @@ const ProductsPage = ({ language }) => {
                   className="btn-primary w-full text-center"
                 >
                   <MessageCircle className="inline mr-2" size={16} />
-                  {t.inquireNow}
+                  {t.inquireNow || 'Inquire Now'}
                 </Link>
               </div>
             ))}
@@ -278,35 +264,35 @@ const ProductsPage = ({ language }) => {
       <section className="section section-light">
         <div className="container">
           <div className="text-center mb-16">
-            <h2 className="mb-6">{t.productFeatures}</h2>
+            <h2 className="mb-6">{t.productFeatures || 'Product Features'}</h2>
           </div>
           <div className="grid-4">
             <div className="text-center">
               <div className="w-16 h-16 bg-gradient-to-br from-green-100 to-green-200 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Leaf className="text-green-600" size={24} />
               </div>
-              <h3 className="mb-3">{t.qualityMaterials}</h3>
+              <h3 className="mb-3">{t.qualityMaterials || 'Quality Materials'}</h3>
               <p className="text-gray-600">Premium natural fibers sourced sustainably</p>
             </div>
             <div className="text-center">
               <div className="w-16 h-16 bg-gradient-to-br from-amber-100 to-amber-200 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Star className="text-amber-600" size={24} />
               </div>
-              <h3 className="mb-3">{t.expertCraftsmanship}</h3>
+              <h3 className="mb-3">{t.expertCraftsmanship || 'Expert Craftsmanship'}</h3>
               <p className="text-gray-600">Traditional Turkish weaving techniques</p>
             </div>
             <div className="text-center">
               <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Award className="text-blue-600" size={24} />
               </div>
-              <h3 className="mb-3">{t.certifiedSafe}</h3>
+              <h3 className="mb-3">{t.certifiedSafe || 'Certified Safe'}</h3>
               <p className="text-gray-600">OEKO-TEX and GOTS certified products</p>
             </div>
             <div className="text-center">
               <div className="w-16 h-16 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Leaf className="text-emerald-600" size={24} />
               </div>
-              <h3 className="mb-3">{t.sustainableProduction}</h3>
+              <h3 className="mb-3">{t.sustainableProduction || 'Sustainable Production'}</h3>
               <p className="text-gray-600">Environmentally responsible manufacturing</p>
             </div>
           </div>
