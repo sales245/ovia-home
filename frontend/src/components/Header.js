@@ -20,6 +20,96 @@ const translations = {
     customerPanel: 'Müşteri Paneli',
     getQuote: 'Teklif Al',
     language: 'Dil'
+  },
+  de: {
+    home: 'Startseite',
+    products: 'Produkte',
+    about: 'Über uns',
+    contact: 'Kontakt',
+    customerPanel: 'Kundenbereich',
+    getQuote: 'Angebot erhalten',
+    language: 'Sprache'
+  },
+  fr: {
+    home: 'Accueil',
+    products: 'Produits',
+    about: 'À propos',
+    contact: 'Contact',
+    customerPanel: 'Espace Client',
+    getQuote: 'Obtenir un devis',
+    language: 'Langue'
+  },
+  it: {
+    home: 'Home',
+    products: 'Prodotti',
+    about: 'Chi siamo',
+    contact: 'Contatti',
+    customerPanel: 'Area Cliente',
+    getQuote: 'Richiedi preventivo',
+    language: 'Lingua'
+  },
+  es: {
+    home: 'Inicio',
+    products: 'Productos',
+    about: 'Acerca de',
+    contact: 'Contacto',
+    customerPanel: 'Panel del Cliente',
+    getQuote: 'Obtener cotización',
+    language: 'Idioma'
+  },
+  pl: {
+    home: 'Strona główna',
+    products: 'Produkty',
+    about: 'O nas',
+    contact: 'Kontakt',
+    customerPanel: 'Panel Klienta',
+    getQuote: 'Otrzymaj wycenę',
+    language: 'Język'
+  },
+  ru: {
+    home: 'Главная',
+    products: 'Продукты',
+    about: 'О нас',
+    contact: 'Контакты',
+    customerPanel: 'Панель клиента',
+    getQuote: 'Получить предложение',
+    language: 'Язык'
+  },
+  bg: {
+    home: 'Начало',
+    products: 'Продукти',
+    about: 'За нас',
+    contact: 'Контакти',
+    customerPanel: 'Клиентски панел',
+    getQuote: 'Получи оферта',
+    language: 'Език'
+  },
+  el: {
+    home: 'Αρχική',
+    products: 'Προϊόντα',
+    about: 'Σχετικά με εμάς',
+    contact: 'Επικοινωνία',
+    customerPanel: 'Πάνελ Πελάτη',
+    getQuote: 'Λάβετε προσφορά',
+    language: 'Γλώσσα'
+  },
+  pt: {
+    home: 'Início',
+    products: 'Produtos',
+    about: 'Sobre nós',
+    contact: 'Contato',
+    customerPanel: 'Painel do Cliente',
+    getQuote: 'Obter orçamento',
+    language: 'Idioma'
+  },
+  ar: {
+    home: 'الرئيسية',
+    products: 'المنتجات',
+    about: 'معلومات عنا',
+    contact: 'اتصل بنا',
+    customerPanel: 'لوحة العميل',
+    getQuote: 'احصل على عرض أسعار',
+    language: 'اللغة'
   }
 };
 
