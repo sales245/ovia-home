@@ -1,0 +1,255 @@
+import React, { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { Menu, X, Globe, Mail, MessageCircle, Instagram } from 'lucide-react';
+
+const translations = {
+  en: {
+    home: 'Home',
+    products: 'Products',
+    about: 'About',
+    contact: 'Contact',
+    customerPanel: 'Customer Panel',
+    getQuote: 'Get Quote',
+    language: 'Language'
+  },
+  tr: {
+    home: 'Ana Sayfa',
+    products: 'Ürünler',
+    about: 'Hakkımızda',
+    contact: 'İletişim',
+    customerPanel: 'Müşteri Paneli',
+    getQuote: 'Teklif Al',
+    language: 'Dil'
+  }
+};
+
+const Header = ({ language, setLanguage }) => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const location = useLocation();
+  const t = translations[language];
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  const isActive = (path) => {
+    return location.pathname === path;
+  };
+
+  const handleContactClick = (type) => {
+    switch (type) {
+      case 'email':
+        window.location.href = 'mailto:sales@oviahome.info';
+        break;
+      case 'whatsapp':
+        window.open('https://wa.me/905464313745', '_blank');
+        break;
+      case 'instagram':
+        window.open('https://instagram.com/oviahome', '_blank');
+        break;
+      default:
+        break;
+    }
+  };
+
+  return (
+    <header className="fixed top-0 left-0 right-0 z-50 glass-effect">
+      <div className="container">
+        <div className="flex items-center justify-between py-4">
+          {/* Logo */}
+          <Link to="/" className="flex items-center">
+            <div className="text-2xl font-bold text-gray-800">
+              <span style={{ fontFamily: 'Playfair Display, serif' }}>Ovia Home</span>
+            </div>
+          </Link>
+
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center space-x-8">
+            <Link
+              to="/"
+              className={`text-sm font-medium transition-colors hover:text-gray-600 ${
+                isActive('/') ? 'text-gray-900 border-b-2 border-gray-800 pb-1' : 'text-gray-700'
+              }`}
+            >
+              {t.home}
+            </Link>
+            <Link
+              to="/products"
+              className={`text-sm font-medium transition-colors hover:text-gray-600 ${
+                isActive('/products') ? 'text-gray-900 border-b-2 border-gray-800 pb-1' : 'text-gray-700'
+              }`}
+            >
+              {t.products}
+            </Link>
+            <Link
+              to="/about"
+              className={`text-sm font-medium transition-colors hover:text-gray-600 ${
+                isActive('/about') ? 'text-gray-900 border-b-2 border-gray-800 pb-1' : 'text-gray-700'
+              }`}
+            >
+              {t.about}
+            </Link>
+            <Link
+              to="/contact"
+              className={`text-sm font-medium transition-colors hover:text-gray-600 ${
+                isActive('/contact') ? 'text-gray-900 border-b-2 border-gray-800 pb-1' : 'text-gray-700'
+              }`}
+            >
+              {t.contact}
+            </Link>
+            <Link
+              to="/customer-panel"
+              className={`text-sm font-medium transition-colors hover:text-gray-600 ${
+                isActive('/customer-panel') ? 'text-gray-900 border-b-2 border-gray-800 pb-1' : 'text-gray-700'
+              }`}
+            >
+              {t.customerPanel}
+            </Link>
+          </nav>
+
+          {/* Contact Icons & Language Selector */}
+          <div className="hidden md:flex items-center space-x-4">
+            <button
+              onClick={() => handleContactClick('email')}
+              className="p-2 text-gray-600 hover:text-gray-800 transition-colors"
+              title="Email us"
+            >
+              <Mail size={18} />
+            </button>
+            <button
+              onClick={() => handleContactClick('whatsapp')}
+              className="p-2 text-gray-600 hover:text-gray-800 transition-colors"
+              title="WhatsApp"
+            >
+              <MessageCircle size={18} />
+            </button>
+            <button
+              onClick={() => handleContactClick('instagram')}
+              className="p-2 text-gray-600 hover:text-gray-800 transition-colors"
+              title="Instagram"
+            >
+              <Instagram size={18} />
+            </button>
+            
+            <div className="relative">
+              <select
+                value={language}
+                onChange={(e) => setLanguage(e.target.value)}
+                className="appearance-none bg-transparent border border-gray-300 rounded px-3 py-1 text-sm focus:outline-none focus:border-gray-500"
+              >
+                <option value="en">EN</option>
+                <option value="tr">TR</option>
+              </select>
+              <Globe size={14} className="absolute right-1 top-1/2 transform -translate-y-1/2 pointer-events-none text-gray-500" />
+            </div>
+
+            <Link to="/contact" className="btn-primary text-sm py-2 px-4">
+              {t.getQuote}
+            </Link>
+          </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            onClick={toggleMenu}
+            className="md:hidden p-2 text-gray-600 hover:text-gray-800"
+          >
+            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
+
+        {/* Mobile Navigation */}
+        {isMenuOpen && (
+          <div className="md:hidden py-4 border-t border-gray-200">
+            <nav className="flex flex-col space-y-4">
+              <Link
+                to="/"
+                className={`text-sm font-medium ${
+                  isActive('/') ? 'text-gray-900' : 'text-gray-700'
+                }`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                {t.home}
+              </Link>
+              <Link
+                to="/products"
+                className={`text-sm font-medium ${
+                  isActive('/products') ? 'text-gray-900' : 'text-gray-700'
+                }`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                {t.products}
+              </Link>
+              <Link
+                to="/about"
+                className={`text-sm font-medium ${
+                  isActive('/about') ? 'text-gray-900' : 'text-gray-700'
+                }`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                {t.about}
+              </Link>
+              <Link
+                to="/contact"
+                className={`text-sm font-medium ${
+                  isActive('/contact') ? 'text-gray-900' : 'text-gray-700'
+                }`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                {t.contact}
+              </Link>
+              <Link
+                to="/customer-panel"
+                className={`text-sm font-medium ${
+                  isActive('/customer-panel') ? 'text-gray-900' : 'text-gray-700'
+                }`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                {t.customerPanel}
+              </Link>
+              
+              <div className="flex items-center space-x-4 pt-4 border-t border-gray-200">
+                <button
+                  onClick={() => handleContactClick('email')}
+                  className="p-2 text-gray-600 hover:text-gray-800"
+                >
+                  <Mail size={18} />
+                </button>
+                <button
+                  onClick={() => handleContactClick('whatsapp')}
+                  className="p-2 text-gray-600 hover:text-gray-800"
+                >
+                  <MessageCircle size={18} />
+                </button>
+                <button
+                  onClick={() => handleContactClick('instagram')}
+                  className="p-2 text-gray-600 hover:text-gray-800"
+                >
+                  <Instagram size={18} />
+                </button>
+                
+                <select
+                  value={language}
+                  onChange={(e) => setLanguage(e.target.value)}
+                  className="appearance-none bg-transparent border border-gray-300 rounded px-3 py-1 text-sm"
+                >
+                  <option value="en">EN</option>
+                  <option value="tr">TR</option>
+                </select>
+              </div>
+              
+              <Link
+                to="/contact"
+                className="btn-primary text-sm py-2 px-4 text-center mt-4"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                {t.getQuote}
+              </Link>
+            </nav>
+          </div>
+        )}
+      </div>
+    </header>
+  );
+};
+
+export default Header;
