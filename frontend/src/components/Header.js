@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Globe, Mail, MessageCircle, Instagram } from 'lucide-react';
+import { translations } from '../translations';
 
 const translations = {
   en: {
