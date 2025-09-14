@@ -3,66 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Star, Globe, Award, Shield, Users } from 'lucide-react';
 import { translations } from '../translations';
 
-const translations = {
-  en: {
-    heroTitle: 'Premium Turkish Home Textiles',
-    heroSubtitle: 'Discover the finest cotton, bamboo, and linen textiles crafted with traditional Turkish artistry for wholesale partners worldwide.',
-    getQuote: 'Get Quote',
-    exploreProducts: 'Explore Products',
-    whyChooseUs: 'Why Choose Ovia Home',
-    qualityCraftsmanship: 'Quality Craftsmanship',
-    qualityDesc: 'Traditional Turkish weaving techniques passed down through generations',
-    naturalMaterials: 'Natural Materials',
-    materialsDesc: 'Premium cotton, bamboo, and linen sourced from sustainable farms',
-    certifiedQuality: 'Certified Quality',
-    certifiedDesc: 'OEKO-TEX, GOTS, and organic cotton certifications ensure safety',
-    globalReach: 'Global Reach',
-    reachDesc: 'Trusted by wholesalers in 30+ countries worldwide',
-    ourProducts: 'Our Product Categories',
-    bathrobes: 'Bathrobes',
-    bathrobesDesc: 'Luxurious cotton and bamboo bathrobes for ultimate comfort',
-    towels: 'Towels',
-    towelsDesc: 'Absorbent and soft towels in various sizes and colors',
-    bedding: 'Bedding',
-    beddingDesc: 'Premium bed linens and comforters for restful sleep',
-    homeDecor: 'Home Décor',
-    decorDesc: 'Beautiful curtains, cushions, and decorative textiles',
-    trustIndicators: 'Trusted by Global Partners',
-    countries: 'Countries Served',
-    yearsExp: 'Years Experience',
-    certificates: 'Certificates',
-    customers: 'Happy Customers'
-  },
-  tr: {
-    heroTitle: 'Premium Türk Ev Tekstilleri',
-    heroSubtitle: 'Dünya çapındaki toptan ortaklar için geleneksel Türk sanatıyla üretilmiş en kaliteli pamuk, bambu ve keten tekstilleri keşfedin.',
-    getQuote: 'Teklif Al',
-    exploreProducts: 'Ürünleri Keşfet',
-    whyChooseUs: 'Neden Ovia Home?',
-    qualityCraftsmanship: 'Kaliteli İşçilik',
-    qualityDesc: 'Nesillerden nesilere aktarılan geleneksel Türk dokuma teknikleri',
-    naturalMaterials: 'Doğal Malzemeler',
-    materialsDesc: 'Sürdürülebilir çiftliklerden temin edilen premium pamuk, bambu ve keten',
-    certifiedQuality: 'Sertifikalı Kalite',
-    certifiedDesc: 'OEKO-TEX, GOTS ve organik pamuk sertifikaları güvenliği garanti eder',
-    globalReach: 'Küresel Erişim',
-    reachDesc: '30+ ülkede toptancılar tarafından güvenilen marka',
-    ourProducts: 'Ürün Kategorilerimiz',
-    bathrobes: 'Bornozlar',
-    bathrobesDesc: 'Nihai konfor için lüks pamuk ve bambu bornozları',
-    towels: 'Havlular',
-    towelsDesc: 'Çeşitli boyut ve renklerde emici ve yumuşak havlular',
-    bedding: 'Yatak Takımları',
-    beddingDesc: 'Rahat uyku için premium yatak örtüleri ve yorganlar',
-    homeDecor: 'Ev Dekorasyonu',
-    decorDesc: 'Güzel perdeler, yastıklar ve dekoratif tekstiller',
-    trustIndicators: 'Küresel Ortaklar Tarafından Güvenilen',
-    countries: 'Hizmet Verilen Ülke',
-    yearsExp: 'Yıl Deneyim',
-    certificates: 'Sertifika',
-    customers: 'Mutlu Müşteri'
-  }
-};
+
 
 const HomePage = ({ stats, language }) => {
   const t = translations[language];
