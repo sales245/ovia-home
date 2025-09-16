@@ -282,13 +282,35 @@ const productsData = [
 const ProductsPage = ({ language }) => {
   const [searchParams] = useSearchParams();
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || 'all');
+  const [productsFromAPI, setProductsFromAPI] = useState([]);
+  const [loading, setLoading] = useState(true);
   const t = translations[language] || translations.en;
 
+  const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+  const API = `${BACKEND_URL}/api`;
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch(`${API}/products`);
+        const apiProducts = await response.json();
+        setProductsFromAPI(apiProducts);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+        // Fallback to hardcoded data if API fails
+        setProductsFromAPI(productsData);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, [API]);
+
   // Transform products data with language-specific content
-  const products = productsData.map(product => ({
+  const products = (productsFromAPI.length > 0 ? productsFromAPI : productsData).map(product => ({
     ...product,
-    name: product.name[language] || product.name.en,
-    features: product.features[language] || product.features.en
+    name: product.name[language] || product.name.en || product.name,
+    features: product.features[language] || product.features.en || product.features
   }));
 
   const filteredProducts = selectedCategory === 'all' 
