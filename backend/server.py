@@ -203,6 +203,135 @@ async def get_stats():
 async def root():
     return {"message": "Ovia Home API - Turkish Home Textiles"}
 
+# Create sample data endpoint for admin testing
+@api_router.post("/admin/seed-data")
+async def seed_sample_data():
+    """Create sample data for admin panel testing"""
+    import random
+    
+    # Sample inquiries
+    sample_inquiries = [
+        {
+            "id": f"inquiry-{i}",
+            "name": f"Customer {i}",
+            "email": f"customer{i}@example.com",
+            "company": f"Company {i} Ltd",
+            "phone": f"+1-555-{1000+i:04d}",
+            "product_category": random.choice(["Bathrobes", "Towels", "Bedding", "Home Decor"]),
+            "message": f"I'm interested in your products for wholesale. Please provide more information about pricing and minimum order quantities.",
+            "created_at": (datetime.now(timezone.utc) - timedelta(days=random.randint(1, 30))).isoformat()
+        }
+        for i in range(1, 21)
+    ]
+    
+    # Sample quotes
+    sample_quotes = [
+        {
+            "id": f"quote-{i}",
+            "name": f"Wholesale Buyer {i}",
+            "email": f"buyer{i}@wholesale.com",
+            "company": f"Wholesale Co {i}",
+            "phone": f"+1-555-{2000+i:04d}",
+            "country": random.choice(["Germany", "France", "Italy", "Spain", "UK", "USA"]),
+            "products": random.sample(["Bathrobes", "Towels", "Bedding", "Home Decor"], random.randint(1, 3)),
+            "quantity": f"{random.randint(100, 1000)} pieces",
+            "message": f"Looking for bulk pricing on your textile products for our retail chain.",
+            "created_at": (datetime.now(timezone.utc) - timedelta(days=random.randint(1, 15))).isoformat()
+        }
+        for i in range(1, 16)
+    ]
+    
+    # Sample customers
+    sample_customers = [
+        {
+            "id": f"customer-{i}",
+            "name": f"Business Owner {i}",
+            "email": f"owner{i}@business.com",
+            "company": f"Textile Business {i}",
+            "phone": f"+1-555-{3000+i:04d}",
+            "country": random.choice(["Germany", "France", "Italy", "Spain", "UK", "USA", "Canada"]),
+            "created_at": (datetime.now(timezone.utc) - timedelta(days=random.randint(1, 60))).isoformat()
+        }
+        for i in range(1, 11)
+    ]
+    
+    # Insert sample data
+    try:
+        # Only insert if collections are empty to avoid duplicates
+        if await db.inquiries.count_documents({}) == 0:
+            await db.inquiries.insert_many(sample_inquiries)
+        
+        if await db.quotes.count_documents({}) == 0:
+            await db.quotes.insert_many(sample_quotes)
+            
+        if await db.customers.count_documents({}) == 0:
+            await db.customers.insert_many(sample_customers)
+            
+        return {"message": "Sample data created successfully", "status": "success"}
+    except Exception as e:
+        return {"message": f"Error creating sample data: {str(e)}", "status": "error"}
+
+@api_router.get("/admin/analytics")
+async def get_admin_analytics():
+    """Get detailed analytics for admin dashboard"""
+    try:
+        # Get counts by time periods
+        now = datetime.now(timezone.utc)
+        last_week = now - timedelta(days=7)
+        last_month = now - timedelta(days=30)
+        
+        # Inquiries by period
+        inquiries_total = await db.inquiries.count_documents({})
+        inquiries_week = await db.inquiries.count_documents({
+            "created_at": {"$gte": last_week.isoformat()}
+        })
+        inquiries_month = await db.inquiries.count_documents({
+            "created_at": {"$gte": last_month.isoformat()}
+        })
+        
+        # Quotes by period
+        quotes_total = await db.quotes.count_documents({})
+        quotes_week = await db.quotes.count_documents({
+            "created_at": {"$gte": last_week.isoformat()}
+        })
+        quotes_month = await db.quotes.count_documents({
+            "created_at": {"$gte": last_month.isoformat()}
+        })
+        
+        # Most popular product categories
+        pipeline = [
+            {"$group": {"_id": "$product_category", "count": {"$sum": 1}}},
+            {"$sort": {"count": -1}},
+            {"$limit": 5}
+        ]
+        popular_categories = await db.inquiries.aggregate(pipeline).to_list(5)
+        
+        # Countries by quotes
+        countries_pipeline = [
+            {"$group": {"_id": "$country", "count": {"$sum": 1}}},
+            {"$sort": {"count": -1}},
+            {"$limit": 10}
+        ]
+        countries_data = await db.quotes.aggregate(countries_pipeline).to_list(10)
+        
+        return {
+            "inquiries": {
+                "total": inquiries_total,
+                "this_week": inquiries_week,
+                "this_month": inquiries_month
+            },
+            "quotes": {
+                "total": quotes_total,
+                "this_week": quotes_week,
+                "this_month": quotes_month
+            },
+            "popular_categories": popular_categories,
+            "top_countries": countries_data,
+            "customers_total": await db.customers.count_documents({})
+        }
+    except Exception as e:
+        return {"error": str(e)}
+
 # Include the router in the main app
 app.include_router(api_router)
 
