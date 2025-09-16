@@ -733,6 +733,198 @@ const AdminPage = ({ language }) => {
               </CardContent>
             </Card>
           )}
+
+          {/* Products Tab */}
+          {activeTab === 'products' && (
+            <>
+              {!showProductForm ? (
+                <Card>
+                  <CardHeader>
+                    <div className="flex justify-between items-center">
+                      <CardTitle>{at.products}</CardTitle>
+                      <div className="flex space-x-2">
+                        <Button
+                          onClick={() => exportData(dashboardData.products, 'products')}
+                          variant="outline"
+                          size="sm"
+                        >
+                          <Download className="w-4 h-4 mr-2" />
+                          {at.export}
+                        </Button>
+                        <Button onClick={handleAddProduct} size="sm">
+                          <Package className="w-4 h-4 mr-2" />
+                          {at.addProduct}
+                        </Button>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {dashboardData.products.map((product) => (
+                        <div key={product.id} className="border rounded-lg overflow-hidden">
+                          <img
+                            src={product.image}
+                            alt={product.name[language] || product.name.en}
+                            className="w-full h-48 object-cover"
+                          />
+                          <div className="p-4">
+                            <h3 className="font-semibold mb-2">
+                              {product.name[language] || product.name.en}
+                            </h3>
+                            <p className="text-sm text-gray-600 mb-2">
+                              Category: {product.category}
+                            </p>
+                            <div className="flex flex-wrap gap-1 mb-3">
+                              {product.badges.map((badge) => (
+                                <Badge key={badge} variant="outline" className="text-xs">
+                                  {badge}
+                                </Badge>
+                              ))}
+                            </div>
+                            <div className="flex space-x-2">
+                              <Button
+                                onClick={() => handleEditProduct(product)}
+                                variant="outline"
+                                size="sm"
+                                className="flex-1"
+                              >
+                                {at.editProduct}
+                              </Button>
+                              <Button
+                                onClick={() => handleDeleteProduct(product.id)}
+                                variant="outline"
+                                size="sm"
+                                className="text-red-600 hover:text-red-700"
+                              >
+                                {at.deleteProduct}
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              ) : (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>
+                      {editingProduct ? at.editProduct : at.addProduct}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <form onSubmit={handleSaveProduct} className="space-y-6">
+                      {/* Basic Info */}
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="category">{at.productCategory}</Label>
+                          <select
+                            id="category"
+                            value={productFormData.category}
+                            onChange={(e) => setProductFormData({...productFormData, category: e.target.value})}
+                            className="w-full p-2 border rounded-md"
+                            required
+                          >
+                            <option value="bathrobes">Bathrobes</option>
+                            <option value="towels">Towels</option>
+                            <option value="bedding">Bedding</option>
+                            <option value="home-decor">Home Décor</option>
+                          </select>
+                        </div>
+                        <div>
+                          <Label htmlFor="image">{at.productImage}</Label>
+                          <Input
+                            id="image"
+                            type="url"
+                            value={productFormData.image}
+                            onChange={(e) => setProductFormData({...productFormData, image: e.target.value})}
+                            placeholder="https://example.com/image.jpg"
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      {/* Multilingual Names */}
+                      <div>
+                        <Label>{at.productName} (Multilingual)</Label>
+                        <div className="grid md:grid-cols-2 gap-4 mt-2">
+                          {Object.keys(productFormData.name).map((lang) => (
+                            <div key={lang}>
+                              <Label htmlFor={`name-${lang}`} className="text-sm">
+                                {lang.toUpperCase()}
+                              </Label>
+                              <Input
+                                id={`name-${lang}`}
+                                value={productFormData.name[lang]}
+                                onChange={(e) => setProductFormData({
+                                  ...productFormData,
+                                  name: { ...productFormData.name, [lang]: e.target.value }
+                                })}
+                                placeholder={`Product name in ${lang.toUpperCase()}`}
+                                required={lang === 'en'}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Multilingual Features */}
+                      <div>
+                        <Label>{at.productFeatures} (3 {at.feature}s per language)</Label>
+                        {Object.keys(productFormData.features).map((lang) => (
+                          <div key={lang} className="mt-4">
+                            <Label className="text-sm font-medium">{lang.toUpperCase()}</Label>
+                            <div className="grid gap-2 mt-1">
+                              {productFormData.features[lang].map((feature, index) => (
+                                <Input
+                                  key={index}
+                                  value={feature}
+                                  onChange={(e) => updateProductFeature(lang, index, e.target.value)}
+                                  placeholder={`${at.feature} ${index + 1} in ${lang.toUpperCase()}`}
+                                  required={lang === 'en'}
+                                />
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Badges */}
+                      <div>
+                        <Label>{at.productBadges}</Label>
+                        <div className="flex flex-wrap gap-2 mt-2">
+                          {['organicCotton', 'premium', 'certified', 'sustainable'].map((badge) => (
+                            <label key={badge} className="flex items-center space-x-2">
+                              <input
+                                type="checkbox"
+                                checked={productFormData.badges.includes(badge)}
+                                onChange={() => toggleBadge(badge)}
+                              />
+                              <span className="text-sm">{badge}</span>
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Form Actions */}
+                      <div className="flex space-x-4">
+                        <Button type="submit" disabled={loading}>
+                          {loading ? 'Saving...' : at.saveProduct}
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => setShowProductForm(false)}
+                        >
+                          {at.cancel}
+                        </Button>
+                      </div>
+                    </form>
+                  </CardContent>
+                </Card>
+              )}
+            </>
+          )}
         </div>
       </section>
     </div>
