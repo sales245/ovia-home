@@ -24,7 +24,30 @@ app = FastAPI()
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
 
-# Define Models
+# Product Management Models
+class Product(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    category: str
+    image: str
+    name: dict  # Multilingual names
+    features: dict  # Multilingual features  
+    badges: List[str]
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class ProductCreate(BaseModel):
+    category: str
+    image: str
+    name: dict
+    features: dict
+    badges: List[str]
+
+class ProductUpdate(BaseModel):
+    category: Optional[str] = None
+    image: Optional[str] = None
+    name: Optional[dict] = None
+    features: Optional[dict] = None
+    badges: Optional[List[str]] = None
 class ProductInquiry(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     name: str
