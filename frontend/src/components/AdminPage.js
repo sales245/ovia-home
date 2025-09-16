@@ -27,10 +27,28 @@ const AdminPage = ({ language }) => {
     inquiries: [],
     quotes: [],
     customers: [],
-    orders: []
+    orders: [],
+    products: []
   });
   const [activeTab, setActiveTab] = useState('dashboard');
   const [refreshing, setRefreshing] = useState(false);
+
+  // Product management states
+  const [showProductForm, setShowProductForm] = useState(false);
+  const [editingProduct, setEditingProduct] = useState(null);
+  const [productFormData, setProductFormData] = useState({
+    category: 'bathrobes',
+    image: '',
+    name: {
+      en: '', tr: '', de: '', fr: '', it: '', es: '', pl: '', ru: '', bg: '', el: '', pt: '', ar: ''
+    },
+    features: {
+      en: ['', '', ''], tr: ['', '', ''], de: ['', '', ''], fr: ['', '', ''],
+      it: ['', '', ''], es: ['', '', ''], pl: ['', '', ''], ru: ['', '', ''],
+      bg: ['', '', ''], el: ['', '', ''], pt: ['', '', ''], ar: ['', '', '']
+    },
+    badges: []
+  });
 
   const t = translations[language] || translations.en;
 
