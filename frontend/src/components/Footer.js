@@ -187,7 +187,7 @@ const Footer = ({ language }) => {
         {/* Bottom */}
         <div className="border-t border-gray-200 pt-8 flex flex-col md:flex-row justify-between items-center">
           <div className="text-gray-600 text-sm mb-4 md:mb-0">
-            © 2024 Ovia Home. {footerTranslations.allRightsReserved[language] || footerTranslations.allRightsReserved.en}
+            © 2025 Ovia Home. {footerTranslations.allRightsReserved[language] || footerTranslations.allRightsReserved.en}
           </div>
           <div className="text-gray-600 text-sm">
             {footerTranslations.madeWith[language] || footerTranslations.madeWith.en} 🇹🇷
