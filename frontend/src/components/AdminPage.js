@@ -100,6 +100,7 @@ const AdminPage = ({ language }) => {
       quotes: 'Teklif Talepleri',
       customers: 'Müşteriler',
       orders: 'Siparişler',
+      products: 'Ürünler',
       login: 'Yönetici Girişi',
       username: 'Kullanıcı Adı',
       password: 'Şifre',
