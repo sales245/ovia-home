@@ -11,6 +11,7 @@ import ProductsPage from './components/ProductsPage';
 import AboutPage from './components/AboutPage';
 import ContactPage from './components/ContactPage';
 import CustomerPanel from './components/CustomerPanel';
+import AdminPage from './components/AdminPage';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -44,6 +45,7 @@ function App() {
             <Route path="/about" element={<AboutPage language={language} />} />
             <Route path="/contact" element={<ContactPage language={language} />} />
             <Route path="/customer-panel" element={<CustomerPanel language={language} />} />
+            <Route path="/admin" element={<AdminPage language={language} />} />
           </Routes>
         </main>
         <Footer language={language} />
