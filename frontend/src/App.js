@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import './App.css';
 
@@ -15,6 +15,27 @@ import AdminPage from './components/AdminPage';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
+
+// Layout wrapper component to conditionally show header/footer
+const Layout = ({ children, language, setLanguage }) => {
+  const location = useLocation();
+  const isAdminPage = location.pathname.startsWith('/admin');
+
+  if (isAdminPage) {
+    // Admin pages don't need header/footer
+    return <>{children}</>;
+  }
+
+  return (
+    <>
+      <Header language={language} setLanguage={setLanguage} />
+      <main className="min-h-screen">
+        {children}
+      </main>
+      <Footer language={language} />
+    </>
+  );
+};
 
 function App() {
   const [language, setLanguage] = useState('en');
@@ -37,8 +58,7 @@ function App() {
   return (
     <div className="App" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       <BrowserRouter>
-        <Header language={language} setLanguage={setLanguage} />
-        <main className="min-h-screen">
+        <Layout language={language} setLanguage={setLanguage}>
           <Routes>
             <Route path="/" element={<HomePage stats={stats} language={language} />} />
             <Route path="/products" element={<ProductsPage language={language} />} />
@@ -47,8 +67,7 @@ function App() {
             <Route path="/customer-panel" element={<CustomerPanel language={language} />} />
             <Route path="/admin" element={<AdminPage language={language} />} />
           </Routes>
-        </main>
-        <Footer language={language} />
+        </Layout>
       </BrowserRouter>
     </div>
   );
