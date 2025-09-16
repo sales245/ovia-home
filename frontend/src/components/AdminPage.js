@@ -61,6 +61,7 @@ const AdminPage = ({ language }) => {
       quotes: 'Quote Requests',
       customers: 'Customers',
       orders: 'Orders',
+      products: 'Products',
       login: 'Admin Login',
       username: 'Username',
       password: 'Password',
