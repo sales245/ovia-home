@@ -284,6 +284,13 @@ const ProductsPage = ({ language }) => {
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || 'all');
   const t = translations[language] || translations.en;
 
+  // Transform products data with language-specific content
+  const products = productsData.map(product => ({
+    ...product,
+    name: product.name[language] || product.name.en,
+    features: product.features[language] || product.features.en
+  }));
+
   const filteredProducts = selectedCategory === 'all' 
     ? products 
     : products.filter(product => product.category === selectedCategory);
