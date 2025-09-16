@@ -205,7 +205,177 @@ async def update_order_status(order_id: str, status: str, tracking_number: Optio
     
     return {"message": "Order updated successfully"}
 
-# Statistics Routes
+# Product Management Routes
+@api_router.get("/products", response_model=List[Product])
+async def get_products():
+    products = await db.products.find().to_list(1000)
+    return [Product(**product) for product in products]
+
+@api_router.get("/products/{product_id}", response_model=Product)
+async def get_product(product_id: str):
+    product = await db.products.find_one({"id": product_id})
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    return Product(**product)
+
+@api_router.post("/products", response_model=Product)
+async def create_product(product: ProductCreate):
+    product_dict = product.dict()
+    product_obj = Product(**product_dict)
+    await db.products.insert_one(product_obj.dict())
+    return product_obj
+
+@api_router.put("/products/{product_id}", response_model=Product)
+async def update_product(product_id: str, product_update: ProductUpdate):
+    update_data = {k: v for k, v in product_update.dict().items() if v is not None}
+    update_data["updated_at"] = datetime.now(timezone.utc)
+    
+    result = await db.products.update_one(
+        {"id": product_id},
+        {"$set": update_data}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Product not found")
+    
+    updated_product = await db.products.find_one({"id": product_id})
+    return Product(**updated_product)
+
+@api_router.delete("/products/{product_id}")
+async def delete_product(product_id: str):
+    result = await db.products.delete_one({"id": product_id})
+    
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Product not found")
+    
+    return {"message": "Product deleted successfully"}
+
+# Initialize default products endpoint
+@api_router.post("/admin/init-products")
+async def initialize_products():
+    """Initialize the product catalog with default products"""
+    
+    # Check if products already exist
+    existing_count = await db.products.count_documents({})
+    if existing_count > 0:
+        return {"message": "Products already initialized", "count": existing_count}
+    
+    default_products = [
+        {
+            "id": "product-1",
+            "category": "bathrobes",
+            "image": "https://images.unsplash.com/photo-1713881676551-b16f22ce4719?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDF8MHwxfHNlYXJjaHwxfHxjb3R0b24lMjBiYXRocm9iZXN8ZW58MHx8fHwxNzU3ODY5NDU1fDA&ixlib=rb-4.1.0&q=85",
+            "name": {
+                "en": "Premium Cotton Bathrobe",
+                "tr": "Premium Pamuk Bornoz",
+                "de": "Premium Baumwoll-Bademantel",
+                "fr": "Peignoir en Coton Premium",
+                "it": "Accappatoio di Cotone Premium",
+                "es": "Albornoz de Algodón Premium",
+                "pl": "Szlafrok Bawełniany Premium",
+                "ru": "Премиум Хлопковый Халат",
+                "bg": "Премиум Памучен Халат",
+                "el": "Premium Βαμβακερό Μπουρνούζι",
+                "pt": "Roupão de Algodão Premium",
+                "ar": "بشكير قطني فاخر"
+            },
+            "features": {
+                "en": ["100% Organic Cotton", "OEKO-TEX Certified", "Multiple Sizes"],
+                "tr": ["%100 Organik Pamuk", "OEKO-TEX Sertifikalı", "Çoklu Bedenler"],
+                "de": ["100% Bio-Baumwolle", "OEKO-TEX Zertifiziert", "Mehrere Größen"],
+                "fr": ["100% Coton Biologique", "Certifié OEKO-TEX", "Tailles Multiples"],
+                "it": ["100% Cotone Biologico", "Certificato OEKO-TEX", "Taglie Multiple"],
+                "es": ["100% Algodón Orgánico", "Certificado OEKO-TEX", "Múltiples Tallas"],
+                "pl": ["100% Bawełna Organiczna", "Certyfikat OEKO-TEX", "Wiele Rozmiarów"],
+                "ru": ["100% Органический Хлопок", "Сертификат OEKO-TEX", "Разные Размеры"],
+                "bg": ["100% Органичен Памук", "OEKO-TEX Сертификат", "Множество Размери"],
+                "el": ["100% Βιολογικό Βαμβάκι", "Πιστοποίηση OEKO-TEX", "Πολλαπλά Μεγέθη"],
+                "pt": ["100% Algodão Orgânico", "Certificado OEKO-TEX", "Múltiplos Tamanhos"],
+                "ar": ["قطن عضوي 100%", "معتمد OEKO-TEX", "أحجام متعددة"]
+            },
+            "badges": ["organicCotton", "certified"],
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        },
+        {
+            "id": "product-2",
+            "category": "bathrobes",
+            "image": "https://images.unsplash.com/photo-1639654803583-7c616d7e0b6c?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDF8MHwxfHNlYXJjaHwyfHxjb3R0b24lMjBiYXRocm9iZXN8ZW58MHx8fHwxNzU3ODY5NDU1fDA&ixlib=rb-4.1.0&q=85",
+            "name": {
+                "en": "Bamboo Luxury Bathrobe",
+                "tr": "Bambu Lüks Bornoz",
+                "de": "Bambus Luxus-Bademantel",
+                "fr": "Peignoir de Luxe en Bambou",
+                "it": "Accappatoio di Lusso in Bambù",
+                "es": "Albornoz de Lujo de Bambú",
+                "pl": "Luksusowy Szlafrok Bambusowy",
+                "ru": "Роскошный Бамбуковый Халат",
+                "bg": "Луксозен Бамбуков Халат",
+                "el": "Πολυτελές Μπαμπού Μπουρνούζι",
+                "pt": "Roupão de Luxo de Bambu",
+                "ar": "بشكير خيزران فاخر"
+            },
+            "features": {
+                "en": ["Bamboo Fiber", "Antibacterial", "Eco-Friendly"],
+                "tr": ["Bambu Lifi", "Antibakteriyel", "Çevre Dostu"],
+                "de": ["Bambusfaser", "Antibakteriell", "Umweltfreundlich"],
+                "fr": ["Fibre de Bambou", "Antibactérien", "Écologique"],
+                "it": ["Fibra di Bambù", "Antibatterico", "Ecologico"],
+                "es": ["Fibra de Bambú", "Antibacteriano", "Ecológico"],
+                "pl": ["Włókno Bambusowe", "Antybakteryjne", "Ekologiczne"],
+                "ru": ["Бамбуковое Волокно", "Антибактериальный", "Экологичный"],
+                "bg": ["Бамбуково Влакно", "Антибактериален", "Екологичен"],
+                "el": ["Ίνα Μπαμπού", "Αντιβακτηριδιακό", "Φιλικό προς το Περιβάλλον"],
+                "pt": ["Fibra de Bambu", "Antibacteriano", "Ecológico"],
+                "ar": ["ألياف الخيزران", "مضاد للبكتيريا", "صديق للبيئة"]
+            },
+            "badges": ["sustainable", "premium"],
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        },
+        {
+            "id": "product-3",
+            "category": "towels",
+            "image": "https://images.unsplash.com/photo-1649446326998-a16524cfa667?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2Mzl8MHwxfHNlYXJjaHwxfHxsdXh1cnklMjB0b3dlbHN8ZW58MHx8fHwxNzU3ODY5NDU5fDA&ixlib=rb-4.1.0&q=85",
+            "name": {
+                "en": "Turkish Cotton Towel Set",
+                "tr": "Türk Pamuğu Havlu Seti",
+                "de": "Türkisches Baumwoll-Handtuch-Set",
+                "fr": "Set de Serviettes en Coton Turc",
+                "it": "Set Asciugamani in Cotone Turco",
+                "es": "Juego de Toallas de Algodón Turco",
+                "pl": "Zestaw Ręczników z Tureckiej Bawełny",
+                "ru": "Набор Полотенец из Турецкого Хлопка",
+                "bg": "Комплект Хавлии от Турски Памук",
+                "el": "Σετ Πετσέτες από Τουρκικό Βαμβάκι",
+                "pt": "Conjunto de Toalhas de Algodão Turco",
+                "ar": "طقم مناشف قطن تركي"
+            },
+            "features": {
+                "en": ["Turkish Cotton", "High Absorption", "Various Colors"],
+                "tr": ["Türk Pamuğu", "Yüksek Emicilik", "Çeşitli Renkler"],
+                "de": ["Türkische Baumwolle", "Hohe Saugfähigkeit", "Verschiedene Farben"],
+                "fr": ["Coton Turc", "Haute Absorption", "Couleurs Variées"],
+                "it": ["Cotone Turco", "Alta Assorbenza", "Vari Colori"],
+                "es": ["Algodón Turco", "Alta Absorción", "Varios Colores"],
+                "pl": ["Turecka Bawełna", "Wysoka Chłonność", "Różne Kolory"],
+                "ru": ["Турецкий Хлопок", "Высокая Впитываемость", "Разные Цвета"],
+                "bg": ["Турски Памук", "Високо Поглъщане", "Различни Цветове"],
+                "el": ["Τουρκικό Βαμβάκι", "Υψηλή Απορρόφηση", "Διάφορα Χρώματα"],
+                "pt": ["Algodão Turco", "Alta Absorção", "Várias Cores"],
+                "ar": ["قطن تركي", "امتصاص عالي", "ألوان متنوعة"]
+            },
+            "badges": ["premium", "certified"],
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }
+    ]
+    
+    try:
+        await db.products.insert_many(default_products)
+        return {"message": "Products initialized successfully", "count": len(default_products)}
+    except Exception as e:
+        return {"message": f"Error initializing products: {str(e)}", "status": "error"}
 @api_router.get("/stats")
 async def get_stats():
     inquiries_count = await db.inquiries.count_documents({})
