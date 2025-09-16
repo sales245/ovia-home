@@ -469,7 +469,8 @@ const AdminPage = ({ language }) => {
               { id: 'dashboard', label: at.dashboard, icon: BarChart3 },
               { id: 'inquiries', label: at.inquiries, icon: MessageSquare },
               { id: 'quotes', label: at.quotes, icon: FileText },
-              { id: 'customers', label: at.customers, icon: Users }
+              { id: 'customers', label: at.customers, icon: Users },
+              { id: 'products', label: at.products, icon: Package }
             ].map(({ id, label, icon: Icon }) => (
               <button
                 key={id}
