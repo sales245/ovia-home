@@ -91,7 +91,19 @@ const AdminPage = ({ language }) => {
       created: 'Created',
       loginError: 'Invalid credentials. Please try again.',
       businessMetrics: 'Business Metrics',
-      quickActions: 'Quick Actions'
+      quickActions: 'Quick Actions',
+      // Product Management
+      addProduct: 'Add Product',
+      editProduct: 'Edit Product',
+      deleteProduct: 'Delete Product',
+      productName: 'Product Name',
+      productCategory: 'Product Category',
+      productImage: 'Product Image',
+      productFeatures: 'Product Features',
+      productBadges: 'Product Badges',
+      saveProduct: 'Save Product',
+      cancel: 'Cancel',
+      feature: 'Feature'
     },
     tr: {
       adminPanel: 'Yönetici Paneli',
