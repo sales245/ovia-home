@@ -130,7 +130,19 @@ const AdminPage = ({ language }) => {
       created: 'Oluşturuldu',
       loginError: 'Geçersiz kimlik bilgileri. Lütfen tekrar deneyin.',
       businessMetrics: 'İş Metrikleri',
-      quickActions: 'Hızlı İşlemler'
+      quickActions: 'Hızlı İşlemler',
+      // Product Management
+      addProduct: 'Ürün Ekle',
+      editProduct: 'Ürünü Düzenle',
+      deleteProduct: 'Ürünü Sil',
+      productName: 'Ürün Adı',
+      productCategory: 'Ürün Kategorisi',
+      productImage: 'Ürün Resmi',
+      productFeatures: 'Ürün Özellikleri',
+      productBadges: 'Ürün Rozetleri',
+      saveProduct: 'Ürünü Kaydet',
+      cancel: 'İptal',
+      feature: 'Özellik'
     }
   };
 
