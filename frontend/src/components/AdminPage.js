@@ -196,24 +196,27 @@ const AdminPage = ({ language }) => {
     setRefreshing(true);
     try {
       // Fetch all data in parallel
-      const [statsRes, inquiriesRes, quotesRes, customersRes] = await Promise.all([
+      const [statsRes, inquiriesRes, quotesRes, customersRes, productsRes] = await Promise.all([
         fetch(`${API}/stats`),
         fetch(`${API}/inquiries`),
         fetch(`${API}/quotes`),
-        fetch(`${API}/customers`)
+        fetch(`${API}/customers`),
+        fetch(`${API}/products`)
       ]);
 
       const stats = await statsRes.json();
       const inquiries = await inquiriesRes.json();
       const quotes = await quotesRes.json();
       const customers = await customersRes.json();
+      const products = await productsRes.json();
 
       setDashboardData({
         stats,
         inquiries: inquiries.slice(0, 10), // Latest 10
         quotes: quotes.slice(0, 10),
         customers: customers.slice(0, 10),
-        orders: [] // Orders would come from customer orders
+        orders: [], // Orders would come from customer orders
+        products: products || []
       });
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
