@@ -85,6 +85,16 @@ const Header = ({ language, setLanguage }) => {
             >
               {t.customerPanel}
             </Link>
+            {/* Discrete Admin Link */}
+            <Link
+              to="/admin"
+              className={`text-xs text-gray-400 hover:text-gray-600 transition-colors ${
+                isActive('/admin') ? 'text-gray-600' : ''
+              }`}
+              title="Admin Panel"
+            >
+              •
+            </Link>
           </nav>
 
           {/* Contact Icons & Language Selector */}
