@@ -235,6 +235,102 @@ const AdminPage = ({ language }) => {
     });
   };
 
+  // Product Management Functions
+  const handleAddProduct = () => {
+    setEditingProduct(null);
+    setProductFormData({
+      category: 'bathrobes',
+      image: '',
+      name: {
+        en: '', tr: '', de: '', fr: '', it: '', es: '', pl: '', ru: '', bg: '', el: '', pt: '', ar: ''
+      },
+      features: {
+        en: ['', '', ''], tr: ['', '', ''], de: ['', '', ''], fr: ['', '', ''],
+        it: ['', '', ''], es: ['', '', ''], pl: ['', '', ''], ru: ['', '', ''],
+        bg: ['', '', ''], el: ['', '', ''], pt: ['', '', ''], ar: ['', '', '']
+      },
+      badges: []
+    });
+    setShowProductForm(true);
+  };
+
+  const handleEditProduct = (product) => {
+    setEditingProduct(product);
+    setProductFormData({
+      category: product.category,
+      image: product.image,
+      name: product.name,
+      features: product.features,
+      badges: product.badges
+    });
+    setShowProductForm(true);
+  };
+
+  const handleDeleteProduct = async (productId) => {
+    if (!window.confirm('Are you sure you want to delete this product?')) return;
+    
+    try {
+      const response = await fetch(`${API}/products/${productId}`, {
+        method: 'DELETE'
+      });
+      
+      if (response.ok) {
+        fetchDashboardData();
+      }
+    } catch (error) {
+      console.error('Error deleting product:', error);
+    }
+  };
+
+  const handleSaveProduct = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const url = editingProduct 
+        ? `${API}/products/${editingProduct.id}`
+        : `${API}/products`;
+      
+      const method = editingProduct ? 'PUT' : 'POST';
+      
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(productFormData)
+      });
+
+      if (response.ok) {
+        setShowProductForm(false);
+        fetchDashboardData();
+      }
+    } catch (error) {
+      console.error('Error saving product:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateProductFeature = (lang, index, value) => {
+    setProductFormData(prev => ({
+      ...prev,
+      features: {
+        ...prev.features,
+        [lang]: prev.features[lang].map((feature, i) => i === index ? value : feature)
+      }
+    }));
+  };
+
+  const toggleBadge = (badge) => {
+    setProductFormData(prev => ({
+      ...prev,
+      badges: prev.badges.includes(badge)
+        ? prev.badges.filter(b => b !== badge)
+        : [...prev.badges, badge]
+    }));
+  };
+
   const exportData = (data, filename) => {
     const csv = convertToCSV(data);
     const blob = new Blob([csv], { type: 'text/csv' });
