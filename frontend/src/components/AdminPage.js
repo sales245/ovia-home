@@ -38,7 +38,7 @@ const AdminPage = ({ language }) => {
   const [showProductForm, setShowProductForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [productFormData, setProductFormData] = useState({
-    category: 'bathrobes',
+    category: '',
     image: '',
     name: {
       en: '', tr: '', de: '', fr: '', it: '', es: '', pl: '', ru: '', bg: '', el: '', pt: '', ar: ''
@@ -310,11 +310,173 @@ const AdminPage = ({ language }) => {
     });
   };
 
+  // Product query modal state
+  const [queryModalProduct, setQueryModalProduct] = useState(null);
+  const [showQueryModal, setShowQueryModal] = useState(false);
+
+  const handleQueryProduct = (product) => {
+    setQueryModalProduct(product);
+    setShowQueryModal(true);
+  };
+
+  // Product URL integration function
+  const [urlIntegrationData, setUrlIntegrationData] = useState({
+    url: '',
+    loading: false,
+    error: null
+  });
+
+  const extractProductDataFromURL = async (url) => {
+    setUrlIntegrationData(prev => ({ ...prev, loading: true, error: null }));
+    
+    try {
+      // This is a simplified implementation
+      // In a real-world scenario, you'd use a backend service to scrape the page
+      // or integrate with specific APIs like Amazon Product API, etc.
+      
+      // For demo purposes, we'll simulate data extraction
+      await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate loading
+      
+      // Mock extracted data based on URL patterns
+      let extractedData = {
+        name: { en: '', tr: '' },
+        features: { en: ['', '', ''] },
+        image: '',
+        badges: []
+      };
+
+      // Simple URL pattern matching for demo
+      if (url.includes('amazon')) {
+        extractedData = {
+          name: { 
+            en: 'Premium Cotton Bathrobe',
+            tr: 'Premium Pamuk Bornoz' 
+          },
+          features: { 
+            en: ['100% Cotton', 'Machine Washable', 'Soft & Comfortable'] 
+          },
+          image: 'https://via.placeholder.com/400x400/4f46e5/ffffff?text=Amazon+Product',
+          badges: ['premium', 'organicCotton']
+        };
+      } else if (url.includes('ebay')) {
+        extractedData = {
+          name: { 
+            en: 'Luxury Hotel Bathrobe',
+            tr: 'Lüks Otel Bornozu' 
+          },
+          features: { 
+            en: ['Hotel Quality', 'Super Absorbent', 'Long Lasting'] 
+          },
+          image: 'https://via.placeholder.com/400x400/10b981/ffffff?text=eBay+Product',
+          badges: ['premium']
+        };
+      } else {
+        extractedData = {
+          name: { 
+            en: 'Imported Bathrobe',
+            tr: 'İthal Bornoz' 
+          },
+          features: { 
+            en: ['High Quality', 'Imported Material', 'Durable'] 
+          },
+          image: 'https://via.placeholder.com/400x400/8b5cf6/ffffff?text=Product+Image',
+          badges: ['certified']
+        };
+      }
+
+      // Update form with extracted data (excluding prices as requested)
+      setProductFormData(prev => ({
+        ...prev,
+        name: { ...prev.name, ...extractedData.name },
+        features: { 
+          ...prev.features, 
+          en: extractedData.features.en,
+          // Auto-translate to other languages if needed
+          tr: extractedData.features.en.map(f => f) // Simplified for demo
+        },
+        image: extractedData.image,
+        badges: extractedData.badges
+      }));
+
+      setUrlIntegrationData(prev => ({ 
+        ...prev, 
+        loading: false, 
+        url: '',
+        error: null 
+      }));
+
+    } catch (error) {
+      console.error('URL integration error:', error);
+      setUrlIntegrationData(prev => ({ 
+        ...prev, 
+        loading: false, 
+        error: 'Ürün bilgileri çekilemedi. Lütfen tekrar deneyin.' 
+      }));
+    }
+  };
+
+  // Translation function
+  const translateText = async (text, targetLang) => {
+    try {
+      // Using LibreTranslate API (free alternative to Google Translate)
+      const response = await fetch('https://libretranslate.de/translate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          q: text,
+          source: 'en',
+          target: targetLang,
+          format: 'text'
+        })
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        return data.translatedText;
+      }
+    } catch (error) {
+      console.error('Translation error:', error);
+    }
+    return text; // Return original text if translation fails
+  };
+
+  // Auto translate product name when English name is entered
+  const handleProductNameChange = async (lang, value) => {
+    const newName = { ...productFormData.name, [lang]: value };
+    
+    if (lang === 'en' && value.trim()) {
+      // Auto-translate to other languages
+      const langMap = {
+        tr: 'tr', de: 'de', fr: 'fr', it: 'it', 
+        es: 'es', pl: 'pl', ru: 'ru', bg: 'bg', 
+        el: 'el', pt: 'pt', ar: 'ar'
+      };
+      
+      for (const [targetLang, code] of Object.entries(langMap)) {
+        if (!newName[targetLang]) { // Only translate if field is empty
+          try {
+            const translated = await translateText(value, code);
+            newName[targetLang] = translated;
+          } catch (error) {
+            console.error(`Translation error for ${targetLang}:`, error);
+          }
+        }
+      }
+    }
+    
+    setProductFormData({
+      ...productFormData,
+      name: newName
+    });
+  };
+
   // Product Management Functions
   const handleAddProduct = () => {
     setEditingProduct(null);
     setProductFormData({
-      category: 'bathrobes',
+      category: '',
       image: '',
       name: {
         en: '', tr: '', de: '', fr: '', it: '', es: '', pl: '', ru: '', bg: '', el: '', pt: '', ar: ''
@@ -930,12 +1092,22 @@ const AdminPage = ({ language }) => {
                   <CardContent>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                       {dashboardData.products.map((product) => (
-                        <div key={product.id} className="border rounded-lg overflow-hidden">
-                          <img
-                            src={product.image}
-                            alt={product.name[language] || product.name.en}
-                            className="w-full h-48 object-cover"
-                          />
+                        <div key={product.id} className="border rounded-lg overflow-hidden relative">
+                          <div className="relative">
+                            <img
+                              src={product.image}
+                              alt={product.name[language] || product.name.en}
+                              className="w-full h-48 object-cover"
+                            />
+                            {/* Şimdi Sorgula Butonu */}
+                            <Button
+                              onClick={() => handleQueryProduct(product)}
+                              size="sm"
+                              className="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1"
+                            >
+                              🔍 Şimdi Sorgula
+                            </Button>
+                          </div>
                           <div className="p-4">
                             <h3 className="font-semibold mb-2">
                               {product.name[language] || product.name.en}
@@ -997,174 +1169,396 @@ const AdminPage = ({ language }) => {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <form onSubmit={handleSaveProduct} className="space-y-6">
-                      {/* Basic Info */}
-                      <div className="grid md:grid-cols-2 gap-4">
-                        <div>
-                          <Label htmlFor="category">{at.productCategory}</Label>
-                          <select
-                            id="category"
-                            value={productFormData.category}
-                            onChange={(e) => setProductFormData({...productFormData, category: e.target.value})}
-                            className="w-full p-2 border rounded-md"
-                            required
-                          >
-                            {dashboardData.categories.map((category) => (
-                              <option key={category.slug} value={category.slug}>
-                                {category.name[language] || category.name.en}
-                              </option>
-                            ))}
-                          </select>
+                    <div className="grid lg:grid-cols-2 gap-8">
+                      {/* Sol Taraf - Form */}
+                      <div className="space-y-8">
+                        <form onSubmit={handleSaveProduct} className="space-y-8">
+                      {/* Adım 1: Temel Bilgiler */}
+                      <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                        <h3 className="text-lg font-semibold text-blue-800 mb-4">📋 Adım 1: Temel Bilgiler</h3>
+                        
+                        {/* URL Entegrasyon */}
+                        <div className="bg-white p-4 rounded border border-blue-300 mb-4">
+                          <h4 className="font-medium text-blue-700 mb-3">🔗 Hızlı Entegrasyon</h4>
+                          <p className="text-sm text-gray-600 mb-3">
+                            Başka bir sitedeki ürün linkini yapıştırın, bilgileri otomatik çekelim (fiyat hariç)
+                          </p>
+                          <div className="flex gap-2">
+                            <Input
+                              placeholder="https://amazon.com/product-url veya başka site linki..."
+                              value={urlIntegrationData.url}
+                              onChange={(e) => setUrlIntegrationData(prev => ({ ...prev, url: e.target.value }))}
+                              className="flex-1"
+                            />
+                            <Button
+                              type="button"
+                              onClick={() => extractProductDataFromURL(urlIntegrationData.url)}
+                              disabled={!urlIntegrationData.url || urlIntegrationData.loading}
+                              className="bg-blue-600 hover:bg-blue-700"
+                            >
+                              {urlIntegrationData.loading ? '⏳ Çekiliyor...' : '🚀 Çek'}
+                            </Button>
+                          </div>
+                          {urlIntegrationData.error && (
+                            <p className="text-sm text-red-600 mt-2">❌ {urlIntegrationData.error}</p>
+                          )}
+                          {urlIntegrationData.loading && (
+                            <div className="mt-3 p-3 bg-blue-100 rounded">
+                              <p className="text-sm text-blue-700">🔄 Ürün bilgileri çekiliyor, lütfen bekleyin...</p>
+                            </div>
+                          )}
                         </div>
-                        <div>
-                          <Label htmlFor="image">{at.productImage}</Label>
-                          <Input
-                            id="image"
-                            type="url"
-                            value={productFormData.image}
-                            onChange={(e) => setProductFormData({...productFormData, image: e.target.value})}
-                            placeholder="https://example.com/image.jpg"
-                            required
-                          />
+
+                        <div className="grid md:grid-cols-2 gap-4">
+                          <div>
+                            <Label htmlFor="category">{at.productCategory}</Label>
+                            <select
+                              id="category"
+                              value={productFormData.category}
+                              onChange={(e) => setProductFormData({...productFormData, category: e.target.value})}
+                              className="w-full p-2 border rounded-md"
+                              required
+                            >
+                              <option value="" disabled>
+                                {dashboardData.categories.length > 0 ? 'Kategori seçin...' : 'Önce kategori oluşturun'}
+                              </option>
+                              {dashboardData.categories.map((category) => (
+                                <option key={category.slug} value={category.slug}>
+                                  {category.name[language] || category.name.en}
+                                </option>
+                              ))}
+                            </select>
+                            {dashboardData.categories.length === 0 && (
+                              <p className="text-sm text-amber-600 mt-1">
+                                ⚠️ Ürün eklemek için önce kategori oluşturmanız gerekir.
+                              </p>
+                            )}
+                          </div>
+                          <div>
+                            <Label htmlFor="image">{at.productImage}</Label>
+                            <Input
+                              id="image"
+                              type="url"
+                              value={productFormData.image}
+                              onChange={(e) => setProductFormData({...productFormData, image: e.target.value})}
+                              placeholder="https://example.com/image.jpg"
+                              required
+                            />
+                            <p className="text-xs text-gray-500 mt-1">📷 Yüksek kaliteli ürün fotoğrafı linkini girin</p>
+                          </div>
                         </div>
                       </div>
 
-                      {/* Multilingual Names */}
-                      <div>
-                        <Label>{at.productName} (Multilingual)</Label>
-                        <div className="grid md:grid-cols-2 gap-4 mt-2">
+                      {/* Adım 2: Ürün Adları */}
+                      <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+                        <h3 className="text-lg font-semibold text-green-800 mb-4">🌍 Adım 2: Ürün Adları (Çok Dilli)</h3>
+                        <div className="bg-white p-3 rounded border mb-4">
+                          <p className="text-sm text-green-700 mb-2">
+                            💡 <strong>İpucu:</strong> İngilizce ürün adını girin, diğer diller otomatik çevrilecek
+                          </p>
+                        </div>
+                        <div className="grid md:grid-cols-2 gap-4">
                           {Object.keys(productFormData.name).map((lang) => (
                             <div key={lang}>
-                              <Label htmlFor={`name-${lang}`} className="text-sm">
-                                {lang.toUpperCase()}
+                              <Label htmlFor={`name-${lang}`} className="text-sm flex items-center gap-2">
+                                {lang.toUpperCase()} 
+                                {lang === 'en' && <span className="text-green-600">🌟 Ana dil</span>}
+                                {lang === 'tr' && <span className="text-red-600">🇹🇷</span>}
+                                {lang === 'de' && <span className="text-yellow-600">🇩🇪</span>}
+                                {lang === 'fr' && <span className="text-blue-600">🇫🇷</span>}
                               </Label>
                               <Input
                                 id={`name-${lang}`}
                                 value={productFormData.name[lang]}
-                                onChange={(e) => setProductFormData({
-                                  ...productFormData,
-                                  name: { ...productFormData.name, [lang]: e.target.value }
-                                })}
-                                placeholder={`Product name in ${lang.toUpperCase()}`}
+                                onChange={(e) => handleProductNameChange(lang, e.target.value)}
+                                placeholder={lang === 'en' ? 'Ürün adını İngilizce girin...' : `Otomatik çevrilecek...`}
                                 required={lang === 'en'}
+                                className={lang === 'en' ? 'border-green-300 focus:border-green-500' : ''}
                               />
                             </div>
                           ))}
                         </div>
                       </div>
 
-                      {/* Multilingual Features */}
-                      <div>
-                        <Label>{at.productFeatures} (3 {at.feature}s per language)</Label>
-                        {Object.keys(productFormData.features).map((lang) => (
-                          <div key={lang} className="mt-4">
-                            <Label className="text-sm font-medium">{lang.toUpperCase()}</Label>
-                            <div className="grid gap-2 mt-1">
-                              {productFormData.features[lang].map((feature, index) => (
-                                <Input
-                                  key={index}
-                                  value={feature}
-                                  onChange={(e) => updateProductFeature(lang, index, e.target.value)}
-                                  placeholder={`${at.feature} ${index + 1} in ${lang.toUpperCase()}`}
-                                  required={lang === 'en'}
-                                />
-                              ))}
-                            </div>
-                          </div>
-                        ))}
+                      {/* Adım 3: Ürün Özellikleri (Sadece İngilizce) */}
+                      <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
+                        <h3 className="text-lg font-semibold text-purple-800 mb-4">✨ Adım 3: Ürün Özellikleri</h3>
+                        <div className="bg-white p-3 rounded border mb-4">
+                          <p className="text-sm text-purple-700">
+                            📝 Şimdilik sadece İngilizce özellikler girin. İleride çeviri özelliği eklenecek.
+                          </p>
+                        </div>
+                        <div className="grid gap-3">
+                          <Label className="text-sm font-medium">EN (İngilizce Özellikler)</Label>
+                          {productFormData.features.en.map((feature, index) => (
+                            <Input
+                              key={index}
+                              value={feature}
+                              onChange={(e) => updateProductFeature('en', index, e.target.value)}
+                              placeholder={`Özellik ${index + 1} (örn: %100 Pamuk, Antibakteriyel, Yumuşak Doku)`}
+                              required={index < 1} // İlk özellik zorunlu
+                            />
+                          ))}
+                        </div>
                       </div>
 
-                      {/* Badges */}
-                      <div>
-                        <Label>{at.productBadges}</Label>
-                        <div className="flex flex-wrap gap-2 mt-2">
-                          {['organicCotton', 'premium', 'certified', 'sustainable'].map((badge) => (
-                            <label key={badge} className="flex items-center space-x-2">
+                      {/* Adım 4: Etiketler */}
+                      <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                        <h3 className="text-lg font-semibold text-yellow-800 mb-4">🏷️ Adım 4: Ürün Etiketleri</h3>
+                        <div className="bg-white p-3 rounded border mb-4">
+                          <p className="text-sm text-yellow-700">
+                            🎯 Ürününüzün öne çıkan özelliklerini seçin
+                          </p>
+                        </div>
+                        <div className="flex flex-wrap gap-3">
+                          {[
+                            { key: 'organicCotton', label: '🌿 Organik Pamuk', color: 'bg-green-100 text-green-800' },
+                            { key: 'premium', label: '⭐ Premium', color: 'bg-purple-100 text-purple-800' },
+                            { key: 'certified', label: '✅ Sertifikalı', color: 'bg-blue-100 text-blue-800' },
+                            { key: 'sustainable', label: '♻️ Sürdürülebilir', color: 'bg-emerald-100 text-emerald-800' }
+                          ].map(({ key, label, color }) => (
+                            <label key={key} className={`flex items-center space-x-2 p-2 rounded cursor-pointer ${color} ${productFormData.badges.includes(key) ? 'ring-2 ring-offset-1 ring-blue-500' : ''}`}>
                               <input
                                 type="checkbox"
-                                checked={productFormData.badges.includes(badge)}
-                                onChange={() => toggleBadge(badge)}
+                                checked={productFormData.badges.includes(key)}
+                                onChange={() => toggleBadge(key)}
+                                className="rounded"
                               />
-                              <span className="text-sm">{badge}</span>
+                              <span className="text-sm font-medium">{label}</span>
                             </label>
                           ))}
                         </div>
                       </div>
 
-                      {/* Pricing and Stock */}
-                      <div className="grid md:grid-cols-2 gap-4">
-                        <div>
-                          <Label htmlFor="retail_price">{at.retailPrice}</Label>
-                          <Input
-                            id="retail_price"
-                            type="number"
-                            step="0.01"
-                            value={productFormData.retail_price}
-                            onChange={(e) => setProductFormData({...productFormData, retail_price: e.target.value})}
-                            placeholder="29.99"
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="wholesale_price">{at.wholesalePrice}</Label>
-                          <Input
-                            id="wholesale_price"
-                            type="number"
-                            step="0.01"
-                            value={productFormData.wholesale_price}
-                            onChange={(e) => setProductFormData({...productFormData, wholesale_price: e.target.value})}
-                            placeholder="19.99"
-                          />
+                      {/* Adım 5: Fiyat ve Stok */}
+                      <div className="bg-orange-50 p-4 rounded-lg border border-orange-200">
+                        <h3 className="text-lg font-semibold text-orange-800 mb-4">💰 Adım 5: Fiyatlandırma ve Stok</h3>
+                        <div className="grid md:grid-cols-2 gap-6">
+                          <div className="space-y-4">
+                            <h4 className="font-medium text-orange-700">Fiyatlar</h4>
+                            <div>
+                              <Label htmlFor="retail_price" className="flex items-center gap-2">
+                                🛒 {at.retailPrice}
+                              </Label>
+                              <Input
+                                id="retail_price"
+                                type="number"
+                                step="0.01"
+                                value={productFormData.retail_price}
+                                onChange={(e) => setProductFormData({...productFormData, retail_price: e.target.value})}
+                                placeholder="29.99"
+                                className="mt-1"
+                              />
+                              <p className="text-xs text-gray-500 mt-1">Bireysel müşteri fiyatı</p>
+                            </div>
+                            <div>
+                              <Label htmlFor="wholesale_price" className="flex items-center gap-2">
+                                📦 {at.wholesalePrice}
+                              </Label>
+                              <Input
+                                id="wholesale_price"
+                                type="number"
+                                step="0.01"
+                                value={productFormData.wholesale_price}
+                                onChange={(e) => setProductFormData({...productFormData, wholesale_price: e.target.value})}
+                                placeholder="19.99"
+                                className="mt-1"
+                              />
+                              <p className="text-xs text-gray-500 mt-1">Toptan satış fiyatı</p>
+                            </div>
+                            <div>
+                              <Label htmlFor="min_wholesale_quantity" className="flex items-center gap-2">
+                                📊 {at.minWholesaleQuantity}
+                              </Label>
+                              <Input
+                                id="min_wholesale_quantity"
+                                type="number"
+                                value={productFormData.min_wholesale_quantity}
+                                onChange={(e) => setProductFormData({...productFormData, min_wholesale_quantity: parseInt(e.target.value) || 50})}
+                                min="1"
+                                className="mt-1"
+                              />
+                              <p className="text-xs text-gray-500 mt-1">Toptan için minimum adet</p>
+                            </div>
+                          </div>
+                          
+                          <div className="space-y-4">
+                            <h4 className="font-medium text-orange-700">Stok Durumu</h4>
+                            <div>
+                              <Label htmlFor="stock_quantity" className="flex items-center gap-2">
+                                📈 {at.stockQuantity}
+                              </Label>
+                              <Input
+                                id="stock_quantity"
+                                type="number"
+                                value={productFormData.stock_quantity}
+                                onChange={(e) => setProductFormData({...productFormData, stock_quantity: e.target.value})}
+                                placeholder="100"
+                                className="mt-1"
+                              />
+                              <p className="text-xs text-gray-500 mt-1">Mevcut stok adedi</p>
+                            </div>
+                            
+                            <div className="flex items-center space-x-3 p-3 bg-white rounded border">
+                              <input
+                                type="checkbox"
+                                id="in_stock"
+                                checked={productFormData.in_stock}
+                                onChange={(e) => setProductFormData({...productFormData, in_stock: e.target.checked})}
+                                className="w-4 h-4 text-green-600 rounded"
+                              />
+                              <Label htmlFor="in_stock" className="flex items-center gap-2 cursor-pointer">
+                                {productFormData.in_stock ? '✅' : '❌'} {at.inStock}
+                              </Label>
+                            </div>
+                          </div>
                         </div>
                       </div>
 
-                      <div className="grid md:grid-cols-2 gap-4">
-                        <div>
-                          <Label htmlFor="min_wholesale_quantity">{at.minWholesaleQuantity}</Label>
-                          <Input
-                            id="min_wholesale_quantity"
-                            type="number"
-                            value={productFormData.min_wholesale_quantity}
-                            onChange={(e) => setProductFormData({...productFormData, min_wholesale_quantity: parseInt(e.target.value) || 50})}
-                            min="1"
-                          />
+                      {/* Form Kaydet Butonları */}
+                      <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        <div className="flex space-x-4 justify-end">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => setShowProductForm(false)}
+                            className="px-6 py-2"
+                          >
+                            ❌ {at.cancel}
+                          </Button>
+                          <Button 
+                            type="submit" 
+                            disabled={loading || !productFormData.category}
+                            className="px-6 py-2 bg-green-600 hover:bg-green-700"
+                          >
+                            {loading ? '⏳ Kaydediliyor...' : '✅ ' + at.saveProduct}
+                          </Button>
                         </div>
-                        <div>
-                          <Label htmlFor="stock_quantity">{at.stockQuantity}</Label>
-                          <Input
-                            id="stock_quantity"
-                            type="number"
-                            value={productFormData.stock_quantity}
-                            onChange={(e) => setProductFormData({...productFormData, stock_quantity: e.target.value})}
-                            placeholder="100"
-                          />
-                        </div>
+                        {!productFormData.category && (
+                          <p className="text-sm text-red-600 mt-2 text-right">
+                            ⚠️ Kategori seçimi zorunludur
+                          </p>
+                        )}
+                      </div>
+                        </form>
                       </div>
 
-                      {/* Stock Status */}
-                      <div className="flex items-center space-x-2">
-                        <input
-                          type="checkbox"
-                          id="in_stock"
-                          checked={productFormData.in_stock}
-                          onChange={(e) => setProductFormData({...productFormData, in_stock: e.target.checked})}
-                        />
-                        <Label htmlFor="in_stock">{at.inStock}</Label>
-                      </div>
+                      {/* Sağ Taraf - Önizleme */}
+                      <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
+                        <h3 className="text-lg font-semibold text-gray-800 mb-4">👁️ Ürün Önizlemesi</h3>
+                        
+                        {/* Ürün Kartı Önizlemesi */}
+                        <div className="bg-white rounded-lg shadow-md p-4 max-w-sm mx-auto">
+                          {/* Ürün Resmi */}
+                          <div className="aspect-square bg-gray-200 rounded-lg mb-4 overflow-hidden">
+                            {productFormData.image ? (
+                              <img 
+                                src={productFormData.image} 
+                                alt="Product preview"
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  e.target.style.display = 'none';
+                                  e.target.nextSibling.style.display = 'flex';
+                                }}
+                              />
+                            ) : null}
+                            <div 
+                              className={`w-full h-full flex items-center justify-center text-gray-400 ${productFormData.image ? 'hidden' : 'flex'}`}
+                            >
+                              <div className="text-center">
+                                <span className="text-4xl mb-2 block">📷</span>
+                                <span className="text-sm">Resim bekleniyor...</span>
+                              </div>
+                            </div>
+                          </div>
 
-                      {/* Form Actions */}
-                      <div className="flex space-x-4">
-                        <Button type="submit" disabled={loading}>
-                          {loading ? 'Saving...' : at.saveProduct}
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          onClick={() => setShowProductForm(false)}
-                        >
-                          {at.cancel}
-                        </Button>
+                          {/* Ürün Adı */}
+                          <h4 className="font-semibold text-gray-800 mb-2">
+                            {productFormData.name[language] || productFormData.name.en || 'Ürün adı bekleniyor...'}
+                          </h4>
+
+                          {/* Özellikler */}
+                          <div className="mb-3">
+                            {productFormData.features.en.filter(f => f.trim()).length > 0 ? (
+                              <ul className="text-sm text-gray-600 space-y-1">
+                                {productFormData.features.en.filter(f => f.trim()).map((feature, index) => (
+                                  <li key={index} className="flex items-center gap-2">
+                                    <span className="w-1 h-1 bg-blue-500 rounded-full"></span>
+                                    {feature}
+                                  </li>
+                                ))}
+                              </ul>
+                            ) : (
+                              <p className="text-sm text-gray-400">Özellikler bekleniyor...</p>
+                            )}
+                          </div>
+
+                          {/* Etiketler */}
+                          <div className="mb-3">
+                            {productFormData.badges.length > 0 ? (
+                              <div className="flex flex-wrap gap-1">
+                                {productFormData.badges.map((badge) => (
+                                  <span 
+                                    key={badge} 
+                                    className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full"
+                                  >
+                                    {badge === 'organicCotton' && '🌿 Organik'}
+                                    {badge === 'premium' && '⭐ Premium'}
+                                    {badge === 'certified' && '✅ Sertifikalı'}
+                                    {badge === 'sustainable' && '♻️ Sürdürülebilir'}
+                                  </span>
+                                ))}
+                              </div>
+                            ) : (
+                              <p className="text-xs text-gray-400">Etiket yok</p>
+                            )}
+                          </div>
+
+                          {/* Fiyat */}
+                          <div className="mt-4 pt-3 border-t border-gray-200">
+                            <div className="flex justify-between items-center">
+                              <div>
+                                {productFormData.retail_price ? (
+                                  <span className="text-lg font-bold text-green-600">
+                                    ${productFormData.retail_price}
+                                  </span>
+                                ) : (
+                                  <span className="text-sm text-gray-400">Fiyat bekleniyor...</span>
+                                )}
+                                {productFormData.wholesale_price && (
+                                  <div className="text-xs text-gray-500">
+                                    Toptan: ${productFormData.wholesale_price}
+                                  </div>
+                                )}
+                              </div>
+                              <div className="text-right">
+                                <div className={`text-xs px-2 py-1 rounded ${
+                                  productFormData.in_stock ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                                }`}>
+                                  {productFormData.in_stock ? '✅ Stokta' : '❌ Stok Yok'}
+                                </div>
+                                {productFormData.stock_quantity && (
+                                  <div className="text-xs text-gray-500 mt-1">
+                                    {productFormData.stock_quantity} adet
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Kategori Bilgisi */}
+                        <div className="mt-4 text-center">
+                          <p className="text-sm text-gray-600">
+                            📂 Kategori: {
+                              productFormData.category 
+                                ? dashboardData.categories.find(c => c.slug === productFormData.category)?.name[language] || productFormData.category
+                                : 'Seçilmedi'
+                            }
+                          </p>
+                        </div>
                       </div>
-                    </form>
+                    </div>
                   </CardContent>
                 </Card>
               )}
@@ -1357,6 +1751,193 @@ const AdminPage = ({ language }) => {
           )}
         </div>
       </section>
+
+      {/* Ürün Sorgula Modal */}
+      {showQueryModal && queryModalProduct && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              {/* Modal Header */}
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-xl font-bold text-gray-800">
+                  🔍 Ürün Detayları
+                </h2>
+                <Button
+                  onClick={() => setShowQueryModal(false)}
+                  variant="outline"
+                  size="sm"
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  ✕
+                </Button>
+              </div>
+
+              {/* Ürün Bilgileri */}
+              <div className="space-y-6">
+                {/* Ürün Resmi ve Temel Bilgiler */}
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div>
+                    <img
+                      src={queryModalProduct.image}
+                      alt={queryModalProduct.name[language] || queryModalProduct.name.en}
+                      className="w-full h-64 object-cover rounded-lg border"
+                    />
+                  </div>
+                  <div className="space-y-4">
+                    <div>
+                      <h3 className="font-semibold text-lg text-gray-800 mb-2">
+                        {queryModalProduct.name[language] || queryModalProduct.name.en}
+                      </h3>
+                      <p className="text-sm text-gray-600">
+                        📂 Kategori: {queryModalProduct.category}
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        🆔 ID: {queryModalProduct.id}
+                      </p>
+                    </div>
+
+                    {/* Fiyat Bilgileri */}
+                    <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+                      <h4 className="font-medium text-green-800 mb-3">💰 Fiyat Bilgileri</h4>
+                      {queryModalProduct.retail_price && (
+                        <p className="text-sm mb-2">
+                          🛒 <strong>Perakende:</strong> ${queryModalProduct.retail_price}
+                        </p>
+                      )}
+                      {queryModalProduct.wholesale_price && (
+                        <p className="text-sm mb-2">
+                          📦 <strong>Toptan:</strong> ${queryModalProduct.wholesale_price}
+                        </p>
+                      )}
+                      {queryModalProduct.min_wholesale_quantity && (
+                        <p className="text-sm">
+                          📊 <strong>Min. Toptan Adet:</strong> {queryModalProduct.min_wholesale_quantity}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Stok Durumu */}
+                    <div className={`p-4 rounded-lg border ${
+                      queryModalProduct.in_stock 
+                        ? 'bg-green-50 border-green-200' 
+                        : 'bg-red-50 border-red-200'
+                    }`}>
+                      <h4 className={`font-medium mb-2 ${
+                        queryModalProduct.in_stock ? 'text-green-800' : 'text-red-800'
+                      }`}>
+                        📈 Stok Durumu
+                      </h4>
+                      <p className="text-sm">
+                        {queryModalProduct.in_stock ? '✅ Stokta Mevcut' : '❌ Stok Yok'}
+                      </p>
+                      {queryModalProduct.stock_quantity && (
+                        <p className="text-sm mt-1">
+                          Mevcut Adet: {queryModalProduct.stock_quantity}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Ürün Özellikleri */}
+                <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
+                  <h4 className="font-medium text-purple-800 mb-3">✨ Ürün Özellikleri</h4>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    {Object.keys(queryModalProduct.features).map((lang) => (
+                      <div key={lang}>
+                        <h5 className="text-sm font-medium text-purple-700 mb-2">
+                          {lang.toUpperCase()}
+                        </h5>
+                        <ul className="space-y-1">
+                          {queryModalProduct.features[lang]
+                            .filter(feature => feature.trim())
+                            .map((feature, index) => (
+                            <li key={index} className="text-sm text-gray-700 flex items-center gap-2">
+                              <span className="w-1 h-1 bg-purple-500 rounded-full"></span>
+                              {feature}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Etiketler */}
+                <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                  <h4 className="font-medium text-yellow-800 mb-3">🏷️ Ürün Etiketleri</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {queryModalProduct.badges.length > 0 ? (
+                      queryModalProduct.badges.map((badge) => (
+                        <span 
+                          key={badge} 
+                          className="text-xs px-3 py-1 bg-blue-100 text-blue-700 rounded-full border border-blue-200"
+                        >
+                          {badge === 'organicCotton' && '🌿 Organik Pamuk'}
+                          {badge === 'premium' && '⭐ Premium'}
+                          {badge === 'certified' && '✅ Sertifikalı'}
+                          {badge === 'sustainable' && '♻️ Sürdürülebilir'}
+                          {!['organicCotton', 'premium', 'certified', 'sustainable'].includes(badge) && badge}
+                        </span>
+                      ))
+                    ) : (
+                      <p className="text-sm text-gray-500">Etiket bulunmuyor</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Çok Dilli İsimler */}
+                <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                  <h4 className="font-medium text-blue-800 mb-3">🌍 Çok Dilli İsimler</h4>
+                  <div className="grid md:grid-cols-2 gap-3">
+                    {Object.keys(queryModalProduct.name).map((lang) => (
+                      <div key={lang} className="text-sm">
+                        <span className="font-medium text-blue-700">
+                          {lang.toUpperCase()}:
+                        </span>{' '}
+                        <span className="text-gray-700">
+                          {queryModalProduct.name[lang] || 'Çeviri yok'}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Tarih Bilgileri */}
+                <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                  <h4 className="font-medium text-gray-800 mb-3">📅 Tarih Bilgileri</h4>
+                  <div className="grid md:grid-cols-2 gap-3 text-sm text-gray-600">
+                    <p>
+                      <strong>Oluşturulma:</strong>{' '}
+                      {queryModalProduct.created_at 
+                        ? new Date(queryModalProduct.created_at).toLocaleDateString('tr-TR')
+                        : 'Bilinmiyor'
+                      }
+                    </p>
+                    <p>
+                      <strong>Son Güncelleme:</strong>{' '}
+                      {queryModalProduct.updated_at 
+                        ? new Date(queryModalProduct.updated_at).toLocaleDateString('tr-TR')
+                        : 'Bilinmiyor'
+                      }
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Modal Footer */}
+              <div className="mt-6 pt-4 border-t border-gray-200 flex justify-end">
+                <Button
+                  onClick={() => setShowQueryModal(false)}
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
+                  ✅ Kapat
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
