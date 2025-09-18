@@ -28,7 +28,8 @@ const AdminPage = ({ language }) => {
     quotes: [],
     customers: [],
     orders: [],
-    products: []
+    products: [],
+    categories: []
   });
   const [activeTab, setActiveTab] = useState('dashboard');
   const [refreshing, setRefreshing] = useState(false);
@@ -47,7 +48,28 @@ const AdminPage = ({ language }) => {
       it: ['', '', ''], es: ['', '', ''], pl: ['', '', ''], ru: ['', '', ''],
       bg: ['', '', ''], el: ['', '', ''], pt: ['', '', ''], ar: ['', '', '']
     },
-    badges: []
+    badges: [],
+    retail_price: '',
+    wholesale_price: '',
+    min_wholesale_quantity: 50,
+    in_stock: true,
+    stock_quantity: ''
+  });
+
+  // Category management states
+  const [showCategoryForm, setShowCategoryForm] = useState(false);
+  const [editingCategory, setEditingCategory] = useState(null);
+  const [categoryFormData, setCategoryFormData] = useState({
+    name: {
+      en: '', tr: '', de: '', fr: '', it: '', es: '', pl: '', ru: '', bg: '', el: '', pt: '', ar: ''
+    },
+    slug: '',
+    description: {
+      en: '', tr: '', de: '', fr: '', it: '', es: '', pl: '', ru: '', bg: '', el: '', pt: '', ar: ''
+    },
+    image: '',
+    sort_order: 0,
+    is_active: true
   });
 
   const t = translations[language] || translations.en;
@@ -103,7 +125,32 @@ const AdminPage = ({ language }) => {
       productBadges: 'Product Badges',
       saveProduct: 'Save Product',
       cancel: 'Cancel',
-      feature: 'Feature'
+      feature: 'Feature',
+      // Category Management
+      categories: 'Categories',
+      addCategory: 'Add Category',
+      editCategory: 'Edit Category',
+      deleteCategory: 'Delete Category',
+      categoryName: 'Category Name',
+      categorySlug: 'Category Slug',
+      categoryDescription: 'Category Description',
+      categoryImage: 'Category Image',
+      sortOrder: 'Sort Order',
+      isActive: 'Is Active',
+      saveCategory: 'Save Category',
+      // Pricing
+      retailPrice: 'Retail Price',
+      wholesalePrice: 'Wholesale Price',
+      minWholesaleQuantity: 'Min Wholesale Quantity',
+      inStock: 'In Stock',
+      stockQuantity: 'Stock Quantity',
+      addToCart: 'Add to Cart',
+      cart: 'Cart',
+      quantity: 'Quantity',
+      total: 'Total',
+      customerType: 'Customer Type',
+      retail: 'Retail',
+      wholesale: 'Wholesale'
     },
     tr: {
       adminPanel: 'Yönetici Paneli',
@@ -154,7 +201,32 @@ const AdminPage = ({ language }) => {
       productBadges: 'Ürün Rozetleri',
       saveProduct: 'Ürünü Kaydet',
       cancel: 'İptal',
-      feature: 'Özellik'
+      feature: 'Özellik',
+      // Category Management
+      categories: 'Kategoriler',
+      addCategory: 'Kategori Ekle',
+      editCategory: 'Kategoriyi Düzenle',
+      deleteCategory: 'Kategoriyi Sil',
+      categoryName: 'Kategori Adı',
+      categorySlug: 'Kategori Slug',
+      categoryDescription: 'Kategori Açıklaması',
+      categoryImage: 'Kategori Resmi',
+      sortOrder: 'Sıra Numarası',
+      isActive: 'Aktif',
+      saveCategory: 'Kategoriyi Kaydet',
+      // Pricing
+      retailPrice: 'Perakende Fiyatı',
+      wholesalePrice: 'Toptan Fiyatı',
+      minWholesaleQuantity: 'Min Toptan Miktarı',
+      inStock: 'Stokta',
+      stockQuantity: 'Stok Miktarı',
+      addToCart: 'Sepete Ekle',
+      cart: 'Sepet',
+      quantity: 'Miktar',
+      total: 'Toplam',
+      customerType: 'Müşteri Tipi',
+      retail: 'Perakende',
+      wholesale: 'Toptan'
     }
   };
 
@@ -196,12 +268,13 @@ const AdminPage = ({ language }) => {
     setRefreshing(true);
     try {
       // Fetch all data in parallel
-      const [statsRes, inquiriesRes, quotesRes, customersRes, productsRes] = await Promise.all([
+      const [statsRes, inquiriesRes, quotesRes, customersRes, productsRes, categoriesRes] = await Promise.all([
         fetch(`${API}/stats`),
         fetch(`${API}/inquiries`),
         fetch(`${API}/quotes`),
         fetch(`${API}/customers`),
-        fetch(`${API}/products`)
+        fetch(`${API}/products`),
+        fetch(`${API}/categories`)
       ]);
 
       const stats = await statsRes.json();
@@ -209,6 +282,7 @@ const AdminPage = ({ language }) => {
       const quotes = await quotesRes.json();
       const customers = await customersRes.json();
       const products = await productsRes.json();
+      const categories = await categoriesRes.json();
 
       setDashboardData({
         stats,
@@ -216,7 +290,8 @@ const AdminPage = ({ language }) => {
         quotes: quotes.slice(0, 10),
         customers: customers.slice(0, 10),
         orders: [], // Orders would come from customer orders
-        products: products || []
+        products: products || [],
+        categories: categories || []
       });
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
@@ -249,7 +324,12 @@ const AdminPage = ({ language }) => {
         it: ['', '', ''], es: ['', '', ''], pl: ['', '', ''], ru: ['', '', ''],
         bg: ['', '', ''], el: ['', '', ''], pt: ['', '', ''], ar: ['', '', '']
       },
-      badges: []
+      badges: [],
+      retail_price: '',
+      wholesale_price: '',
+      min_wholesale_quantity: 50,
+      in_stock: true,
+      stock_quantity: ''
     });
     setShowProductForm(true);
   };
@@ -261,7 +341,12 @@ const AdminPage = ({ language }) => {
       image: product.image,
       name: product.name,
       features: product.features,
-      badges: product.badges
+      badges: product.badges,
+      retail_price: product.retail_price || '',
+      wholesale_price: product.wholesale_price || '',
+      min_wholesale_quantity: product.min_wholesale_quantity || 50,
+      in_stock: product.in_stock !== undefined ? product.in_stock : true,
+      stock_quantity: product.stock_quantity || ''
     });
     setShowProductForm(true);
   };
@@ -359,6 +444,89 @@ const AdminPage = ({ language }) => {
     ].join('\n');
     
     return csvContent;
+  };
+
+  // Category Management Functions
+  const handleAddCategory = () => {
+    setEditingCategory(null);
+    setCategoryFormData({
+      name: {
+        en: '', tr: '', de: '', fr: '', it: '', es: '', pl: '', ru: '', bg: '', el: '', pt: '', ar: ''
+      },
+      slug: '',
+      description: {
+        en: '', tr: '', de: '', fr: '', it: '', es: '', pl: '', ru: '', bg: '', el: '', pt: '', ar: ''
+      },
+      image: '',
+      sort_order: 0,
+      is_active: true
+    });
+    setShowCategoryForm(true);
+  };
+
+  const handleEditCategory = (category) => {
+    setEditingCategory(category);
+    setCategoryFormData({
+      name: category.name,
+      slug: category.slug,
+      description: category.description || {},
+      image: category.image || '',
+      sort_order: category.sort_order,
+      is_active: category.is_active
+    });
+    setShowCategoryForm(true);
+  };
+
+  const handleDeleteCategory = async (categoryId) => {
+    if (!window.confirm('Are you sure you want to delete this category?')) return;
+    
+    try {
+      const response = await fetch(`${API}/categories/${categoryId}`, {
+        method: 'DELETE'
+      });
+      
+      if (response.ok) {
+        fetchDashboardData();
+      } else {
+        const error = await response.json();
+        alert(error.detail || 'Error deleting category');
+      }
+    } catch (error) {
+      console.error('Error deleting category:', error);
+    }
+  };
+
+  const handleSaveCategory = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const url = editingCategory 
+        ? `${API}/categories/${editingCategory.id}`
+        : `${API}/categories`;
+      
+      const method = editingCategory ? 'PUT' : 'POST';
+      
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(categoryFormData)
+      });
+
+      if (response.ok) {
+        setShowCategoryForm(false);
+        fetchDashboardData();
+      } else {
+        const error = await response.json();
+        alert(error.detail || 'Error saving category');
+      }
+    } catch (error) {
+      console.error('Error saving category:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Login Form
@@ -470,7 +638,8 @@ const AdminPage = ({ language }) => {
               { id: 'inquiries', label: at.inquiries, icon: MessageSquare },
               { id: 'quotes', label: at.quotes, icon: FileText },
               { id: 'customers', label: at.customers, icon: Users },
-              { id: 'products', label: at.products, icon: Package }
+              { id: 'products', label: at.products, icon: Package },
+              { id: 'categories', label: at.categories, icon: Package }
             ].map(({ id, label, icon: Icon }) => (
               <button
                 key={id}
@@ -774,6 +943,21 @@ const AdminPage = ({ language }) => {
                             <p className="text-sm text-gray-600 mb-2">
                               Category: {product.category}
                             </p>
+                            {(product.retail_price || product.wholesale_price) && (
+                              <div className="text-sm text-gray-600 mb-2">
+                                {product.retail_price && (
+                                  <p>Retail: ${product.retail_price}</p>
+                                )}
+                                {product.wholesale_price && (
+                                  <p>Wholesale: ${product.wholesale_price} (min: {product.min_wholesale_quantity || 50})</p>
+                                )}
+                              </div>
+                            )}
+                            <div className="flex items-center text-sm text-gray-600 mb-2">
+                              <span className={`inline-block w-2 h-2 rounded-full mr-2 ${product.in_stock ? 'bg-green-500' : 'bg-red-500'}`}></span>
+                              {product.in_stock ? 'In Stock' : 'Out of Stock'}
+                              {product.stock_quantity && <span className="ml-2">({product.stock_quantity} units)</span>}
+                            </div>
                             <div className="flex flex-wrap gap-1 mb-3">
                               {product.badges.map((badge) => (
                                 <Badge key={badge} variant="outline" className="text-xs">
@@ -825,10 +1009,11 @@ const AdminPage = ({ language }) => {
                             className="w-full p-2 border rounded-md"
                             required
                           >
-                            <option value="bathrobes">Bathrobes</option>
-                            <option value="towels">Towels</option>
-                            <option value="bedding">Bedding</option>
-                            <option value="home-decor">Home Décor</option>
+                            {dashboardData.categories.map((category) => (
+                              <option key={category.slug} value={category.slug}>
+                                {category.name[language] || category.name.en}
+                              </option>
+                            ))}
                           </select>
                         </div>
                         <div>
@@ -906,6 +1091,66 @@ const AdminPage = ({ language }) => {
                         </div>
                       </div>
 
+                      {/* Pricing and Stock */}
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="retail_price">{at.retailPrice}</Label>
+                          <Input
+                            id="retail_price"
+                            type="number"
+                            step="0.01"
+                            value={productFormData.retail_price}
+                            onChange={(e) => setProductFormData({...productFormData, retail_price: e.target.value})}
+                            placeholder="29.99"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="wholesale_price">{at.wholesalePrice}</Label>
+                          <Input
+                            id="wholesale_price"
+                            type="number"
+                            step="0.01"
+                            value={productFormData.wholesale_price}
+                            onChange={(e) => setProductFormData({...productFormData, wholesale_price: e.target.value})}
+                            placeholder="19.99"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="min_wholesale_quantity">{at.minWholesaleQuantity}</Label>
+                          <Input
+                            id="min_wholesale_quantity"
+                            type="number"
+                            value={productFormData.min_wholesale_quantity}
+                            onChange={(e) => setProductFormData({...productFormData, min_wholesale_quantity: parseInt(e.target.value) || 50})}
+                            min="1"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="stock_quantity">{at.stockQuantity}</Label>
+                          <Input
+                            id="stock_quantity"
+                            type="number"
+                            value={productFormData.stock_quantity}
+                            onChange={(e) => setProductFormData({...productFormData, stock_quantity: e.target.value})}
+                            placeholder="100"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Stock Status */}
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="checkbox"
+                          id="in_stock"
+                          checked={productFormData.in_stock}
+                          onChange={(e) => setProductFormData({...productFormData, in_stock: e.target.checked})}
+                        />
+                        <Label htmlFor="in_stock">{at.inStock}</Label>
+                      </div>
+
                       {/* Form Actions */}
                       <div className="flex space-x-4">
                         <Button type="submit" disabled={loading}>
@@ -915,6 +1160,191 @@ const AdminPage = ({ language }) => {
                           type="button"
                           variant="outline"
                           onClick={() => setShowProductForm(false)}
+                        >
+                          {at.cancel}
+                        </Button>
+                      </div>
+                    </form>
+                  </CardContent>
+                </Card>
+              )}
+            </>
+          )}
+
+          {/* Categories Tab */}
+          {activeTab === 'categories' && (
+            <>
+              {!showCategoryForm ? (
+                <Card>
+                  <CardHeader>
+                    <div className="flex justify-between items-center">
+                      <CardTitle>{at.categories}</CardTitle>
+                      <Button onClick={handleAddCategory}>
+                        {at.addCategory}
+                      </Button>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {dashboardData.categories.map((category) => (
+                        <div key={category.id} className="border rounded-lg overflow-hidden">
+                          {category.image && (
+                            <img
+                              src={category.image}
+                              alt={category.name[language] || category.name.en}
+                              className="w-full h-48 object-cover"
+                            />
+                          )}
+                          <div className="p-4">
+                            <h3 className="font-semibold mb-2">
+                              {category.name[language] || category.name.en}
+                            </h3>
+                            <p className="text-sm text-gray-600 mb-2">
+                              Slug: {category.slug}
+                            </p>
+                            <p className="text-sm text-gray-600 mb-2">
+                              Sort Order: {category.sort_order}
+                            </p>
+                            {category.description && (
+                              <p className="text-sm text-gray-500 mb-3">
+                                {category.description[language] || category.description.en}
+                              </p>
+                            )}
+                            <div className="flex space-x-2">
+                              <Button
+                                onClick={() => handleEditCategory(category)}
+                                variant="outline"
+                                size="sm"
+                                className="flex-1"
+                              >
+                                {at.editCategory}
+                              </Button>
+                              <Button
+                                onClick={() => handleDeleteCategory(category.id)}
+                                variant="outline"
+                                size="sm"
+                                className="text-red-600 hover:text-red-700"
+                              >
+                                {at.deleteCategory}
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              ) : (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>
+                      {editingCategory ? at.editCategory : at.addCategory}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <form onSubmit={handleSaveCategory} className="space-y-6">
+                      {/* Basic Info */}
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="slug">{at.categorySlug}</Label>
+                          <Input
+                            id="slug"
+                            value={categoryFormData.slug}
+                            onChange={(e) => setCategoryFormData({...categoryFormData, slug: e.target.value})}
+                            placeholder="category-slug"
+                            required
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="sort_order">{at.sortOrder}</Label>
+                          <Input
+                            id="sort_order"
+                            type="number"
+                            value={categoryFormData.sort_order}
+                            onChange={(e) => setCategoryFormData({...categoryFormData, sort_order: parseInt(e.target.value) || 0})}
+                            min="0"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <Label htmlFor="image">{at.categoryImage}</Label>
+                        <Input
+                          id="image"
+                          type="url"
+                          value={categoryFormData.image}
+                          onChange={(e) => setCategoryFormData({...categoryFormData, image: e.target.value})}
+                          placeholder="https://example.com/image.jpg"
+                        />
+                      </div>
+
+                      {/* Multilingual Names */}
+                      <div>
+                        <Label>{at.categoryName} (Multilingual)</Label>
+                        <div className="grid md:grid-cols-2 gap-4 mt-2">
+                          {Object.keys(categoryFormData.name).map((lang) => (
+                            <div key={lang}>
+                              <Label htmlFor={`name-${lang}`} className="text-sm">
+                                {lang.toUpperCase()}
+                              </Label>
+                              <Input
+                                id={`name-${lang}`}
+                                value={categoryFormData.name[lang]}
+                                onChange={(e) => setCategoryFormData({
+                                  ...categoryFormData,
+                                  name: { ...categoryFormData.name, [lang]: e.target.value }
+                                })}
+                                placeholder={`Category name in ${lang.toUpperCase()}`}
+                                required={lang === 'en'}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Multilingual Descriptions */}
+                      <div>
+                        <Label>{at.categoryDescription} (Multilingual)</Label>
+                        <div className="grid md:grid-cols-2 gap-4 mt-2">
+                          {Object.keys(categoryFormData.description).map((lang) => (
+                            <div key={lang}>
+                              <Label htmlFor={`desc-${lang}`} className="text-sm">
+                                {lang.toUpperCase()}
+                              </Label>
+                              <Input
+                                id={`desc-${lang}`}
+                                value={categoryFormData.description[lang]}
+                                onChange={(e) => setCategoryFormData({
+                                  ...categoryFormData,
+                                  description: { ...categoryFormData.description, [lang]: e.target.value }
+                                })}
+                                placeholder={`Category description in ${lang.toUpperCase()}`}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Active Status */}
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="checkbox"
+                          id="is_active"
+                          checked={categoryFormData.is_active}
+                          onChange={(e) => setCategoryFormData({...categoryFormData, is_active: e.target.checked})}
+                        />
+                        <Label htmlFor="is_active">{at.isActive}</Label>
+                      </div>
+
+                      {/* Form Actions */}
+                      <div className="flex space-x-4">
+                        <Button type="submit" disabled={loading}>
+                          {at.saveCategory}
+                        </Button>
+                        <Button 
+                          type="button" 
+                          variant="outline" 
+                          onClick={() => setShowCategoryForm(false)}
                         >
                           {at.cancel}
                         </Button>

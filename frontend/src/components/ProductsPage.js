@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import { MessageCircle, Star, Award, Leaf } from 'lucide-react';
+import { MessageCircle, Star, Award, Leaf, ShoppingCart, Plus, Minus } from 'lucide-react';
 import { translations } from '../translations';
 
 // Multilingual product database
@@ -284,10 +284,23 @@ const ProductsPage = ({ language }) => {
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || 'all');
   const [productsFromAPI, setProductsFromAPI] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [customerType, setCustomerType] = useState('retail'); // retail or wholesale
+  const [cart, setCart] = useState({ items: [], total: 0 });
+  const [quantities, setQuantities] = useState({}); // Track quantities for each product
   const t = translations[language] || translations.en;
 
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
   const API = `${BACKEND_URL}/api`;
+
+  // Generate session ID for cart
+  const getSessionId = () => {
+    let sessionId = localStorage.getItem('cart_session_id');
+    if (!sessionId) {
+      sessionId = 'session_' + Math.random().toString(36).substr(2, 9);
+      localStorage.setItem('cart_session_id', sessionId);
+    }
+    return sessionId;
+  };
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -305,6 +318,67 @@ const ProductsPage = ({ language }) => {
     };
     fetchProducts();
   }, [API]);
+
+  // Load cart on component mount
+  useEffect(() => {
+    fetchCart();
+  }, []);
+
+  const fetchCart = async () => {
+    try {
+      const sessionId = getSessionId();
+      const response = await fetch(`${API}/cart/${sessionId}`);
+      const cartData = await response.json();
+      setCart(cartData);
+    } catch (error) {
+      console.error('Error fetching cart:', error);
+    }
+  };
+
+  const addToCart = async (productId, quantity = 1) => {
+    try {
+      const sessionId = getSessionId();
+      const response = await fetch(`${API}/cart/${sessionId}/add`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          product_id: productId,
+          quantity: quantity,
+          customer_type: customerType
+        })
+      });
+      
+      if (response.ok) {
+        const updatedCart = await response.json();
+        setCart(updatedCart);
+        setQuantities(prev => ({ ...prev, [productId]: 1 })); // Reset quantity selector
+      } else {
+        const error = await response.json();
+        alert(error.detail || 'Error adding to cart');
+      }
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+    }
+  };
+
+  const updateQuantity = (productId, newQuantity) => {
+    if (newQuantity < 1) newQuantity = 1;
+    setQuantities(prev => ({ ...prev, [productId]: newQuantity }));
+  };
+
+  const getProductPrice = (product) => {
+    const quantity = quantities[product.id] || 1;
+    const isWholesale = customerType === 'wholesale' && quantity >= (product.min_wholesale_quantity || 50);
+    
+    if (isWholesale && product.wholesale_price) {
+      return product.wholesale_price;
+    } else if (product.retail_price) {
+      return product.retail_price;
+    }
+    return null;
+  };
 
   // Transform products data with language-specific content
   const products = (productsFromAPI.length > 0 ? productsFromAPI : productsData).map(product => ({
@@ -440,6 +514,37 @@ const ProductsPage = ({ language }) => {
               {t.homeDecor}
             </button>
           </div>
+
+          {/* Customer Type Selector and Cart Display */}
+          <div className="flex flex-col md:flex-row justify-between items-center mb-8 p-4 bg-white rounded-lg shadow-sm">
+            <div className="flex items-center space-x-4 mb-4 md:mb-0">
+              <label className="text-sm font-medium text-gray-700">
+                {t.customerType}:
+              </label>
+              <select
+                value={customerType}
+                onChange={(e) => setCustomerType(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-md text-sm"
+              >
+                <option value="retail">{t.retail}</option>
+                <option value="wholesale">{t.wholesale}</option>
+              </select>
+            </div>
+            
+            {cart.items.length > 0 && (
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-2">
+                  <ShoppingCart className="text-amber-600" size={20} />
+                  <span className="text-sm font-medium">
+                    {cart.items.length} {cart.items.length === 1 ? 'item' : 'items'}
+                  </span>
+                </div>
+                <div className="text-lg font-semibold text-amber-700">
+                  {t.total}: ${cart.total.toFixed(2)}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </section>
 
@@ -481,17 +586,74 @@ const ProductsPage = ({ language }) => {
                   ))}
                 </ul>
                 
-                <div className="text-center text-sm text-gray-500 mb-4">
-                  {t.contactForPricing || 'Contact for Wholesale Pricing'}
+                {/* Pricing and Stock Status */}
+                <div className="mb-4">
+                  {product.in_stock !== false ? (
+                    <div className="flex items-center text-sm text-green-600 mb-2">
+                      <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                      {t.inStock}
+                    </div>
+                  ) : (
+                    <div className="flex items-center text-sm text-red-600 mb-2">
+                      <div className="w-2 h-2 bg-red-500 rounded-full mr-2"></div>
+                      {t.outOfStock}
+                    </div>
+                  )}
+                  
+                  {getProductPrice(product) ? (
+                    <div className="text-lg font-semibold text-amber-700 mb-2">
+                      ${getProductPrice(product)}
+                      {customerType === 'wholesale' && (
+                        <span className="text-sm text-gray-500 ml-2">
+                          ({t.minQuantity}: {product.min_wholesale_quantity || 50})
+                        </span>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="text-center text-sm text-gray-500 mb-2">
+                      {t.contactForPricing || 'Contact for Wholesale Pricing'}
+                    </div>
+                  )}
                 </div>
-                
-                <Link
-                  to={`/contact?product=${encodeURIComponent(product.name)}`}
-                  className="btn-primary w-full text-center"
-                >
-                  <MessageCircle className="inline mr-2" size={16} />
-                  {t.inquireNow || 'Inquire Now'}
-                </Link>
+
+                {/* Quantity Selector and Add to Cart */}
+                {getProductPrice(product) && product.in_stock !== false ? (
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-center space-x-3">
+                      <button
+                        onClick={() => updateQuantity(product.id, (quantities[product.id] || 1) - 1)}
+                        className="w-8 h-8 flex items-center justify-center border border-gray-300 rounded-md hover:bg-gray-100"
+                      >
+                        <Minus size={16} />
+                      </button>
+                      <span className="w-12 text-center font-medium">
+                        {quantities[product.id] || 1}
+                      </span>
+                      <button
+                        onClick={() => updateQuantity(product.id, (quantities[product.id] || 1) + 1)}
+                        className="w-8 h-8 flex items-center justify-center border border-gray-300 rounded-md hover:bg-gray-100"
+                      >
+                        <Plus size={16} />
+                      </button>
+                    </div>
+                    
+                    <button
+                      onClick={() => addToCart(product.id, quantities[product.id] || 1)}
+                      className="btn-primary w-full"
+                    >
+                      <ShoppingCart className="inline mr-2" size={16} />
+                      {t.addToCart}
+                    </button>
+                  </div>
+                ) : (
+                  <Link
+                    to={`/contact?product=${encodeURIComponent(product.name)}`}
+                    className="btn-primary w-full text-center"
+                  >
+                    <MessageCircle className="inline mr-2" size={16} />
+                    {t.inquireNow || 'Inquire Now'}
+                  </Link>
+                )}
               </div>
             ))}
           </div>

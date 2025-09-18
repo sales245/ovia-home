@@ -11,7 +11,8 @@ import uuid
 from datetime import datetime, timezone
 
 # Import cart and payment system
-from cart_payment_system import setup_cart_payment_routes, timedelta
+# from cart_payment_system import setup_cart_payment_routes, timedelta
+from datetime import timedelta
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -35,6 +36,11 @@ class Product(BaseModel):
     name: dict  # Multilingual names
     features: dict  # Multilingual features  
     badges: List[str]
+    retail_price: Optional[float] = None  # Retail price for individual customers
+    wholesale_price: Optional[float] = None  # Wholesale price for bulk orders
+    min_wholesale_quantity: int = 50  # Minimum quantity for wholesale pricing
+    in_stock: bool = True
+    stock_quantity: Optional[int] = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
@@ -44,6 +50,11 @@ class ProductCreate(BaseModel):
     name: dict
     features: dict
     badges: List[str]
+    retail_price: Optional[float] = None
+    wholesale_price: Optional[float] = None
+    min_wholesale_quantity: int = 50
+    in_stock: bool = True
+    stock_quantity: Optional[int] = None
 
 class ProductUpdate(BaseModel):
     category: Optional[str] = None
@@ -51,6 +62,62 @@ class ProductUpdate(BaseModel):
     name: Optional[dict] = None
     features: Optional[dict] = None
     badges: Optional[List[str]] = None
+    retail_price: Optional[float] = None
+    wholesale_price: Optional[float] = None
+    min_wholesale_quantity: Optional[int] = None
+    in_stock: Optional[bool] = None
+    stock_quantity: Optional[int] = None
+
+# Category Management Models
+class Category(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: dict  # Multilingual names (e.g., {"en": "Bathrobes", "tr": "Bornozlar"})
+    slug: str  # URL-friendly identifier (e.g., "bathrobes")
+    description: Optional[dict] = None  # Multilingual descriptions
+    image: Optional[str] = None  # Category image URL
+    sort_order: int = 0  # For ordering categories
+    is_active: bool = True
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class CategoryCreate(BaseModel):
+    name: dict
+    slug: str
+    description: Optional[dict] = None
+    image: Optional[str] = None
+    sort_order: int = 0
+    is_active: bool = True
+
+class CategoryUpdate(BaseModel):
+    name: Optional[dict] = None
+    slug: Optional[str] = None
+    description: Optional[dict] = None
+    image: Optional[str] = None
+    sort_order: Optional[int] = None
+    is_active: Optional[bool] = None
+
+# Cart and Shopping Models
+class CartItem(BaseModel):
+    product_id: str
+    quantity: int
+    price: float
+    product_name: dict
+    product_image: str
+    customer_type: str = "retail"  # retail or wholesale
+
+class Cart(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    session_id: str
+    items: List[CartItem] = []
+    total: float = 0.0
+    customer_type: str = "retail"
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class AddToCartRequest(BaseModel):
+    product_id: str
+    quantity: int = 1
+    customer_type: str = "retail"
 class ProductInquiry(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     name: str
@@ -252,6 +319,281 @@ async def delete_product(product_id: str):
         raise HTTPException(status_code=404, detail="Product not found")
     
     return {"message": "Product deleted successfully"}
+
+# Category Management Routes
+@api_router.get("/categories", response_model=List[Category])
+async def get_categories():
+    categories = await db.categories.find({"is_active": True}).sort("sort_order", 1).to_list(1000)
+    return [Category(**category) for category in categories]
+
+@api_router.get("/categories/{category_id}", response_model=Category)
+async def get_category(category_id: str):
+    category = await db.categories.find_one({"id": category_id})
+    if not category:
+        raise HTTPException(status_code=404, detail="Category not found")
+    return Category(**category)
+
+@api_router.post("/categories", response_model=Category)
+async def create_category(category: CategoryCreate):
+    # Check if slug already exists
+    existing = await db.categories.find_one({"slug": category.slug})
+    if existing:
+        raise HTTPException(status_code=400, detail="Category slug already exists")
+    
+    category_dict = category.dict()
+    category_obj = Category(**category_dict)
+    await db.categories.insert_one(category_obj.dict())
+    return category_obj
+
+@api_router.put("/categories/{category_id}", response_model=Category)
+async def update_category(category_id: str, category_update: CategoryUpdate):
+    # Check if new slug conflicts with existing categories
+    if category_update.slug:
+        existing = await db.categories.find_one({
+            "slug": category_update.slug,
+            "id": {"$ne": category_id}
+        })
+        if existing:
+            raise HTTPException(status_code=400, detail="Category slug already exists")
+    
+    update_data = {k: v for k, v in category_update.dict().items() if v is not None}
+    update_data["updated_at"] = datetime.now(timezone.utc)
+    
+    result = await db.categories.update_one(
+        {"id": category_id},
+        {"$set": update_data}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Category not found")
+    
+    updated_category = await db.categories.find_one({"id": category_id})
+    return Category(**updated_category)
+
+@api_router.delete("/categories/{category_id}")
+async def delete_category(category_id: str):
+    # Check if category is used by products
+    products_using_category = await db.products.count_documents({"category": category_id})
+    if products_using_category > 0:
+        raise HTTPException(
+            status_code=400, 
+            detail=f"Cannot delete category. {products_using_category} products are using this category."
+        )
+    
+    result = await db.categories.delete_one({"id": category_id})
+    
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Category not found")
+    
+    return {"message": "Category deleted successfully"}
+
+@api_router.post("/admin/init-categories")
+async def initialize_categories():
+    """Initialize default categories"""
+    existing_count = await db.categories.count_documents({})
+    if existing_count > 0:
+        return {"message": "Categories already initialized", "count": existing_count}
+    
+    default_categories = [
+        {
+            "slug": "bathrobes",
+            "name": {
+                "en": "Bathrobes",
+                "tr": "Bornozlar",
+                "de": "Bademäntel",
+                "fr": "Peignoirs",
+                "it": "Accappatoi",
+                "es": "Albornoces"
+            },
+            "description": {
+                "en": "Luxury bathrobes made from premium materials",
+                "tr": "Premium malzemelerden yapılmış lüks bornozlar"
+            },
+            "sort_order": 1,
+            "is_active": True
+        },
+        {
+            "slug": "towels",
+            "name": {
+                "en": "Towels",
+                "tr": "Havlular",
+                "de": "Handtücher",
+                "fr": "Serviettes",
+                "it": "Asciugamani", 
+                "es": "Toallas"
+            },
+            "description": {
+                "en": "High-quality towels for home and spa use",
+                "tr": "Ev ve spa kullanımı için yüksek kaliteli havlular"
+            },
+            "sort_order": 2,
+            "is_active": True
+        },
+        {
+            "slug": "bedding",
+            "name": {
+                "en": "Bedding",
+                "tr": "Yatak Takımları",
+                "de": "Bettwäsche",
+                "fr": "Literie",
+                "it": "Biancheria da letto",
+                "es": "Ropa de cama"
+            },
+            "description": {
+                "en": "Premium bedding sets and linens",
+                "tr": "Premium yatak takımları ve çarşaflar"
+            },
+            "sort_order": 3,
+            "is_active": True
+        },
+        {
+            "slug": "home-decor",
+            "name": {
+                "en": "Home Décor",
+                "tr": "Ev Dekorasyonu",
+                "de": "Wohndekoration",
+                "fr": "Décoration",
+                "it": "Decorazione casa",
+                "es": "Decoración del hogar"
+            },
+            "description": {
+                "en": "Decorative items and accessories for your home",
+                "tr": "Eviniz için dekoratif eşyalar ve aksesuarlar"
+            },
+            "sort_order": 4,
+            "is_active": True
+        }
+    ]
+    
+    categories = [Category(**cat) for cat in default_categories]
+    await db.categories.insert_many([cat.dict() for cat in categories])
+    
+    return {"message": "Categories initialized successfully", "count": len(categories)}
+
+# Cart Management Routes
+@api_router.get("/cart/{session_id}", response_model=Cart)
+async def get_cart(session_id: str):
+    cart = await db.carts.find_one({"session_id": session_id})
+    if not cart:
+        # Create empty cart
+        empty_cart = Cart(session_id=session_id)
+        await db.carts.insert_one(empty_cart.dict())
+        return empty_cart
+    return Cart(**cart)
+
+@api_router.post("/cart/{session_id}/add", response_model=Cart)
+async def add_to_cart(session_id: str, request: AddToCartRequest):
+    # Get product details
+    product = await db.products.find_one({"id": request.product_id})
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    
+    # Determine price based on customer type and quantity
+    if request.customer_type == "wholesale" and request.quantity >= product.get("min_wholesale_quantity", 50):
+        price = product.get("wholesale_price")
+        if price is None:
+            raise HTTPException(status_code=400, detail="Wholesale price not available")
+    else:
+        price = product.get("retail_price")
+        if price is None:
+            raise HTTPException(status_code=400, detail="Retail price not available")
+    
+    # Get or create cart
+    cart = await db.carts.find_one({"session_id": session_id})
+    if not cart:
+        cart = Cart(session_id=session_id, customer_type=request.customer_type).dict()
+        await db.carts.insert_one(cart)
+    
+    # Check if item already in cart
+    existing_item = None
+    for item in cart["items"]:
+        if item["product_id"] == request.product_id:
+            existing_item = item
+            break
+    
+    if existing_item:
+        # Update quantity
+        existing_item["quantity"] += request.quantity
+    else:
+        # Add new item
+        cart_item = CartItem(
+            product_id=request.product_id,
+            quantity=request.quantity,
+            price=price,
+            product_name=product["name"],
+            product_image=product["image"],
+            customer_type=request.customer_type
+        )
+        cart["items"].append(cart_item.dict())
+    
+    # Recalculate total
+    cart["total"] = sum(item["price"] * item["quantity"] for item in cart["items"])
+    cart["updated_at"] = datetime.now(timezone.utc)
+    
+    # Update in database
+    await db.carts.update_one(
+        {"session_id": session_id},
+        {"$set": cart}
+    )
+    
+    return Cart(**cart)
+
+@api_router.put("/cart/{session_id}/update", response_model=Cart)
+async def update_cart_item(session_id: str, product_id: str, quantity: int):
+    cart = await db.carts.find_one({"session_id": session_id})
+    if not cart:
+        raise HTTPException(status_code=404, detail="Cart not found")
+    
+    # Find and update item
+    item_found = False
+    for item in cart["items"]:
+        if item["product_id"] == product_id:
+            if quantity <= 0:
+                cart["items"].remove(item)
+            else:
+                item["quantity"] = quantity
+            item_found = True
+            break
+    
+    if not item_found:
+        raise HTTPException(status_code=404, detail="Item not found in cart")
+    
+    # Recalculate total
+    cart["total"] = sum(item["price"] * item["quantity"] for item in cart["items"])
+    cart["updated_at"] = datetime.now(timezone.utc)
+    
+    # Update in database
+    await db.carts.update_one(
+        {"session_id": session_id},
+        {"$set": cart}
+    )
+    
+    return Cart(**cart)
+
+@api_router.delete("/cart/{session_id}/remove/{product_id}")
+async def remove_from_cart(session_id: str, product_id: str):
+    cart = await db.carts.find_one({"session_id": session_id})
+    if not cart:
+        raise HTTPException(status_code=404, detail="Cart not found")
+    
+    # Remove item
+    cart["items"] = [item for item in cart["items"] if item["product_id"] != product_id]
+    
+    # Recalculate total
+    cart["total"] = sum(item["price"] * item["quantity"] for item in cart["items"])
+    cart["updated_at"] = datetime.now(timezone.utc)
+    
+    await db.carts.update_one(
+        {"session_id": session_id},
+        {"$set": cart}
+    )
+    
+    return {"message": "Item removed from cart"}
+
+@api_router.delete("/cart/{session_id}/clear")
+async def clear_cart(session_id: str):
+    await db.carts.delete_one({"session_id": session_id})
+    return {"message": "Cart cleared"}
 
 # Initialize default products endpoint
 @api_router.post("/admin/init-products")
