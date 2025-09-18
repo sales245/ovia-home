@@ -48,7 +48,12 @@ const AdminPage = ({ language }) => {
       it: ['', '', ''], es: ['', '', ''], pl: ['', '', ''], ru: ['', '', ''],
       bg: ['', '', ''], el: ['', '', ''], pt: ['', '', ''], ar: ['', '', '']
     },
-    badges: []
+    badges: [],
+    retail_price: '',
+    wholesale_price: '',
+    min_wholesale_quantity: 50,
+    in_stock: true,
+    stock_quantity: ''
   });
 
   // Category management states
@@ -132,7 +137,20 @@ const AdminPage = ({ language }) => {
       categoryImage: 'Category Image',
       sortOrder: 'Sort Order',
       isActive: 'Is Active',
-      saveCategory: 'Save Category'
+      saveCategory: 'Save Category',
+      // Pricing
+      retailPrice: 'Retail Price',
+      wholesalePrice: 'Wholesale Price',
+      minWholesaleQuantity: 'Min Wholesale Quantity',
+      inStock: 'In Stock',
+      stockQuantity: 'Stock Quantity',
+      addToCart: 'Add to Cart',
+      cart: 'Cart',
+      quantity: 'Quantity',
+      total: 'Total',
+      customerType: 'Customer Type',
+      retail: 'Retail',
+      wholesale: 'Wholesale'
     },
     tr: {
       adminPanel: 'Yönetici Paneli',
@@ -195,7 +213,20 @@ const AdminPage = ({ language }) => {
       categoryImage: 'Kategori Resmi',
       sortOrder: 'Sıra Numarası',
       isActive: 'Aktif',
-      saveCategory: 'Kategoriyi Kaydet'
+      saveCategory: 'Kategoriyi Kaydet',
+      // Pricing
+      retailPrice: 'Perakende Fiyatı',
+      wholesalePrice: 'Toptan Fiyatı',
+      minWholesaleQuantity: 'Min Toptan Miktarı',
+      inStock: 'Stokta',
+      stockQuantity: 'Stok Miktarı',
+      addToCart: 'Sepete Ekle',
+      cart: 'Sepet',
+      quantity: 'Miktar',
+      total: 'Toplam',
+      customerType: 'Müşteri Tipi',
+      retail: 'Perakende',
+      wholesale: 'Toptan'
     }
   };
 
@@ -293,7 +324,12 @@ const AdminPage = ({ language }) => {
         it: ['', '', ''], es: ['', '', ''], pl: ['', '', ''], ru: ['', '', ''],
         bg: ['', '', ''], el: ['', '', ''], pt: ['', '', ''], ar: ['', '', '']
       },
-      badges: []
+      badges: [],
+      retail_price: '',
+      wholesale_price: '',
+      min_wholesale_quantity: 50,
+      in_stock: true,
+      stock_quantity: ''
     });
     setShowProductForm(true);
   };
@@ -305,7 +341,12 @@ const AdminPage = ({ language }) => {
       image: product.image,
       name: product.name,
       features: product.features,
-      badges: product.badges
+      badges: product.badges,
+      retail_price: product.retail_price || '',
+      wholesale_price: product.wholesale_price || '',
+      min_wholesale_quantity: product.min_wholesale_quantity || 50,
+      in_stock: product.in_stock !== undefined ? product.in_stock : true,
+      stock_quantity: product.stock_quantity || ''
     });
     setShowProductForm(true);
   };
@@ -902,6 +943,21 @@ const AdminPage = ({ language }) => {
                             <p className="text-sm text-gray-600 mb-2">
                               Category: {product.category}
                             </p>
+                            {(product.retail_price || product.wholesale_price) && (
+                              <div className="text-sm text-gray-600 mb-2">
+                                {product.retail_price && (
+                                  <p>Retail: ${product.retail_price}</p>
+                                )}
+                                {product.wholesale_price && (
+                                  <p>Wholesale: ${product.wholesale_price} (min: {product.min_wholesale_quantity || 50})</p>
+                                )}
+                              </div>
+                            )}
+                            <div className="flex items-center text-sm text-gray-600 mb-2">
+                              <span className={`inline-block w-2 h-2 rounded-full mr-2 ${product.in_stock ? 'bg-green-500' : 'bg-red-500'}`}></span>
+                              {product.in_stock ? 'In Stock' : 'Out of Stock'}
+                              {product.stock_quantity && <span className="ml-2">({product.stock_quantity} units)</span>}
+                            </div>
                             <div className="flex flex-wrap gap-1 mb-3">
                               {product.badges.map((badge) => (
                                 <Badge key={badge} variant="outline" className="text-xs">
@@ -1033,6 +1089,66 @@ const AdminPage = ({ language }) => {
                             </label>
                           ))}
                         </div>
+                      </div>
+
+                      {/* Pricing and Stock */}
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="retail_price">{at.retailPrice}</Label>
+                          <Input
+                            id="retail_price"
+                            type="number"
+                            step="0.01"
+                            value={productFormData.retail_price}
+                            onChange={(e) => setProductFormData({...productFormData, retail_price: e.target.value})}
+                            placeholder="29.99"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="wholesale_price">{at.wholesalePrice}</Label>
+                          <Input
+                            id="wholesale_price"
+                            type="number"
+                            step="0.01"
+                            value={productFormData.wholesale_price}
+                            onChange={(e) => setProductFormData({...productFormData, wholesale_price: e.target.value})}
+                            placeholder="19.99"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="min_wholesale_quantity">{at.minWholesaleQuantity}</Label>
+                          <Input
+                            id="min_wholesale_quantity"
+                            type="number"
+                            value={productFormData.min_wholesale_quantity}
+                            onChange={(e) => setProductFormData({...productFormData, min_wholesale_quantity: parseInt(e.target.value) || 50})}
+                            min="1"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="stock_quantity">{at.stockQuantity}</Label>
+                          <Input
+                            id="stock_quantity"
+                            type="number"
+                            value={productFormData.stock_quantity}
+                            onChange={(e) => setProductFormData({...productFormData, stock_quantity: e.target.value})}
+                            placeholder="100"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Stock Status */}
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="checkbox"
+                          id="in_stock"
+                          checked={productFormData.in_stock}
+                          onChange={(e) => setProductFormData({...productFormData, in_stock: e.target.checked})}
+                        />
+                        <Label htmlFor="in_stock">{at.inStock}</Label>
                       </div>
 
                       {/* Form Actions */}

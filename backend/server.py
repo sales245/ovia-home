@@ -36,6 +36,11 @@ class Product(BaseModel):
     name: dict  # Multilingual names
     features: dict  # Multilingual features  
     badges: List[str]
+    retail_price: Optional[float] = None  # Retail price for individual customers
+    wholesale_price: Optional[float] = None  # Wholesale price for bulk orders
+    min_wholesale_quantity: int = 50  # Minimum quantity for wholesale pricing
+    in_stock: bool = True
+    stock_quantity: Optional[int] = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
@@ -45,6 +50,11 @@ class ProductCreate(BaseModel):
     name: dict
     features: dict
     badges: List[str]
+    retail_price: Optional[float] = None
+    wholesale_price: Optional[float] = None
+    min_wholesale_quantity: int = 50
+    in_stock: bool = True
+    stock_quantity: Optional[int] = None
 
 class ProductUpdate(BaseModel):
     category: Optional[str] = None
@@ -52,6 +62,11 @@ class ProductUpdate(BaseModel):
     name: Optional[dict] = None
     features: Optional[dict] = None
     badges: Optional[List[str]] = None
+    retail_price: Optional[float] = None
+    wholesale_price: Optional[float] = None
+    min_wholesale_quantity: Optional[int] = None
+    in_stock: Optional[bool] = None
+    stock_quantity: Optional[int] = None
 
 # Category Management Models
 class Category(BaseModel):
@@ -80,6 +95,29 @@ class CategoryUpdate(BaseModel):
     image: Optional[str] = None
     sort_order: Optional[int] = None
     is_active: Optional[bool] = None
+
+# Cart and Shopping Models
+class CartItem(BaseModel):
+    product_id: str
+    quantity: int
+    price: float
+    product_name: dict
+    product_image: str
+    customer_type: str = "retail"  # retail or wholesale
+
+class Cart(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    session_id: str
+    items: List[CartItem] = []
+    total: float = 0.0
+    customer_type: str = "retail"
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class AddToCartRequest(BaseModel):
+    product_id: str
+    quantity: int = 1
+    customer_type: str = "retail"
 class ProductInquiry(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     name: str
@@ -431,6 +469,131 @@ async def initialize_categories():
     await db.categories.insert_many([cat.dict() for cat in categories])
     
     return {"message": "Categories initialized successfully", "count": len(categories)}
+
+# Cart Management Routes
+@api_router.get("/cart/{session_id}", response_model=Cart)
+async def get_cart(session_id: str):
+    cart = await db.carts.find_one({"session_id": session_id})
+    if not cart:
+        # Create empty cart
+        empty_cart = Cart(session_id=session_id)
+        await db.carts.insert_one(empty_cart.dict())
+        return empty_cart
+    return Cart(**cart)
+
+@api_router.post("/cart/{session_id}/add", response_model=Cart)
+async def add_to_cart(session_id: str, request: AddToCartRequest):
+    # Get product details
+    product = await db.products.find_one({"id": request.product_id})
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    
+    # Determine price based on customer type and quantity
+    if request.customer_type == "wholesale" and request.quantity >= product.get("min_wholesale_quantity", 50):
+        price = product.get("wholesale_price")
+        if price is None:
+            raise HTTPException(status_code=400, detail="Wholesale price not available")
+    else:
+        price = product.get("retail_price")
+        if price is None:
+            raise HTTPException(status_code=400, detail="Retail price not available")
+    
+    # Get or create cart
+    cart = await db.carts.find_one({"session_id": session_id})
+    if not cart:
+        cart = Cart(session_id=session_id, customer_type=request.customer_type).dict()
+        await db.carts.insert_one(cart)
+    
+    # Check if item already in cart
+    existing_item = None
+    for item in cart["items"]:
+        if item["product_id"] == request.product_id:
+            existing_item = item
+            break
+    
+    if existing_item:
+        # Update quantity
+        existing_item["quantity"] += request.quantity
+    else:
+        # Add new item
+        cart_item = CartItem(
+            product_id=request.product_id,
+            quantity=request.quantity,
+            price=price,
+            product_name=product["name"],
+            product_image=product["image"],
+            customer_type=request.customer_type
+        )
+        cart["items"].append(cart_item.dict())
+    
+    # Recalculate total
+    cart["total"] = sum(item["price"] * item["quantity"] for item in cart["items"])
+    cart["updated_at"] = datetime.now(timezone.utc)
+    
+    # Update in database
+    await db.carts.update_one(
+        {"session_id": session_id},
+        {"$set": cart}
+    )
+    
+    return Cart(**cart)
+
+@api_router.put("/cart/{session_id}/update", response_model=Cart)
+async def update_cart_item(session_id: str, product_id: str, quantity: int):
+    cart = await db.carts.find_one({"session_id": session_id})
+    if not cart:
+        raise HTTPException(status_code=404, detail="Cart not found")
+    
+    # Find and update item
+    item_found = False
+    for item in cart["items"]:
+        if item["product_id"] == product_id:
+            if quantity <= 0:
+                cart["items"].remove(item)
+            else:
+                item["quantity"] = quantity
+            item_found = True
+            break
+    
+    if not item_found:
+        raise HTTPException(status_code=404, detail="Item not found in cart")
+    
+    # Recalculate total
+    cart["total"] = sum(item["price"] * item["quantity"] for item in cart["items"])
+    cart["updated_at"] = datetime.now(timezone.utc)
+    
+    # Update in database
+    await db.carts.update_one(
+        {"session_id": session_id},
+        {"$set": cart}
+    )
+    
+    return Cart(**cart)
+
+@api_router.delete("/cart/{session_id}/remove/{product_id}")
+async def remove_from_cart(session_id: str, product_id: str):
+    cart = await db.carts.find_one({"session_id": session_id})
+    if not cart:
+        raise HTTPException(status_code=404, detail="Cart not found")
+    
+    # Remove item
+    cart["items"] = [item for item in cart["items"] if item["product_id"] != product_id]
+    
+    # Recalculate total
+    cart["total"] = sum(item["price"] * item["quantity"] for item in cart["items"])
+    cart["updated_at"] = datetime.now(timezone.utc)
+    
+    await db.carts.update_one(
+        {"session_id": session_id},
+        {"$set": cart}
+    )
+    
+    return {"message": "Item removed from cart"}
+
+@api_router.delete("/cart/{session_id}/clear")
+async def clear_cart(session_id: str):
+    await db.carts.delete_one({"session_id": session_id})
+    return {"message": "Cart cleared"}
 
 # Initialize default products endpoint
 @api_router.post("/admin/init-products")
