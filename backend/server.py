@@ -11,7 +11,8 @@ import uuid
 from datetime import datetime, timezone
 
 # Import cart and payment system
-from cart_payment_system import setup_cart_payment_routes, timedelta
+# from cart_payment_system import setup_cart_payment_routes, timedelta
+from datetime import timedelta
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -51,6 +52,34 @@ class ProductUpdate(BaseModel):
     name: Optional[dict] = None
     features: Optional[dict] = None
     badges: Optional[List[str]] = None
+
+# Category Management Models
+class Category(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: dict  # Multilingual names (e.g., {"en": "Bathrobes", "tr": "Bornozlar"})
+    slug: str  # URL-friendly identifier (e.g., "bathrobes")
+    description: Optional[dict] = None  # Multilingual descriptions
+    image: Optional[str] = None  # Category image URL
+    sort_order: int = 0  # For ordering categories
+    is_active: bool = True
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class CategoryCreate(BaseModel):
+    name: dict
+    slug: str
+    description: Optional[dict] = None
+    image: Optional[str] = None
+    sort_order: int = 0
+    is_active: bool = True
+
+class CategoryUpdate(BaseModel):
+    name: Optional[dict] = None
+    slug: Optional[str] = None
+    description: Optional[dict] = None
+    image: Optional[str] = None
+    sort_order: Optional[int] = None
+    is_active: Optional[bool] = None
 class ProductInquiry(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     name: str
@@ -252,6 +281,156 @@ async def delete_product(product_id: str):
         raise HTTPException(status_code=404, detail="Product not found")
     
     return {"message": "Product deleted successfully"}
+
+# Category Management Routes
+@api_router.get("/categories", response_model=List[Category])
+async def get_categories():
+    categories = await db.categories.find({"is_active": True}).sort("sort_order", 1).to_list(1000)
+    return [Category(**category) for category in categories]
+
+@api_router.get("/categories/{category_id}", response_model=Category)
+async def get_category(category_id: str):
+    category = await db.categories.find_one({"id": category_id})
+    if not category:
+        raise HTTPException(status_code=404, detail="Category not found")
+    return Category(**category)
+
+@api_router.post("/categories", response_model=Category)
+async def create_category(category: CategoryCreate):
+    # Check if slug already exists
+    existing = await db.categories.find_one({"slug": category.slug})
+    if existing:
+        raise HTTPException(status_code=400, detail="Category slug already exists")
+    
+    category_dict = category.dict()
+    category_obj = Category(**category_dict)
+    await db.categories.insert_one(category_obj.dict())
+    return category_obj
+
+@api_router.put("/categories/{category_id}", response_model=Category)
+async def update_category(category_id: str, category_update: CategoryUpdate):
+    # Check if new slug conflicts with existing categories
+    if category_update.slug:
+        existing = await db.categories.find_one({
+            "slug": category_update.slug,
+            "id": {"$ne": category_id}
+        })
+        if existing:
+            raise HTTPException(status_code=400, detail="Category slug already exists")
+    
+    update_data = {k: v for k, v in category_update.dict().items() if v is not None}
+    update_data["updated_at"] = datetime.now(timezone.utc)
+    
+    result = await db.categories.update_one(
+        {"id": category_id},
+        {"$set": update_data}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Category not found")
+    
+    updated_category = await db.categories.find_one({"id": category_id})
+    return Category(**updated_category)
+
+@api_router.delete("/categories/{category_id}")
+async def delete_category(category_id: str):
+    # Check if category is used by products
+    products_using_category = await db.products.count_documents({"category": category_id})
+    if products_using_category > 0:
+        raise HTTPException(
+            status_code=400, 
+            detail=f"Cannot delete category. {products_using_category} products are using this category."
+        )
+    
+    result = await db.categories.delete_one({"id": category_id})
+    
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Category not found")
+    
+    return {"message": "Category deleted successfully"}
+
+@api_router.post("/admin/init-categories")
+async def initialize_categories():
+    """Initialize default categories"""
+    existing_count = await db.categories.count_documents({})
+    if existing_count > 0:
+        return {"message": "Categories already initialized", "count": existing_count}
+    
+    default_categories = [
+        {
+            "slug": "bathrobes",
+            "name": {
+                "en": "Bathrobes",
+                "tr": "Bornozlar",
+                "de": "Bademäntel",
+                "fr": "Peignoirs",
+                "it": "Accappatoi",
+                "es": "Albornoces"
+            },
+            "description": {
+                "en": "Luxury bathrobes made from premium materials",
+                "tr": "Premium malzemelerden yapılmış lüks bornozlar"
+            },
+            "sort_order": 1,
+            "is_active": True
+        },
+        {
+            "slug": "towels",
+            "name": {
+                "en": "Towels",
+                "tr": "Havlular",
+                "de": "Handtücher",
+                "fr": "Serviettes",
+                "it": "Asciugamani", 
+                "es": "Toallas"
+            },
+            "description": {
+                "en": "High-quality towels for home and spa use",
+                "tr": "Ev ve spa kullanımı için yüksek kaliteli havlular"
+            },
+            "sort_order": 2,
+            "is_active": True
+        },
+        {
+            "slug": "bedding",
+            "name": {
+                "en": "Bedding",
+                "tr": "Yatak Takımları",
+                "de": "Bettwäsche",
+                "fr": "Literie",
+                "it": "Biancheria da letto",
+                "es": "Ropa de cama"
+            },
+            "description": {
+                "en": "Premium bedding sets and linens",
+                "tr": "Premium yatak takımları ve çarşaflar"
+            },
+            "sort_order": 3,
+            "is_active": True
+        },
+        {
+            "slug": "home-decor",
+            "name": {
+                "en": "Home Décor",
+                "tr": "Ev Dekorasyonu",
+                "de": "Wohndekoration",
+                "fr": "Décoration",
+                "it": "Decorazione casa",
+                "es": "Decoración del hogar"
+            },
+            "description": {
+                "en": "Decorative items and accessories for your home",
+                "tr": "Eviniz için dekoratif eşyalar ve aksesuarlar"
+            },
+            "sort_order": 4,
+            "is_active": True
+        }
+    ]
+    
+    categories = [Category(**cat) for cat in default_categories]
+    await db.categories.insert_many([cat.dict() for cat in categories])
+    
+    return {"message": "Categories initialized successfully", "count": len(categories)}
 
 # Initialize default products endpoint
 @api_router.post("/admin/init-products")
