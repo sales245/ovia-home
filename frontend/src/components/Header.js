@@ -38,7 +38,7 @@ const Header = ({ language, setLanguage }) => {
         <div className="flex items-center justify-between py-4">
           {/* Logo */}
           <Link to="/" className="flex items-center">
-            <div className="text-2xl font-bold text-gray-800">
+            <div className="text-2xl font-bold text-ink">
               <span style={{ fontFamily: 'Playfair Display, serif' }}>Ovia Home</span>
             </div>
           </Link>
