@@ -152,7 +152,7 @@ const Header = ({ language, setLanguage }) => {
           {/* Mobile Menu Button */}
           <button
             onClick={toggleMenu}
-            className="md:hidden p-2 text-gray-600 hover:text-gray-800"
+            className="md:hidden p-2 text-ink-2 hover:text-primary"
           >
             {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
