@@ -396,7 +396,7 @@ const ProductsPage = ({ language }) => {
       case 'organicCotton':
         return 'bg-green-100 text-green-800';
       case 'premium':
-        return 'bg-amber-100 text-amber-800';
+        return 'bg-orange-100 text-primary';
       case 'certified':
         return 'bg-blue-100 text-blue-800';
       case 'sustainable':
