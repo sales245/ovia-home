@@ -101,21 +101,21 @@ const Header = ({ language, setLanguage }) => {
           <div className="hidden md:flex items-center space-x-4">
             <button
               onClick={() => handleContactClick('email')}
-              className="p-2 text-gray-600 hover:text-gray-800 transition-colors"
+              className="p-2 text-ink-2 hover:text-primary transition-colors"
               title="Email us"
             >
               <Mail size={18} />
             </button>
             <button
               onClick={() => handleContactClick('whatsapp')}
-              className="p-2 text-gray-600 hover:text-gray-800 transition-colors"
+              className="p-2 text-ink-2 hover:text-primary transition-colors"
               title="WhatsApp"
             >
               <MessageCircle size={18} />
             </button>
             <button
               onClick={() => handleContactClick('instagram')}
-              className="p-2 text-gray-600 hover:text-gray-800 transition-colors"
+              className="p-2 text-ink-2 hover:text-primary transition-colors"
               title="Instagram"
             >
               <Instagram size={18} />
