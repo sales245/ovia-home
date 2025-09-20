@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { GoogleLogin, googleLogout } from '@react-oauth/google';
 import { Search, Package, Truck, CheckCircle, Clock, AlertCircle } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card } from '../components/ui/card';
@@ -101,50 +102,51 @@ const translations = {
     loginButton: 'Inloggen',
     loginError: 'Ongeldig e-mailadres of wachtwoord.',
     logout: 'Uitloggen',
-    welcome: 'Welkom terug'
-  },
-    customerPanel: 'Müşteri Paneli',
-    orderTracking: 'Sipariş Takibi',
-    trackOrder: 'Siparişinizi Takip Edin',
-    orderNumber: 'Sipariş Numarası',
-    orderNumberPlaceholder: 'Sipariş numaranızı girin (örn. OV12345678)',
-    trackButton: 'Siparişi Takip Et',
-    orderDetails: 'Sipariş Detayları',
-    orderNotFound: 'Sipariş bulunamadı. Lütfen sipariş numaranızı kontrol edin.',
-    status: 'Durum',
-    orderDate: 'Sipariş Tarihi',
-    trackingNumber: 'Kargo Takip Numarası',
-    products: 'Ürünler',
-    shippingAddress: 'Teslimat Adresi',
-    paymentMethod: 'Ödeme Yöntemi',
-    totalAmount: 'Toplam Tutar',
-    contactUs: 'İletişime Geçin',
-    needHelp: 'Siparişinizle ilgili yardıma mı ihtiyacınız var?',
-    helpText: 'Müşteri hizmetleri ekibimiz siparişinizle ilgili sorularınızda size yardımcı olmak için burada.',
-    statuses: {
-      pending: 'Beklemede',
-      confirmed: 'Onaylandı',
-      'in-production': 'Üretimde',
-      shipped: 'Kargoda',
-      delivered: 'Teslim Edildi'
-    },
-    statusDescriptions: {
-      pending: 'Siparişiniz alındı ve işlenmekte',
-      confirmed: 'Siparişiniz onaylandı ve yakında üretime girecek',
-      'in-production': 'Siparişiniz şu anda üretiliyor',
-      shipped: 'Siparişiniz kargoya verildi ve yolda',
-      delivered: 'Siparişiniz başarıyla teslim edildi'
-    },
-    recentOrders: 'Son Siparişler',
-    viewAll: 'Tümünü Görüntüle',
-    noOrders: 'Sipariş bulunamadı',
-    searchPlaceholder: 'Sipariş ara...',
-    customerLogin: 'Müşteri Girişi',
-    email: 'E-posta Adresi',
-  password: 'Şifre',
-  loginButton: 'Panele Erişim',
-  loginError: 'E-posta veya şifre hatalı.',
-    logout: 'Çıkış',
+		welcome: 'Welkom terug'
+	},
+	tr: {
+		customerPanel: 'Müşteri Paneli',
+		orderTracking: 'Sipariş Takibi',
+		trackOrder: 'Siparişinizi Takip Edin',
+		orderNumber: 'Sipariş Numarası',
+		orderNumberPlaceholder: 'Sipariş numaranızı girin (örn. OV12345678)',
+		trackButton: 'Siparişi Takip Et',
+		orderDetails: 'Sipariş Detayları',
+		orderNotFound: 'Sipariş bulunamadı. Lütfen sipariş numaranızı kontrol edin.',
+		status: 'Durum',
+		orderDate: 'Sipariş Tarihi',
+		trackingNumber: 'Kargo Takip Numarası',
+		products: 'Ürünler',
+		shippingAddress: 'Teslimat Adresi',
+		paymentMethod: 'Ödeme Yöntemi',
+		totalAmount: 'Toplam Tutar',
+		contactUs: 'İletişime Geçin',
+		needHelp: 'Siparişinizle ilgili yardıma mı ihtiyacınız var?',
+		helpText: 'Müşteri hizmetleri ekibimiz siparişinizle ilgili sorularınızda size yardımcı olmak için burada.',
+		statuses: {
+			pending: 'Beklemede',
+			confirmed: 'Onaylandı',
+			'in-production': 'Üretimde',
+			shipped: 'Kargoda',
+			delivered: 'Teslim Edildi'
+		},
+		statusDescriptions: {
+			pending: 'Siparişiniz alındı ve işlenmekte',
+			confirmed: 'Siparişiniz onaylandı ve yakında üretime girecek',
+			'in-production': 'Siparişiniz şu anda üretiliyor',
+			shipped: 'Siparişiniz kargoya verildi ve yolda',
+			delivered: 'Siparişiniz başarıyla teslim edildi'
+		},
+		recentOrders: 'Son Siparişler',
+		viewAll: 'Tümünü Görüntüle',
+		noOrders: 'Sipariş bulunamadı',
+		searchPlaceholder: 'Sipariş ara...',
+		customerLogin: 'Müşteri Girişi',
+		email: 'E-posta Adresi',
+		password: 'Şifre',
+		loginButton: 'Panele Erişim',
+		loginError: 'E-posta veya şifre hatalı.',
+		logout: 'Çıkış',
     welcome: 'Tekrar hoş geldiniz'
   }
 };
@@ -405,6 +407,35 @@ const CustomerPanel = ({ language }) => {
                       <Button type="submit" className="w-full" disabled={isLoading}>
                         {isLoading ? 'Loading...' : t.loginButton}
                       </Button>
+                      <div className="mt-4 flex flex-col gap-2">
+                        <GoogleLogin
+                          onSuccess={async (credentialResponse) => {
+                            // Send credentialResponse.credential to backend for verification and login/register
+                            setIsLoading(true);
+                            setError('');
+                            try {
+                              const res = await fetch(`${API}/google-login`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ credential: credentialResponse.credential })
+                              });
+                              if (!res.ok) {
+                                setError('Google login failed.');
+                              } else {
+                                const data = await res.json();
+                                setCustomer(data.customer);
+                                setCustomerOrders(data.orders || []);
+                              }
+                            } catch (err) {
+                              setError('Google login failed.');
+                            } finally {
+                              setIsLoading(false);
+                            }
+                          }}
+                          onError={() => setError('Google login failed.')}
+                          width="100%"
+                        />
+                      </div>
                     </form>
                     <div className="mt-6 pt-6 border-t border-gray-200 text-center">
                       <Button type="button" variant="outline" onClick={() => setShowRegister(true)}>
