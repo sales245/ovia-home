@@ -290,7 +290,7 @@ const AboutPage = ({ language }) => {
             </p>
             <div className="flex justify-center items-center space-x-8">
               <div className="text-center">
-                <MapPin className="w-8 h-8 text-amber-600 mx-auto mb-2" />
+                <MapPin className="w-8 h-8 text-primary mx-auto mb-2" />
                 <div className="stat-number text-2xl">30+</div>
                 <div className="stat-label">Countries</div>
               </div>
