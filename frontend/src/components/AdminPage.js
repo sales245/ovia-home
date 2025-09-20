@@ -328,89 +328,38 @@ const AdminPage = ({ language }) => {
 
   const extractProductDataFromURL = async (url) => {
     setUrlIntegrationData(prev => ({ ...prev, loading: true, error: null }));
-    
     try {
-      // This is a simplified implementation
-      // In a real-world scenario, you'd use a backend service to scrape the page
-      // or integrate with specific APIs like Amazon Product API, etc.
-      
-      // For demo purposes, we'll simulate data extraction
-      await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate loading
-      
-      // Mock extracted data based on URL patterns
-      let extractedData = {
-        name: { en: '', tr: '' },
-        features: { en: ['', '', ''] },
-        image: '',
-        badges: []
-      };
-
-      // Simple URL pattern matching for demo
-      if (url.includes('amazon')) {
-        extractedData = {
-          name: { 
-            en: 'Premium Cotton Bathrobe',
-            tr: 'Premium Pamuk Bornoz' 
-          },
-          features: { 
-            en: ['100% Cotton', 'Machine Washable', 'Soft & Comfortable'] 
-          },
-          image: 'https://via.placeholder.com/400x400/4f46e5/ffffff?text=Amazon+Product',
-          badges: ['premium', 'organicCotton']
-        };
-      } else if (url.includes('ebay')) {
-        extractedData = {
-          name: { 
-            en: 'Luxury Hotel Bathrobe',
-            tr: 'Lüks Otel Bornozu' 
-          },
-          features: { 
-            en: ['Hotel Quality', 'Super Absorbent', 'Long Lasting'] 
-          },
-          image: 'https://via.placeholder.com/400x400/10b981/ffffff?text=eBay+Product',
-          badges: ['premium']
-        };
-      } else {
-        extractedData = {
-          name: { 
-            en: 'Imported Bathrobe',
-            tr: 'İthal Bornoz' 
-          },
-          features: { 
-            en: ['High Quality', 'Imported Material', 'Durable'] 
-          },
-          image: 'https://via.placeholder.com/400x400/8b5cf6/ffffff?text=Product+Image',
-          badges: ['certified']
-        };
-      }
-
-      // Update form with extracted data (excluding prices as requested)
+      const res = await fetch(`${API}/import-product-from-url`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url })
+      });
+      if (!res.ok) throw new Error('Failed to fetch product data');
+      const extractedData = await res.json();
+      if (extractedData.error) throw new Error(extractedData.error);
       setProductFormData(prev => ({
         ...prev,
         name: { ...prev.name, ...extractedData.name },
-        features: { 
-          ...prev.features, 
+        features: {
+          ...prev.features,
           en: extractedData.features.en,
-          // Auto-translate to other languages if needed
-          tr: extractedData.features.en.map(f => f) // Simplified for demo
+          tr: extractedData.features.en.map(f => f) // Basitçe kopyala, istenirse çeviri eklenir
         },
         image: extractedData.image,
         badges: extractedData.badges
       }));
-
-      setUrlIntegrationData(prev => ({ 
-        ...prev, 
-        loading: false, 
+      setUrlIntegrationData(prev => ({
+        ...prev,
+        loading: false,
         url: '',
-        error: null 
+        error: null
       }));
-
     } catch (error) {
       console.error('URL integration error:', error);
-      setUrlIntegrationData(prev => ({ 
-        ...prev, 
-        loading: false, 
-        error: 'Ürün bilgileri çekilemedi. Lütfen tekrar deneyin.' 
+      setUrlIntegrationData(prev => ({
+        ...prev,
+        loading: false,
+        error: 'Ürün bilgileri çekilemedi. Lütfen tekrar deneyin.'
       }));
     }
   };

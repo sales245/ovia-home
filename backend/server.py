@@ -1,3 +1,44 @@
+from fastapi import Body
+import httpx
+from bs4 import BeautifulSoup
+# Ürün URL'sinden veri çekme endpointi (örnek scraping, demo amaçlı)
+class ImportProductRequest(BaseModel):
+    url: str
+
+@api_router.post("/import-product-from-url")
+async def import_product_from_url(request: ImportProductRequest):
+    url = request.url
+    # Sadece demo: Amazon veya Alibaba ise örnek veri döndür
+    if "amazon" in url:
+        return {
+            "name": {"en": "Premium Cotton Bathrobe", "tr": "Premium Pamuk Bornoz"},
+            "features": {"en": ["100% Cotton", "Machine Washable", "Soft & Comfortable"]},
+            "image": "https://via.placeholder.com/400x400/4f46e5/ffffff?text=Amazon+Product",
+            "badges": ["premium", "organicCotton"]
+        }
+    elif "alibaba" in url:
+        return {
+            "name": {"en": "Bulk Hotel Towel Set", "tr": "Toplu Otel Havlu Seti"},
+            "features": {"en": ["Bulk Price", "Hotel Quality", "Customizable"]},
+            "image": "https://via.placeholder.com/400x400/f59e42/ffffff?text=Alibaba+Product",
+            "badges": ["bulk", "customizable"]
+        }
+    # Gerçek scraping örneği (çok basit, sadece başlık ve ilk görsel)
+    try:
+        async with httpx.AsyncClient(timeout=10) as client:
+            resp = await client.get(url)
+            soup = BeautifulSoup(resp.text, 'html.parser')
+            title = soup.title.string if soup.title else "Imported Product"
+            img = soup.find('img')
+            image_url = img['src'] if img and img.has_attr('src') else ''
+            return {
+                "name": {"en": title},
+                "features": {"en": ["Imported from URL"]},
+                "image": image_url,
+                "badges": ["imported"]
+            }
+    except Exception as e:
+        return {"error": f"Failed to import product: {str(e)}"}
 from fastapi import FastAPI, APIRouter, HTTPException, Depends
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
@@ -162,6 +203,7 @@ class Customer(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     name: str
     email: EmailStr
+    password_hash: str
     company: str
     phone: str
     country: str
@@ -170,6 +212,7 @@ class Customer(BaseModel):
 class CustomerCreate(BaseModel):
     name: str
     email: EmailStr
+    password: str
     company: str
     phone: str
     country: str
@@ -220,17 +263,48 @@ async def get_quotes():
     return [QuoteRequest(**quote) for quote in quotes]
 
 # Customer Routes
+import hashlib
+import secrets
+
+def hash_password(password: str, salt: str = None) -> str:
+    if not salt:
+        salt = secrets.token_hex(16)
+    hash_ = hashlib.sha256((salt + password).encode()).hexdigest()
+    return f"{salt}${hash_}"
+
+def verify_password(password: str, hashed: str) -> bool:
+    salt, hash_ = hashed.split('$')
+    return hash_ == hashlib.sha256((salt + password).encode()).hexdigest()
+
 @api_router.post("/customers", response_model=Customer)
 async def create_customer(customer: CustomerCreate):
     # Check if customer already exists
     existing = await db.customers.find_one({"email": customer.email})
     if existing:
-        return Customer(**existing)
+        raise HTTPException(status_code=400, detail="Customer already exists")
     
     customer_dict = customer.dict()
-    customer_obj = Customer(**customer_dict)
+    password = customer_dict.pop("password")
+    password_hash = hash_password(password)
+    customer_obj = Customer(**customer_dict, password_hash=password_hash)
     await db.customers.insert_one(customer_obj.dict())
     return customer_obj
+
+# Login endpoint
+class LoginRequest(BaseModel):
+    email: EmailStr
+    password: str
+
+@api_router.post("/login")
+async def login(request: LoginRequest):
+    user = await db.customers.find_one({"email": request.email})
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid email or password")
+    if not verify_password(request.password, user["password_hash"]):
+        raise HTTPException(status_code=401, detail="Invalid email or password")
+    # Remove password_hash from response
+    user.pop("password_hash", None)
+    return user
 
 @api_router.get("/customers/{customer_id}", response_model=Customer)
 async def get_customer(customer_id: str):

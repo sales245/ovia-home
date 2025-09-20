@@ -49,8 +49,9 @@ const translations = {
     searchPlaceholder: 'Search orders...',
     customerLogin: 'Customer Login',
     email: 'Email Address',
-    loginButton: 'Access Panel',
-    loginError: 'Customer not found. Please check your email address.',
+  password: 'Password',
+  loginButton: 'Access Panel',
+  loginError: 'Invalid email or password.',
     logout: 'Logout',
     welcome: 'Welcome back'
   },
@@ -93,8 +94,9 @@ const translations = {
     searchPlaceholder: 'Sipariş ara...',
     customerLogin: 'Müşteri Girişi',
     email: 'E-posta Adresi',
-    loginButton: 'Panele Erişim',
-    loginError: 'Müşteri bulunamadı. Lütfen e-posta adresinizi kontrol edin.',
+  password: 'Şifre',
+  loginButton: 'Panele Erişim',
+  loginError: 'E-posta veya şifre hatalı.',
     logout: 'Çıkış',
     welcome: 'Tekrar hoş geldiniz'
   }
@@ -108,67 +110,30 @@ const CustomerPanel = ({ language }) => {
   const [customer, setCustomer] = useState(null);
   const [customerEmail, setCustomerEmail] = useState('');
   const [customerOrders, setCustomerOrders] = useState([]);
+  const [customerPassword, setCustomerPassword] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   
   const t = translations[language];
 
-  // Mock customer login for demonstration
+  // Gerçek müşteri login
   const handleCustomerLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
 
     try {
-      // For demo purposes, create a mock customer
-      const mockCustomer = {
-        id: 'customer-123',
-        name: 'John Doe',
-        email: customerEmail,
-        company: 'ABC Trading Co.'
-      };
-      
-      // Mock orders for demonstration
-      const mockOrders = [
-        {
-          id: 'order-1',
-          order_number: 'OV12345678',
-          status: 'shipped',
-          created_at: '2024-01-15T10:00:00Z',
-          tracking_number: 'TRK123456789',
-          products: [
-            { name: 'Premium Cotton Bathrobe', quantity: 50, category: 'bathrobes' },
-            { name: 'Turkish Cotton Towel Set', quantity: 100, category: 'towels' }
-          ],
-          total_amount: 5500,
-          payment_method: 'Bank Transfer',
-          shipping_address: {
-            street: '123 Business Street',
-            city: 'Berlin',
-            country: 'Germany',
-            postal_code: '10115'
-          }
-        },
-        {
-          id: 'order-2',
-          order_number: 'OV87654321',
-          status: 'in-production',
-          created_at: '2024-01-20T14:30:00Z',
-          products: [
-            { name: 'Organic Bedding Collection', quantity: 25, category: 'bedding' }
-          ],
-          total_amount: 3200,
-          payment_method: 'Credit Card',
-          shipping_address: {
-            street: '456 Trade Avenue',
-            city: 'Berlin',
-            country: 'Germany',
-            postal_code: '10117'
-          }
-        }
-      ];
-
-      setCustomer(mockCustomer);
-      setCustomerOrders(mockOrders);
+      const res = await fetch(`${API}/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: customerEmail, password: customerPassword })
+      });
+      if (!res.ok) throw new Error();
+      const user = await res.json();
+      setCustomer(user);
+      // Siparişleri çek
+      const ordersRes = await fetch(`${API}/orders/customer/${user.id}`);
+      const orders = ordersRes.ok ? await ordersRes.json() : [];
+      setCustomerOrders(orders);
     } catch (error) {
       setError(t.loginError);
     } finally {
@@ -277,7 +242,17 @@ const CustomerPanel = ({ language }) => {
                       required
                     />
                   </div>
-
+                  <div>
+                    <Label htmlFor="customer-password">{t.password}</Label>
+                    <Input
+                      id="customer-password"
+                      type="password"
+                      value={customerPassword}
+                      onChange={(e) => setCustomerPassword(e.target.value)}
+                      placeholder="••••••••"
+                      required
+                    />
+                  </div>
                   <Button type="submit" className="w-full" disabled={isLoading}>
                     {isLoading ? 'Loading...' : t.loginButton}
                   </Button>
@@ -285,7 +260,7 @@ const CustomerPanel = ({ language }) => {
 
                 <div className="mt-6 pt-6 border-t border-gray-200 text-center">
                   <p className="text-sm text-gray-600">
-                    Demo: Use any email address to access the customer panel
+                    If you don't have an account, please contact support to register.
                   </p>
                 </div>
               </Card>
