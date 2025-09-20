@@ -534,7 +534,7 @@ const ProductsPage = ({ language }) => {
             {cart.items.length > 0 && (
               <div className="flex items-center space-x-4">
                 <div className="flex items-center space-x-2">
-                  <ShoppingCart className="text-amber-600" size={20} />
+                  <ShoppingCart className="text-primary" size={20} />
                   <span className="text-sm font-medium">
                     {cart.items.length} {cart.items.length === 1 ? 'item' : 'items'}
                   </span>
