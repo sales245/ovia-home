@@ -346,13 +346,14 @@ p {
 
 .certificate-badge {
   display: inline-block;
-  background: var(--accent-sand);
-  color: var(--deep-brown);
+  background: var(--muted);
+  color: var(--ink);
   padding: 8px 16px;
   border-radius: 20px;
   font-size: 0.9rem;
   font-weight: 600;
   margin: 4px;
+  border: 1px solid var(--border-light);
 }
 
 /* Header spacing fix */
