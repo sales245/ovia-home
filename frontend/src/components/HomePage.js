@@ -78,29 +78,29 @@ const HomePage = ({ stats, language }) => {
           </div>
           <div className="grid-4">
             <div className="card text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-amber-100 to-amber-200 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Star className="text-amber-600" size={24} />
+              <div className="w-16 h-16 bg-gradient-to-br from-orange-100 to-orange-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Star className="text-primary" size={24} />
               </div>
               <h3 className="mb-3">{t.qualityCraftsmanship}</h3>
               <p>{t.qualityDesc}</p>
             </div>
             <div className="card text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-green-100 to-green-200 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Shield className="text-green-600" size={24} />
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Shield className="text-secondary" size={24} />
               </div>
               <h3 className="mb-3">{t.naturalMaterials}</h3>
               <p>{t.materialsDesc}</p>
             </div>
             <div className="card text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Award className="text-blue-600" size={24} />
+              <div className="w-16 h-16 bg-gradient-to-br from-orange-100 to-orange-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Award className="text-primary" size={24} />
               </div>
               <h3 className="mb-3">{t.certifiedQuality}</h3>
               <p>{t.certifiedDesc}</p>
             </div>
             <div className="card text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-purple-100 to-purple-200 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Globe className="text-purple-600" size={24} />
+              <div className="w-16 h-16 bg-gradient-to-br from-red-100 to-red-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Globe className="text-secondary" size={24} />
               </div>
               <h3 className="mb-3">{t.globalReach}</h3>
               <p>{t.reachDesc}</p>
