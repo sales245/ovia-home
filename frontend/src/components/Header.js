@@ -88,8 +88,8 @@ const Header = ({ language, setLanguage }) => {
             {/* Discrete Admin Link */}
             <Link
               to="/admin"
-              className={`text-xs text-gray-400 hover:text-gray-600 transition-colors ${
-                isActive('/admin') ? 'text-gray-600' : ''
+              className={`text-xs text-ink-2/50 hover:text-primary transition-colors ${
+                isActive('/admin') ? 'text-primary' : ''
               }`}
               title="Admin Panel"
             >
