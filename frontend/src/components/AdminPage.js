@@ -478,17 +478,24 @@ const AdminPage = ({ language }) => {
     }
   };
 
+  const [productError, setProductError] = useState('');
   const handleSaveProduct = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setProductError('');
+
+    // Kategori seçilmeden ekleme engellensin
+    if (!productFormData.category) {
+      setProductError('Lütfen bir kategori seçin.');
+      setLoading(false);
+      return;
+    }
 
     try {
       const url = editingProduct 
         ? `${API}/products/${editingProduct.id}`
         : `${API}/products`;
-      
       const method = editingProduct ? 'PUT' : 'POST';
-      
       const response = await fetch(url, {
         method,
         headers: {
@@ -496,12 +503,15 @@ const AdminPage = ({ language }) => {
         },
         body: JSON.stringify(productFormData)
       });
-
       if (response.ok) {
         setShowProductForm(false);
         fetchDashboardData();
+      } else {
+        const err = await response.json();
+        setProductError(err.detail || 'Ürün eklenemedi. Lütfen alanları kontrol edin.');
       }
     } catch (error) {
+      setProductError('Ürün eklenemedi. Sunucu hatası.');
       console.error('Error saving product:', error);
     } finally {
       setLoading(false);
@@ -1122,6 +1132,11 @@ const AdminPage = ({ language }) => {
                       {/* Sol Taraf - Form */}
                       <div className="space-y-8">
                         <form onSubmit={handleSaveProduct} className="space-y-8">
+                          {productError && (
+                            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded mb-2">
+                              {productError}
+                            </div>
+                          )}
                       {/* Adım 1: Temel Bilgiler */}
                       <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
                         <h3 className="text-lg font-semibold text-blue-800 mb-4">📋 Adım 1: Temel Bilgiler</h3>
