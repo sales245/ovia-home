@@ -274,7 +274,7 @@ p {
   display: block;
   margin-bottom: 0.5rem;
   font-weight: 600;
-  color: var(--text-dark);
+  color: var(--ink);
 }
 
 .form-input {
@@ -289,8 +289,8 @@ p {
 
 .form-input:focus {
   outline: none;
-  border-color: var(--soft-brown);
-  box-shadow: 0 0 0 3px rgba(160, 149, 107, 0.1);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--ring);
 }
 
 .form-textarea {
@@ -308,8 +308,8 @@ p {
 
 .form-textarea:focus {
   outline: none;
-  border-color: var(--soft-brown);
-  box-shadow: 0 0 0 3px rgba(160, 149, 107, 0.1);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--ring);
 }
 
 /* Statistics */
