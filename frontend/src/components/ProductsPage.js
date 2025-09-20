@@ -467,8 +467,8 @@ const ProductsPage = ({ language }) => {
               onClick={() => setSelectedCategory('all')}
               className={`px-6 py-3 rounded-full transition-all ${
                 selectedCategory === 'all' 
-                  ? 'bg-amber-600 text-white' 
-                  : 'bg-white text-gray-700 border border-gray-300 hover:border-amber-600'
+                  ? 'bg-primary text-white' 
+                  : 'bg-white text-ink-2 border border-gray-300 hover:border-primary hover:text-primary'
               }`}
             >
               {t.allCategories || 'All Categories'}
