@@ -1193,7 +1193,7 @@ const AdminPage = ({ language }) => {
                               ))}
                             </select>
                             {dashboardData.categories.length === 0 && (
-                              <p className="text-sm text-amber-600 mt-1">
+                              <p className="text-sm text-primary mt-1">
                                 ⚠️ Ürün eklemek için önce kategori oluşturmanız gerekir.
                               </p>
                             )}
