@@ -56,6 +56,53 @@ const translations = {
     welcome: 'Welcome back'
   },
   tr: {
+    // ... mevcut Türkçe çeviriler ...
+  },
+  nl: {
+    customerPanel: 'Klantpaneel',
+    orderTracking: 'Bestelling volgen',
+    trackOrder: 'Volg uw bestelling',
+    orderNumber: 'Bestelnummer',
+    orderNumberPlaceholder: 'Voer uw bestelnummer in (bijv. OV12345678)',
+    trackButton: 'Bestelling volgen',
+    orderDetails: 'Bestelgegevens',
+    orderNotFound: 'Bestelling niet gevonden. Controleer uw bestelnummer.',
+    status: 'Status',
+    orderDate: 'Besteldatum',
+    trackingNumber: 'Track & Trace',
+    products: 'Producten',
+    shippingAddress: 'Verzendadres',
+    paymentMethod: 'Betaalmethode',
+    totalAmount: 'Totaalbedrag',
+    contactUs: 'Contact opnemen',
+    needHelp: 'Hulp nodig met uw bestelling?',
+    helpText: 'Onze klantenservice helpt u graag met al uw vragen over uw bestelling.',
+    statuses: {
+      pending: 'In behandeling',
+      confirmed: 'Bevestigd',
+      'in-production': 'In productie',
+      shipped: 'Verzonden',
+      delivered: 'Geleverd'
+    },
+    statusDescriptions: {
+      pending: 'Uw bestelling is ontvangen en wordt verwerkt',
+      confirmed: 'Uw bestelling is bevestigd en gaat binnenkort in productie',
+      'in-production': 'Uw bestelling wordt momenteel geproduceerd',
+      shipped: 'Uw bestelling is verzonden en onderweg',
+      delivered: 'Uw bestelling is succesvol geleverd'
+    },
+    recentOrders: 'Recente bestellingen',
+    viewAll: 'Alle bestellingen bekijken',
+    noOrders: 'Geen bestellingen gevonden',
+    searchPlaceholder: 'Bestellingen zoeken...',
+    customerLogin: 'Klant login',
+    email: 'E-mailadres',
+    password: 'Wachtwoord',
+    loginButton: 'Inloggen',
+    loginError: 'Ongeldig e-mailadres of wachtwoord.',
+    logout: 'Uitloggen',
+    welcome: 'Welkom terug'
+  },
     customerPanel: 'Müşteri Paneli',
     orderTracking: 'Sipariş Takibi',
     trackOrder: 'Siparişinizi Takip Edin',
@@ -220,49 +267,152 @@ const CustomerPanel = ({ language }) => {
             <div className="max-w-md mx-auto">
               <Card className="p-8">
                 <div className="text-center mb-6">
-                  <h1 className="text-2xl font-bold mb-2">{t.customerLogin}</h1>
-                  <p className="text-gray-600">Access your order history and tracking information</p>
+                  <h1 className="text-2xl font-bold mb-2">{showRegister ? 'Register' : t.customerLogin}</h1>
+                  <p className="text-gray-600">{showRegister ? 'Create your account to track orders and manage your profile.' : 'Access your order history and tracking information'}</p>
                 </div>
 
-                {error && (
+                {!showRegister && error && (
                   <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6">
                     {error}
                   </div>
                 )}
 
-                <form onSubmit={handleCustomerLogin} className="space-y-4">
-                  <div>
-                    <Label htmlFor="customer-email">{t.email}</Label>
-                    <Input
-                      id="customer-email"
-                      type="email"
-                      value={customerEmail}
-                      onChange={(e) => setCustomerEmail(e.target.value)}
-                      placeholder="customer@example.com"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="customer-password">{t.password}</Label>
-                    <Input
-                      id="customer-password"
-                      type="password"
-                      value={customerPassword}
-                      onChange={(e) => setCustomerPassword(e.target.value)}
-                      placeholder="••••••••"
-                      required
-                    />
-                  </div>
-                  <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading ? 'Loading...' : t.loginButton}
-                  </Button>
-                </form>
-
-                <div className="mt-6 pt-6 border-t border-gray-200 text-center">
-                  <p className="text-sm text-gray-600">
-                    If you don't have an account, please contact support to register.
-                  </p>
-                </div>
+                {showRegister ? (
+                  <form
+                    onSubmit={async (e) => {
+                      e.preventDefault();
+                      setRegisterError('');
+                      setRegisterSuccess('');
+                      setIsLoading(true);
+                      try {
+                        const res = await fetch(`${API}/customers`, {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify(registerData)
+                        });
+                        if (!res.ok) {
+                          const err = await res.json();
+                          setRegisterError(err.detail || 'Registration failed.');
+                        } else {
+                          setRegisterSuccess('Registration successful! You can now log in.');
+                          setShowRegister(false);
+                        }
+                      } catch (err) {
+                        setRegisterError('Registration failed.');
+                      } finally {
+                        setIsLoading(false);
+                      }
+                    }}
+                    className="space-y-4"
+                  >
+                    <div>
+                      <Label htmlFor="register-name">Name</Label>
+                      <Input
+                        id="register-name"
+                        value={registerData.name}
+                        onChange={e => setRegisterData(d => ({ ...d, name: e.target.value }))}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="register-email">Email</Label>
+                      <Input
+                        id="register-email"
+                        type="email"
+                        value={registerData.email}
+                        onChange={e => setRegisterData(d => ({ ...d, email: e.target.value }))}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="register-password">Password</Label>
+                      <Input
+                        id="register-password"
+                        type="password"
+                        value={registerData.password}
+                        onChange={e => setRegisterData(d => ({ ...d, password: e.target.value }))}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="register-company">Company</Label>
+                      <Input
+                        id="register-company"
+                        value={registerData.company}
+                        onChange={e => setRegisterData(d => ({ ...d, company: e.target.value }))}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="register-phone">Phone</Label>
+                      <Input
+                        id="register-phone"
+                        value={registerData.phone}
+                        onChange={e => setRegisterData(d => ({ ...d, phone: e.target.value }))}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="register-country">Country</Label>
+                      <Input
+                        id="register-country"
+                        value={registerData.country}
+                        onChange={e => setRegisterData(d => ({ ...d, country: e.target.value }))}
+                      />
+                    </div>
+                    {registerError && (
+                      <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded">
+                        {registerError}
+                      </div>
+                    )}
+                    {registerSuccess && (
+                      <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-2 rounded">
+                        {registerSuccess}
+                      </div>
+                    )}
+                    <Button type="submit" className="w-full" disabled={isLoading}>
+                      {isLoading ? 'Registering...' : 'Register'}
+                    </Button>
+                    <div className="text-center mt-4">
+                      <Button type="button" variant="outline" onClick={() => setShowRegister(false)}>
+                        Back to Login
+                      </Button>
+                    </div>
+                  </form>
+                ) : (
+                  <>
+                    <form onSubmit={handleCustomerLogin} className="space-y-4">
+                      <div>
+                        <Label htmlFor="customer-email">{t.email}</Label>
+                        <Input
+                          id="customer-email"
+                          type="email"
+                          value={customerEmail}
+                          onChange={(e) => setCustomerEmail(e.target.value)}
+                          placeholder="customer@example.com"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="customer-password">{t.password}</Label>
+                        <Input
+                          id="customer-password"
+                          type="password"
+                          value={customerPassword}
+                          onChange={(e) => setCustomerPassword(e.target.value)}
+                          placeholder="••••••••"
+                          required
+                        />
+                      </div>
+                      <Button type="submit" className="w-full" disabled={isLoading}>
+                        {isLoading ? 'Loading...' : t.loginButton}
+                      </Button>
+                    </form>
+                    <div className="mt-6 pt-6 border-t border-gray-200 text-center">
+                      <Button type="button" variant="outline" onClick={() => setShowRegister(true)}>
+                        Register
+                      </Button>
+                    </div>
+                  </>
+                )}
               </Card>
             </div>
           </div>
