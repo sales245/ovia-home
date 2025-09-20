@@ -157,15 +157,15 @@ p {
 }
 
 .section-light {
-  background: var(--warm-white);
+  background: var(--bg);
 }
 
 .section-beige {
-  background: var(--primary-beige);
+  background: var(--muted);
 }
 
 .section-cream {
-  background: var(--secondary-cream);
+  background: var(--muted);
 }
 
 /* Container */
