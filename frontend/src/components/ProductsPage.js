@@ -539,7 +539,7 @@ const ProductsPage = ({ language }) => {
                     {cart.items.length} {cart.items.length === 1 ? 'item' : 'items'}
                   </span>
                 </div>
-                <div className="text-lg font-semibold text-amber-700">
+                <div className="text-lg font-semibold text-primary">
                   {t.total}: ${cart.total.toFixed(2)}
                 </div>
               </div>
