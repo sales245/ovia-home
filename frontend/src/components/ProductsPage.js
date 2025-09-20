@@ -573,7 +573,7 @@ const ProductsPage = ({ language }) => {
                   </div>
                 </div>
                 
-                <h3 className="mb-3 group-hover:text-amber-700 transition-colors">
+                <h3 className="mb-3 group-hover:text-primary transition-colors">
                   {product.name}
                 </h3>
                 
