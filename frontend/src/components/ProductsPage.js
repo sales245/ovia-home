@@ -487,8 +487,8 @@ const ProductsPage = ({ language }) => {
               onClick={() => setSelectedCategory('towels')}
               className={`px-6 py-3 rounded-full transition-all ${
                 selectedCategory === 'towels' 
-                  ? 'bg-amber-600 text-white' 
-                  : 'bg-white text-gray-700 border border-gray-300 hover:border-amber-600'
+                  ? 'bg-primary text-white' 
+                  : 'bg-white text-ink-2 border border-gray-300 hover:border-primary hover:text-primary'
               }`}
             >
               {t.towels}
@@ -497,8 +497,8 @@ const ProductsPage = ({ language }) => {
               onClick={() => setSelectedCategory('bedding')}
               className={`px-6 py-3 rounded-full transition-all ${
                 selectedCategory === 'bedding' 
-                  ? 'bg-amber-600 text-white' 
-                  : 'bg-white text-gray-700 border border-gray-300 hover:border-amber-600'
+                  ? 'bg-primary text-white' 
+                  : 'bg-white text-ink-2 border border-gray-300 hover:border-primary hover:text-primary'
               }`}
             >
               {t.bedding}
@@ -507,8 +507,8 @@ const ProductsPage = ({ language }) => {
               onClick={() => setSelectedCategory('home-decor')}
               className={`px-6 py-3 rounded-full transition-all ${
                 selectedCategory === 'home-decor' 
-                  ? 'bg-amber-600 text-white' 
-                  : 'bg-white text-gray-700 border border-gray-300 hover:border-amber-600'
+                  ? 'bg-primary text-white' 
+                  : 'bg-white text-ink-2 border border-gray-300 hover:border-primary hover:text-primary'
               }`}
             >
               {t.homeDecor}
