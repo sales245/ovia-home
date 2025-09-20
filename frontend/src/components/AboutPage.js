@@ -249,8 +249,8 @@ const AboutPage = ({ language }) => {
           </div>
           <div className="grid-4">
             <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-amber-100 to-amber-200 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Award className="text-amber-600" size={24} />
+              <div className="w-16 h-16 bg-gradient-to-br from-orange-100 to-orange-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Award className="text-primary" size={24} />
               </div>
               <h3 className="mb-3">{t.quality}</h3>
               <p className="text-gray-600">{t.qualityDesc}</p>
