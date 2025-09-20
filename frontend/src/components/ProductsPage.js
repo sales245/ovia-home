@@ -580,7 +580,7 @@ const ProductsPage = ({ language }) => {
                 <ul className="text-sm text-gray-600 mb-4 space-y-1">
                   {product.features.map((feature, index) => (
                     <li key={index} className="flex items-center">
-                      <div className="w-1.5 h-1.5 bg-amber-600 rounded-full mr-2"></div>
+                      <div className="w-1.5 h-1.5 bg-primary rounded-full mr-2"></div>
                       {feature}
                     </li>
                   ))}
