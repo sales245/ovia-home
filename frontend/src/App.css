@@ -70,19 +70,19 @@ p {
   color: #5a5a5a;
 }
 
-/* Color Palette - Natural Tones */
+/* Color Palette - Vibrant & Dynamic */
 :root {
-  --primary-beige: #f7f3e9;
-  --secondary-cream: #f5f0e8;
-  --accent-sand: #e8ddd0;
-  --warm-white: #fefefe;
-  --soft-brown: #a0956b;
-  --deep-brown: #8b7355;
-  --text-dark: #2c3e50;
-  --text-medium: #5a5a5a;
-  --text-light: #888;
-  --border-light: #e5ddd0;
-  --gradient-natural: linear-gradient(135deg, #f7f3e9 0%, #e8ddd0 100%);
+  --bg: #FFFFFF;
+  --ink: #1C1C4D;
+  --ink-2: #333333;
+  --muted: #F5F7FA;
+  --primary: #FF6F3C;
+  --primary-600: #e66436;
+  --secondary: #FF4E50;
+  --secondary-600: #e24649;
+  --ring: #1C1C4D80;
+  --border-light: #E5E7EB;
+  --gradient-primary: linear-gradient(135deg, #FF6F3C 0%, #FF4E50 100%);
 }
 
 /* Buttons */
