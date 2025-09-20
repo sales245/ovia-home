@@ -165,7 +165,7 @@ const Header = ({ language, setLanguage }) => {
               <Link
                 to="/"
                 className={`text-sm font-medium ${
-                  isActive('/') ? 'text-gray-900' : 'text-gray-700'
+                  isActive('/') ? 'text-ink' : 'text-ink-2'
                 }`}
                 onClick={() => setIsMenuOpen(false)}
               >
@@ -174,7 +174,7 @@ const Header = ({ language, setLanguage }) => {
               <Link
                 to="/products"
                 className={`text-sm font-medium ${
-                  isActive('/products') ? 'text-gray-900' : 'text-gray-700'
+                  isActive('/products') ? 'text-ink' : 'text-ink-2'
                 }`}
                 onClick={() => setIsMenuOpen(false)}
               >
@@ -183,7 +183,7 @@ const Header = ({ language, setLanguage }) => {
               <Link
                 to="/about"
                 className={`text-sm font-medium ${
-                  isActive('/about') ? 'text-gray-900' : 'text-gray-700'
+                  isActive('/about') ? 'text-ink' : 'text-ink-2'
                 }`}
                 onClick={() => setIsMenuOpen(false)}
               >
@@ -192,7 +192,7 @@ const Header = ({ language, setLanguage }) => {
               <Link
                 to="/contact"
                 className={`text-sm font-medium ${
-                  isActive('/contact') ? 'text-gray-900' : 'text-gray-700'
+                  isActive('/contact') ? 'text-ink' : 'text-ink-2'
                 }`}
                 onClick={() => setIsMenuOpen(false)}
               >
@@ -201,7 +201,7 @@ const Header = ({ language, setLanguage }) => {
               <Link
                 to="/customer-panel"
                 className={`text-sm font-medium ${
-                  isActive('/customer-panel') ? 'text-gray-900' : 'text-gray-700'
+                  isActive('/customer-panel') ? 'text-ink' : 'text-ink-2'
                 }`}
                 onClick={() => setIsMenuOpen(false)}
               >
@@ -211,19 +211,19 @@ const Header = ({ language, setLanguage }) => {
               <div className="flex items-center space-x-4 pt-4 border-t border-gray-200">
                 <button
                   onClick={() => handleContactClick('email')}
-                  className="p-2 text-gray-600 hover:text-gray-800"
+                  className="p-2 text-ink-2 hover:text-primary"
                 >
                   <Mail size={18} />
                 </button>
                 <button
                   onClick={() => handleContactClick('whatsapp')}
-                  className="p-2 text-gray-600 hover:text-gray-800"
+                  className="p-2 text-ink-2 hover:text-primary"
                 >
                   <MessageCircle size={18} />
                 </button>
                 <button
                   onClick={() => handleContactClick('instagram')}
-                  className="p-2 text-gray-600 hover:text-gray-800"
+                  className="p-2 text-ink-2 hover:text-primary"
                 >
                   <Instagram size={18} />
                 </button>
@@ -231,7 +231,7 @@ const Header = ({ language, setLanguage }) => {
                 <select
                   value={language}
                   onChange={(e) => setLanguage(e.target.value)}
-                  className="appearance-none bg-transparent border border-gray-300 rounded px-3 py-1 text-sm"
+                  className="appearance-none bg-transparent border border-gray-300 rounded px-3 py-1 text-sm focus:outline-none focus:border-primary"
                   style={{ direction: language === 'ar' ? 'rtl' : 'ltr' }}
                 >
                   <option value="en">English</option>
