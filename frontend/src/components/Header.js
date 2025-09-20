@@ -125,7 +125,7 @@ const Header = ({ language, setLanguage }) => {
               <select
                 value={language}
                 onChange={(e) => setLanguage(e.target.value)}
-                className="appearance-none bg-transparent border border-gray-300 rounded px-3 py-1 text-sm focus:outline-none focus:border-gray-500"
+                className="appearance-none bg-transparent border border-gray-300 rounded px-3 py-1 text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-ring"
                 style={{ direction: language === 'ar' ? 'rtl' : 'ltr' }}
               >
                 <option value="en">English</option>
