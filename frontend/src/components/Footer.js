@@ -69,32 +69,32 @@ const Footer = ({ language }) => {
         <div className="grid-4 pb-12">
           {/* Company */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">
+            <h3 className="text-lg font-semibold text-ink mb-4">
               {footerTranslations.company[language] || footerTranslations.company.en}
             </h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/" className="text-gray-600 hover:text-gray-800 transition-colors">
+                <Link to="/" className="text-ink-2 hover:text-primary transition-colors">
                   {t.home}
                 </Link>
               </li>
               <li>
-                <Link to="/products" className="text-gray-600 hover:text-gray-800 transition-colors">
+                <Link to="/products" className="text-ink-2 hover:text-primary transition-colors">
                   {t.products}
                 </Link>
               </li>
               <li>
-                <Link to="/about" className="text-gray-600 hover:text-gray-800 transition-colors">
+                <Link to="/about" className="text-ink-2 hover:text-primary transition-colors">
                   {t.about}
                 </Link>
               </li>
               <li>
-                <Link to="/contact" className="text-gray-600 hover:text-gray-800 transition-colors">
+                <Link to="/contact" className="text-ink-2 hover:text-primary transition-colors">
                   {t.contact}
                 </Link>
               </li>
               <li>
-                <Link to="/customer-panel" className="text-gray-600 hover:text-gray-800 transition-colors">
+                <Link to="/customer-panel" className="text-ink-2 hover:text-primary transition-colors">
                   {t.customerPanel}
                 </Link>
               </li>
@@ -103,9 +103,9 @@ const Footer = ({ language }) => {
 
           {/* Contact Information */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">{t.contactInfo}</h3>
+            <h3 className="text-lg font-semibold text-ink mb-4">{t.contactInfo}</h3>
             <ul className="space-y-3">
-              <li className="flex items-center space-x-2 text-gray-600">
+              <li className="flex items-center space-x-2 text-ink-2">
                 <MapPin size={16} />
                 <span>{footerTranslations.addressText[language] || footerTranslations.addressText.en}</span>
               </li>
@@ -113,7 +113,7 @@ const Footer = ({ language }) => {
                 <Mail size={16} />
                 <button
                   onClick={() => handleContactClick('email')}
-                  className="text-gray-600 hover:text-gray-800 transition-colors"
+                  className="text-ink-2 hover:text-primary transition-colors"
                 >
                   sales@oviahome.info
                 </button>
@@ -122,7 +122,7 @@ const Footer = ({ language }) => {
                 <Phone size={16} />
                 <button
                   onClick={() => handleContactClick('whatsapp')}
-                  className="text-gray-600 hover:text-gray-800 transition-colors"
+                  className="text-ink-2 hover:text-primary transition-colors"
                 >
                   +90 546 431 37 45
                 </button>
@@ -132,7 +132,7 @@ const Footer = ({ language }) => {
 
           {/* Certificates */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">{t.certificates}</h3>
+            <h3 className="text-lg font-semibold text-ink mb-4">{t.certificates}</h3>
             <div className="space-y-2">
               <div className="certificate-badge">OEKO-TEX</div>
               <div className="certificate-badge">GOTS</div>
@@ -143,10 +143,10 @@ const Footer = ({ language }) => {
 
           {/* Payment Methods */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">
+            <h3 className="text-lg font-semibold text-ink mb-4">
               {footerTranslations.paymentMethods[language] || footerTranslations.paymentMethods.en}
             </h3>
-            <ul className="space-y-2 text-gray-600">
+            <ul className="space-y-2 text-ink-2">
               <li>Credit Card</li>
               <li>Bank Transfer</li>
               <li>PayPal</li>
@@ -154,27 +154,27 @@ const Footer = ({ language }) => {
             </ul>
             
             <div className="mt-6">
-              <h4 className="text-sm font-semibold text-gray-800 mb-2">
+              <h4 className="text-sm font-semibold text-ink mb-2">
                 {footerTranslations.followUs[language] || footerTranslations.followUs.en}
               </h4>
               <div className="flex space-x-3">
                 <button
                   onClick={() => handleContactClick('instagram')}
-                  className="p-2 text-gray-600 hover:text-gray-800 transition-colors bg-white rounded-full shadow-sm"
+                  className="p-2 text-ink-2 hover:text-primary transition-colors bg-white rounded-full shadow-sm"
                   title="Instagram"
                 >
                   <Instagram size={18} />
                 </button>
                 <button
                   onClick={() => handleContactClick('whatsapp')}
-                  className="p-2 text-gray-600 hover:text-gray-800 transition-colors bg-white rounded-full shadow-sm"
+                  className="p-2 text-ink-2 hover:text-primary transition-colors bg-white rounded-full shadow-sm"
                   title="WhatsApp"
                 >
                   <MessageCircle size={18} />
                 </button>
                 <button
                   onClick={() => handleContactClick('email')}
-                  className="p-2 text-gray-600 hover:text-gray-800 transition-colors bg-white rounded-full shadow-sm"
+                  className="p-2 text-ink-2 hover:text-primary transition-colors bg-white rounded-full shadow-sm"
                   title="Email"
                 >
                   <Mail size={18} />
@@ -186,10 +186,10 @@ const Footer = ({ language }) => {
 
         {/* Bottom */}
         <div className="border-t border-gray-200 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <div className="text-gray-600 text-sm mb-4 md:mb-0">
+          <div className="text-ink-2 text-sm mb-4 md:mb-0">
             © 2025 Ovia Home. {footerTranslations.allRightsReserved[language] || footerTranslations.allRightsReserved.en}
           </div>
-          <div className="text-gray-600 text-sm">
+          <div className="text-ink-2 text-sm">
             {footerTranslations.madeWith[language] || footerTranslations.madeWith.en} 🇹🇷
           </div>
         </div>
