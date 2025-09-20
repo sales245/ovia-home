@@ -193,8 +193,8 @@ const AboutPage = ({ language }) => {
               <p className="text-gray-600">{t.processStep2Desc}</p>
             </div>
             <div className="text-center">
-              <div className="w-20 h-20 bg-gradient-to-br from-amber-100 to-amber-200 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl font-bold text-amber-600">3</span>
+              <div className="w-20 h-20 bg-gradient-to-br from-orange-100 to-orange-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl font-bold text-primary">3</span>
               </div>
               <h3 className="mb-3">{t.processStep3}</h3>
               <p className="text-gray-600">{t.processStep3Desc}</p>
