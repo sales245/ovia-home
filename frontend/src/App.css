@@ -317,7 +317,7 @@ p {
   font-family: 'Playfair Display', serif;
   font-size: 3rem;
   font-weight: 700;
-  color: var(--soft-brown);
+  color: var(--primary);
   line-height: 1;
 }
 
@@ -325,7 +325,7 @@ p {
   font-size: 0.9rem;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: var(--text-medium);
+  color: var(--ink-2);
   margin-top: 0.5rem;
 }
 
