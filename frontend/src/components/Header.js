@@ -47,40 +47,40 @@ const Header = ({ language, setLanguage }) => {
           <nav className="hidden md:flex items-center space-x-8">
             <Link
               to="/"
-              className={`text-sm font-medium transition-colors hover:text-gray-600 ${
-                isActive('/') ? 'text-gray-900 border-b-2 border-gray-800 pb-1' : 'text-gray-700'
+              className={`text-sm font-medium transition-colors hover:text-primary ${
+                isActive('/') ? 'text-ink border-b-2 border-primary pb-1' : 'text-ink-2'
               }`}
             >
               {t.home}
             </Link>
             <Link
               to="/products"
-              className={`text-sm font-medium transition-colors hover:text-gray-600 ${
-                isActive('/products') ? 'text-gray-900 border-b-2 border-gray-800 pb-1' : 'text-gray-700'
+              className={`text-sm font-medium transition-colors hover:text-primary ${
+                isActive('/products') ? 'text-ink border-b-2 border-primary pb-1' : 'text-ink-2'
               }`}
             >
               {t.products}
             </Link>
             <Link
               to="/about"
-              className={`text-sm font-medium transition-colors hover:text-gray-600 ${
-                isActive('/about') ? 'text-gray-900 border-b-2 border-gray-800 pb-1' : 'text-gray-700'
+              className={`text-sm font-medium transition-colors hover:text-primary ${
+                isActive('/about') ? 'text-ink border-b-2 border-primary pb-1' : 'text-ink-2'
               }`}
             >
               {t.about}
             </Link>
             <Link
               to="/contact"
-              className={`text-sm font-medium transition-colors hover:text-gray-600 ${
-                isActive('/contact') ? 'text-gray-900 border-b-2 border-gray-800 pb-1' : 'text-gray-700'
+              className={`text-sm font-medium transition-colors hover:text-primary ${
+                isActive('/contact') ? 'text-ink border-b-2 border-primary pb-1' : 'text-ink-2'
               }`}
             >
               {t.contact}
             </Link>
             <Link
               to="/customer-panel"
-              className={`text-sm font-medium transition-colors hover:text-gray-600 ${
-                isActive('/customer-panel') ? 'text-gray-900 border-b-2 border-gray-800 pb-1' : 'text-gray-700'
+              className={`text-sm font-medium transition-colors hover:text-primary ${
+                isActive('/customer-panel') ? 'text-ink border-b-2 border-primary pb-1' : 'text-ink-2'
               }`}
             >
               {t.customerPanel}
