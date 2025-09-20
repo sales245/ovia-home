@@ -123,7 +123,7 @@ const HomePage = ({ stats, language }) => {
                   alt="Bathrobes"
                   className="w-full h-48 object-cover rounded-xl mb-4"
                 />
-                <h3 className="mb-2 group-hover:text-amber-700 transition-colors">{t.bathrobes}</h3>
+                <h3 className="mb-2 group-hover:text-primary transition-colors">{t.bathrobes}</h3>
                 <p className="text-gray-600">{t.bathrobesDesc}</p>
               </div>
             </Link>
@@ -135,7 +135,7 @@ const HomePage = ({ stats, language }) => {
                   alt="Towels"
                   className="w-full h-48 object-cover rounded-xl mb-4"
                 />
-                <h3 className="mb-2 group-hover:text-amber-700 transition-colors">{t.towels}</h3>
+                <h3 className="mb-2 group-hover:text-primary transition-colors">{t.towels}</h3>
                 <p className="text-gray-600">{t.towelsDesc}</p>
               </div>
             </Link>
@@ -147,7 +147,7 @@ const HomePage = ({ stats, language }) => {
                   alt="Bedding"
                   className="w-full h-48 object-cover rounded-xl mb-4"
                 />
-                <h3 className="mb-2 group-hover:text-amber-700 transition-colors">{t.bedding}</h3>
+                <h3 className="mb-2 group-hover:text-primary transition-colors">{t.bedding}</h3>
                 <p className="text-gray-600">{t.beddingDesc}</p>
               </div>
             </Link>
@@ -159,7 +159,7 @@ const HomePage = ({ stats, language }) => {
                   alt="Home Decor"
                   className="w-full h-48 object-cover rounded-xl mb-4"
                 />
-                <h3 className="mb-2 group-hover:text-amber-700 transition-colors">{t.homeDecor}</h3>
+                <h3 className="mb-2 group-hover:text-primary transition-colors">{t.homeDecor}</h3>
                 <p className="text-gray-600">{t.decorDesc}</p>
               </div>
             </Link>
