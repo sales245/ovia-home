@@ -363,12 +363,30 @@ class OviaHomeAPITester:
             print("❌ Skipping - No customer available for login test")
             return False
         
-        # Use the email from the created customer
+        # Create a new customer specifically for login test to ensure we have the correct credentials
         import uuid
         unique_id = str(uuid.uuid4())[:8]
+        email = f"login.test.{unique_id}@example.com"
+        password = "testpassword123"
+        
+        # First create a customer for login
+        customer_data = {
+            "name": f"Login Test User {unique_id}",
+            "email": email,
+            "password": password,
+            "company": "Test Login Corp",
+            "phone": "+1 555 1234",
+            "country": "USA"
+        }
+        
+        success, response = self.run_test("Create Customer for Login Test", "POST", "customers", 200, customer_data)
+        if not success:
+            return False
+        
+        # Now test login with the correct credentials
         login_data = {
-            "email": f"john.doe.{unique_id}@example.com",
-            "password": "securepassword123"
+            "email": email,
+            "password": password
         }
         return self.run_test("Customer Login", "POST", "login", 200, login_data)
 
