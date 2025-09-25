@@ -261,9 +261,10 @@ class OviaHomeAPITester:
         """Test creating a customer"""
         import uuid
         unique_id = str(uuid.uuid4())[:8]
+        email = f"john.doe.{unique_id}@example.com"
         customer_data = {
             "name": f"John Doe {unique_id}",
-            "email": f"john.doe.{unique_id}@example.com",
+            "email": email,
             "password": "securepassword123",
             "company": "Global Textiles Corp",
             "phone": "+44 20 7946 0958",
@@ -272,6 +273,7 @@ class OviaHomeAPITester:
         success, response = self.run_test("Create Customer", "POST", "customers", 200, customer_data)
         if success and 'id' in response:
             self.created_ids['customer_id'] = response['id']
+            self.created_ids['customer_email'] = email  # Store email for duplicate test
         return success
 
     def test_get_customer(self):
