@@ -257,6 +257,9 @@ backend:
       - working: true
         agent: "testing"
         comment: "✅ Statistics API working - GET /api/stats returns 200 with correct counts for inquiries, quotes, customers, orders"
+      - working: true
+        agent: "testing"
+        comment: "✅ COMPREHENSIVE RE-TEST: Statistics API fully validated - All required fields present (inquiries, quotes, customers, orders, countries_served, years_experience) with proper JSON format and accurate counts"
 
   - task: "Error Handling and Validation"
     implemented: true
