@@ -255,6 +255,7 @@ class OviaHomeAPITester:
         customer_data = {
             "name": "John Doe",
             "email": "john.doe@example.com",
+            "password": "securepassword123",
             "company": "Global Textiles Corp",
             "phone": "+44 20 7946 0958",
             "country": "United Kingdom"
