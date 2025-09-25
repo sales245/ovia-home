@@ -760,6 +760,43 @@ async def initialize_products():
         return {"message": "Products initialized successfully", "count": len(default_products)}
     except Exception as e:
         return {"message": f"Error initializing products: {str(e)}", "status": "error"}
+
+# Ürün URL'sinden veri çekme endpointi (örnek scraping, demo amaçlı)
+@api_router.post("/import-product-from-url")
+async def import_product_from_url(request: ImportProductRequest):
+    url = request.url
+    # Sadece demo: Amazon veya Alibaba ise örnek veri döndür
+    if "amazon" in url:
+        return {
+            "name": {"en": "Premium Cotton Bathrobe", "tr": "Premium Pamuk Bornoz"},
+            "features": {"en": ["100% Cotton", "Machine Washable", "Soft & Comfortable"]},
+            "image": "https://via.placeholder.com/400x400/4f46e5/ffffff?text=Amazon+Product",
+            "badges": ["premium", "organicCotton"]
+        }
+    elif "alibaba" in url:
+        return {
+            "name": {"en": "Bulk Hotel Towel Set", "tr": "Toplu Otel Havlu Seti"},
+            "features": {"en": ["Bulk Price", "Hotel Quality", "Customizable"]},
+            "image": "https://via.placeholder.com/400x400/f59e42/ffffff?text=Alibaba+Product",
+            "badges": ["bulk", "customizable"]
+        }
+    # Gerçek scraping örneği (çok basit, sadece başlık ve ilk görsel)
+    try:
+        async with httpx.AsyncClient(timeout=10) as client:
+            resp = await client.get(url)
+            soup = BeautifulSoup(resp.text, 'html.parser')
+            title = soup.title.string if soup.title else "Imported Product"
+            img = soup.find('img')
+            image_url = img['src'] if img and img.has_attr('src') else ''
+            return {
+                "name": {"en": title},
+                "features": {"en": ["Imported from URL"]},
+                "image": image_url,
+                "badges": ["imported"]
+            }
+    except Exception as e:
+        return {"error": f"Failed to import product: {str(e)}"}
+
 @api_router.get("/stats")
 async def get_stats():
     inquiries_count = await db.inquiries.count_documents({})
