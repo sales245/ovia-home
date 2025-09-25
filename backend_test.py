@@ -55,9 +55,160 @@ class OviaHomeAPITester:
             self.failed_tests.append(f"{name}: Exception - {str(e)}")
             return False, {}
 
-    def test_api_status(self):
-        """Test API root endpoint"""
-        return self.run_test("API Status", "GET", "", 200)
+    def test_database_connection(self):
+        """Test MongoDB database connection by checking API status"""
+        return self.run_test("Database Connection (API Status)", "GET", "", 200)
+
+    def test_get_categories(self):
+        """Test retrieving all categories"""
+        return self.run_test("Get All Categories", "GET", "categories", 200)
+
+    def test_create_category(self):
+        """Test creating a new category"""
+        category_data = {
+            "name": {
+                "en": "Test Category",
+                "tr": "Test Kategorisi"
+            },
+            "slug": "test-category",
+            "description": {
+                "en": "A test category for API testing",
+                "tr": "API testi için test kategorisi"
+            },
+            "sort_order": 10,
+            "is_active": True
+        }
+        success, response = self.run_test("Create Category", "POST", "categories", 200, category_data)
+        if success and 'id' in response:
+            self.created_ids['category_id'] = response['id']
+        return success
+
+    def test_get_products(self):
+        """Test retrieving all products"""
+        return self.run_test("Get All Products", "GET", "products", 200)
+
+    def test_create_product(self):
+        """Test creating a new product"""
+        product_data = {
+            "category": "bathrobes",
+            "image": "https://example.com/test-product.jpg",
+            "name": {
+                "en": "Test Product",
+                "tr": "Test Ürünü"
+            },
+            "features": {
+                "en": ["High Quality", "Durable", "Comfortable"],
+                "tr": ["Yüksek Kalite", "Dayanıklı", "Rahat"]
+            },
+            "badges": ["premium", "new"],
+            "retail_price": 99.99,
+            "wholesale_price": 79.99,
+            "min_wholesale_quantity": 50,
+            "in_stock": True,
+            "stock_quantity": 100
+        }
+        success, response = self.run_test("Create Product", "POST", "products", 200, product_data)
+        if success and 'id' in response:
+            self.created_ids['product_id'] = response['id']
+        return success
+
+    def test_admin_init_categories(self):
+        """Test admin endpoint for initializing categories"""
+        return self.run_test("Admin Init Categories", "POST", "admin/init-categories", 200)
+
+    def test_admin_init_products(self):
+        """Test admin endpoint for initializing products"""
+        return self.run_test("Admin Init Products", "POST", "admin/init-products", 200)
+
+    def test_admin_seed_data(self):
+        """Test admin endpoint for seeding sample data"""
+        return self.run_test("Admin Seed Data", "POST", "admin/seed-data", 200)
+
+    def test_import_product_from_amazon_url(self):
+        """Test importing product from Amazon URL"""
+        import_data = {
+            "url": "https://amazon.com/test-product"
+        }
+        return self.run_test("Import Product from Amazon URL", "POST", "import-product-from-url", 200, import_data)
+
+    def test_import_product_from_alibaba_url(self):
+        """Test importing product from Alibaba URL"""
+        import_data = {
+            "url": "https://alibaba.com/test-product"
+        }
+        return self.run_test("Import Product from Alibaba URL", "POST", "import-product-from-url", 200, import_data)
+
+    def test_update_category(self):
+        """Test updating a category"""
+        if 'category_id' not in self.created_ids:
+            print("❌ Skipping - No category ID available")
+            return False
+        
+        category_id = self.created_ids['category_id']
+        update_data = {
+            "description": {
+                "en": "Updated test category description",
+                "tr": "Güncellenmiş test kategorisi açıklaması"
+            }
+        }
+        return self.run_test("Update Category", "PUT", f"categories/{category_id}", 200, update_data)
+
+    def test_update_product(self):
+        """Test updating a product"""
+        if 'product_id' not in self.created_ids:
+            print("❌ Skipping - No product ID available")
+            return False
+        
+        product_id = self.created_ids['product_id']
+        update_data = {
+            "retail_price": 109.99,
+            "stock_quantity": 150
+        }
+        return self.run_test("Update Product", "PUT", f"products/{product_id}", 200, update_data)
+
+    def test_get_single_category(self):
+        """Test retrieving a single category by ID"""
+        if 'category_id' not in self.created_ids:
+            print("❌ Skipping - No category ID available")
+            return False
+        
+        category_id = self.created_ids['category_id']
+        return self.run_test("Get Single Category", "GET", f"categories/{category_id}", 200)
+
+    def test_get_single_product(self):
+        """Test retrieving a single product by ID"""
+        if 'product_id' not in self.created_ids:
+            print("❌ Skipping - No product ID available")
+            return False
+        
+        product_id = self.created_ids['product_id']
+        return self.run_test("Get Single Product", "GET", f"products/{product_id}", 200)
+
+    def test_delete_product(self):
+        """Test deleting a product"""
+        if 'product_id' not in self.created_ids:
+            print("❌ Skipping - No product ID available")
+            return False
+        
+        product_id = self.created_ids['product_id']
+        success = self.run_test("Delete Product", "DELETE", f"products/{product_id}", 200)[0]
+        if success:
+            # Remove from created_ids since it's deleted
+            del self.created_ids['product_id']
+        return success
+
+    def test_delete_category(self):
+        """Test deleting a category"""
+        if 'category_id' not in self.created_ids:
+            print("❌ Skipping - No category ID available")
+            return False
+        
+        category_id = self.created_ids['category_id']
+        success = self.run_test("Delete Category", "DELETE", f"categories/{category_id}", 200)[0]
+        if success:
+            # Remove from created_ids since it's deleted
+            del self.created_ids['category_id']
+        return success
 
     def test_create_inquiry(self):
         """Test creating a product inquiry"""
