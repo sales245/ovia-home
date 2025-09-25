@@ -267,8 +267,9 @@ async def login(request: LoginRequest):
         raise HTTPException(status_code=401, detail="Invalid email or password")
     if not verify_password(request.password, user["password_hash"]):
         raise HTTPException(status_code=401, detail="Invalid email or password")
-    # Remove password_hash from response
+    # Remove password_hash and _id from response for security and serialization
     user.pop("password_hash", None)
+    user.pop("_id", None)  # Remove ObjectId to avoid serialization issues
     return user
 
 @api_router.get("/customers/{customer_id}", response_model=Customer)
