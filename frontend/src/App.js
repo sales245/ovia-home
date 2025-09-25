@@ -74,7 +74,7 @@ function App() {
           <Route path="/*" element={
             <Layout language={language} setLanguage={setLanguage}>
               <Routes>
-                <Route index element={<HomePage language={language} />} />
+                <Route index element={<HomePage language={language} stats={stats} />} />
                 <Route path="products" element={<ProductsPage language={language} />} />
                 <Route path="about" element={<AboutPage language={language} />} />
                 <Route path="contact" element={<ContactPage language={language} />} />
