@@ -26,9 +26,9 @@ code {
     --card-foreground: 240 38% 20%; /* #1C1C4D */
     --popover: 0 0% 100%;
     --popover-foreground: 240 38% 20%;
-    --primary: 22 100% 61%; /* #FF6F3C */
+    --primary: 42 26% 52%; /* #a0956b */
     --primary-foreground: 0 0% 100%; /* #FFFFFF */
-    --primary-600: 18 80% 56%; /* #e66436 */
+    --primary-600: 35 23% 44%; /* #8b7355 */
     --secondary: 1 100% 64%; /* #FF4E50 */
     --secondary-foreground: 0 0% 100%; /* #FFFFFF */
     --secondary-600: 2 74% 58%; /* #e24649 */
