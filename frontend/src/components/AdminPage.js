@@ -14,6 +14,9 @@ import { translations } from '../translations';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
+console.log('🔧 DEBUG - BACKEND_URL:', BACKEND_URL);
+console.log('🔧 DEBUG - API:', API);
+
 const AdminPage = ({ language }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loginData, setLoginData] = useState({ username: '', password: '' });
