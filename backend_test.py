@@ -44,12 +44,15 @@ class OviaHomeAPITester:
                 try:
                     error_data = response.json()
                     print(f"   Error: {error_data}")
+                    self.failed_tests.append(f"{name}: Expected {expected_status}, got {response.status_code} - {error_data}")
                 except:
                     print(f"   Error: {response.text}")
+                    self.failed_tests.append(f"{name}: Expected {expected_status}, got {response.status_code} - {response.text}")
                 return False, {}
 
         except Exception as e:
             print(f"❌ Failed - Error: {str(e)}")
+            self.failed_tests.append(f"{name}: Exception - {str(e)}")
             return False, {}
 
     def test_api_status(self):
