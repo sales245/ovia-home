@@ -320,6 +320,11 @@ async def get_products():
     products = await db.products.find().to_list(1000)
     return [Product(**product) for product in products]
 
+@api_router.get("/customers") 
+async def get_customers():
+    customers = await db.customers.find().to_list(1000)
+    return customers
+
 @api_router.get("/products/{product_id}", response_model=Product)
 async def get_product(product_id: str):
     product = await db.products.find_one({"id": product_id})
