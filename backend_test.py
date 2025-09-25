@@ -67,12 +67,14 @@ class OviaHomeAPITester:
 
     def test_create_category(self):
         """Test creating a new category"""
+        import uuid
+        unique_id = str(uuid.uuid4())[:8]
         category_data = {
             "name": {
-                "en": "Test Category",
-                "tr": "Test Kategorisi"
+                "en": f"Test Category {unique_id}",
+                "tr": f"Test Kategorisi {unique_id}"
             },
-            "slug": "test-category",
+            "slug": f"test-category-{unique_id}",
             "description": {
                 "en": "A test category for API testing",
                 "tr": "API testi için test kategorisi"
