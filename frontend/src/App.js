@@ -17,6 +17,26 @@ import AdminPage from './components/AdminPage';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
+// WhatsApp floating button component
+const WhatsAppButton = () => {
+  const handleWhatsAppClick = () => {
+    window.open('https://wa.me/905464313745?text=Merhaba%2C%20ürünleriniz%20hakkında%20bilgi%20almak%20istiyorum.', '_blank');
+  };
+
+  return (
+    <button
+      onClick={handleWhatsAppClick}
+      className="fixed bottom-6 right-6 bg-[#25D366] hover:bg-[#128C7E] text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 z-50 group"
+      title="WhatsApp ile iletişime geç"
+    >
+      <MessageCircle size={24} />
+      <span className="absolute right-full mr-3 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white px-2 py-1 rounded text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+        WhatsApp ile mesaj gönderin
+      </span>
+    </button>
+  );
+};
+
 // Layout wrapper component to conditionally show header/footer
 const Layout = ({ children, language, setLanguage }) => {
   const location = useLocation();
