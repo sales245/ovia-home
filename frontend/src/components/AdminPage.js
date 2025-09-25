@@ -11,7 +11,7 @@ import { Label } from '../components/ui/label';
 import { Badge } from '../components/ui/badge';
 import { translations } from '../translations';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 const API = `${BACKEND_URL}/api`;
 
 console.log('🔧 DEBUG - BACKEND_URL:', BACKEND_URL);
