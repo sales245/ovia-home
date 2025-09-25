@@ -323,6 +323,10 @@ async def get_products():
 @api_router.get("/customers") 
 async def get_customers():
     customers = await db.customers.find().to_list(1000)
+    # Convert ObjectId to string for JSON serialization
+    for customer in customers:
+        if '_id' in customer:
+            customer['_id'] = str(customer['_id'])
     return customers
 
 @api_router.get("/products/{product_id}", response_model=Product)
