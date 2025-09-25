@@ -2,13 +2,15 @@ import requests
 import sys
 import json
 from datetime import datetime
+import os
 
 class OviaHomeAPITester:
-    def __init__(self, base_url="https://vibrant-palette-4.preview.emergentagent.com/api"):
+    def __init__(self, base_url="http://localhost:8001/api"):
         self.base_url = base_url
         self.tests_run = 0
         self.tests_passed = 0
         self.created_ids = {}  # Store created resource IDs for cleanup/reference
+        self.failed_tests = []  # Track failed tests for detailed reporting
 
     def run_test(self, name, method, endpoint, expected_status, data=None, params=None):
         """Run a single API test"""
