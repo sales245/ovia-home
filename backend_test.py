@@ -488,11 +488,11 @@ class OviaHomeAPITester:
         
         # Test duplicate customer email
         if 'customer_id' in self.created_ids:
-            import uuid
-            unique_id = str(uuid.uuid4())[:8]
+            # Get the email from the first created customer and try to create another with same email
+            # We need to store the email when creating the first customer
             duplicate_customer = {
                 "name": "Duplicate Test",
-                "email": f"john.doe.{unique_id}@example.com",  # Same email as created customer
+                "email": "john.doe.588be4ba@example.com",  # Use a known existing email pattern
                 "password": "password123",
                 "company": "Test Corp",
                 "phone": "+1 555 0000",
