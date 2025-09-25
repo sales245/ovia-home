@@ -5,7 +5,10 @@ from datetime import datetime
 import os
 
 class OviaHomeAPITester:
-    def __init__(self, base_url="http://localhost:8001/api"):
+    def __init__(self, base_url=None):
+        # Use the same URL as frontend for consistency
+        if base_url is None:
+            base_url = "http://localhost:8001/api"
         self.base_url = base_url
         self.tests_run = 0
         self.tests_passed = 0
