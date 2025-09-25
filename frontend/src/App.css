@@ -76,13 +76,13 @@ p {
   --ink: #1C1C4D;
   --ink-2: #333333;
   --muted: #F5F7FA;
-  --primary: #FF6F3C;
-  --primary-600: #e66436;
+  --primary: #a0956b;
+  --primary-600: #8b7355;
   --secondary: #FF4E50;
   --secondary-600: #e24649;
   --ring: #1C1C4D80;
   --border-light: #E5E7EB;
-  --gradient-primary: linear-gradient(135deg, #FF6F3C 0%, #FF4E50 100%);
+  --gradient-primary: linear-gradient(135deg, #a0956b 0%, #8b7355 100%);
 }
 
 /* Buttons */
