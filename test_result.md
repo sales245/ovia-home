@@ -272,6 +272,24 @@ backend:
       - working: true
         agent: "testing"
         comment: "✅ Error handling working properly - Returns 404 for invalid IDs, 422 for validation errors, proper error messages in response"
+      - working: true
+        agent: "testing"
+        comment: "✅ COMPREHENSIVE RE-TEST: Error handling fully validated - All HTTP status codes working correctly (404, 422, 400), proper error messages, duplicate email validation working"
+
+  - task: "Customer Login API"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "❌ Customer login endpoint failing with 500 error due to ObjectId serialization issue"
+      - working: true
+        agent: "testing"
+        comment: "✅ FIXED: Customer login endpoint - Resolved ObjectId serialization issue by removing _id field from response. Login now working with proper authentication and JSON response"
 
 frontend:
   - task: "Frontend integration with backend APIs"
