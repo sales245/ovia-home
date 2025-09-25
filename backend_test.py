@@ -484,75 +484,85 @@ class OviaHomeAPITester:
         return success and success2 and success3 and success4 and success5 and success6
 
 def main():
-    print("🏠 Starting Comprehensive Ovia Home Backend API Testing...")
+    print("🏠 Starting COMPREHENSIVE Ovia Home Backend API Testing...")
+    print("🎯 Testing ALL Critical Endpoints as Requested")
     print("=" * 70)
     
     tester = OviaHomeAPITester()
     
-    # Test sequence based on review request
+    # Test sequence based on comprehensive review request
     test_results = []
     
-    print("\n📊 1. DATABASE CONNECTION TESTS")
+    print("\n📊 1. DATABASE CONNECTION & ROOT API TESTS")
     print("-" * 50)
     test_results.append(tester.test_database_connection())
     
-    print("\n📂 2. ADMIN INITIALIZATION TESTS")
+    print("\n📂 2. ADMIN INITIALIZATION ENDPOINTS")
     print("-" * 50)
     test_results.append(tester.test_admin_init_categories())
     test_results.append(tester.test_admin_init_products())
     test_results.append(tester.test_admin_seed_data())
     
-    print("\n📋 3. CATEGORY API TESTS")
+    print("\n📊 3. CRITICAL STATISTICS ENDPOINT")
     print("-" * 50)
+    test_results.append(tester.test_stats_detailed_validation())
+    
+    print("\n📋 4. CATEGORIES API - FULL CRUD + JSON VALIDATION")
+    print("-" * 50)
+    test_results.append(tester.test_categories_json_format())
     test_results.append(tester.test_get_categories())
     test_results.append(tester.test_create_category())
     test_results.append(tester.test_get_single_category())
     test_results.append(tester.test_update_category())
     
-    print("\n🛍️ 4. PRODUCT API TESTS")
+    print("\n🛍️ 5. PRODUCTS API - FULL CRUD + JSON VALIDATION")
     print("-" * 50)
+    test_results.append(tester.test_products_json_format())
     test_results.append(tester.test_get_products())
     test_results.append(tester.test_create_product())
     test_results.append(tester.test_get_single_product())
     test_results.append(tester.test_update_product())
     
-    print("\n🌐 5. URL IMPORT TESTS")
+    print("\n👥 6. CUSTOMERS API - SERIALIZATION & CRUD")
     print("-" * 50)
-    test_results.append(tester.test_import_product_from_amazon_url())
-    test_results.append(tester.test_import_product_from_alibaba_url())
+    test_results.append(tester.test_customers_serialization())
+    test_results.append(tester.test_get_all_customers())
+    test_results.append(tester.test_create_customer())
+    test_results.append(tester.test_get_customer())
+    test_results.append(tester.test_customer_login())
     
-    print("\n📞 6. INQUIRY & QUOTE TESTS")
+    print("\n📞 7. INQUIRIES & QUOTES API")
     print("-" * 50)
     test_results.append(tester.test_create_inquiry())
     test_results.append(tester.test_get_inquiries())
     test_results.append(tester.test_create_quote_request())
     test_results.append(tester.test_get_quotes())
     
-    print("\n👥 7. CUSTOMER & ORDER TESTS")
+    print("\n🌐 8. URL IMPORT FUNCTIONALITY")
     print("-" * 50)
-    test_results.append(tester.test_create_customer())
-    test_results.append(tester.test_get_customer())
+    test_results.append(tester.test_import_product_comprehensive())
+    test_results.append(tester.test_import_product_from_amazon_url())
+    test_results.append(tester.test_import_product_from_alibaba_url())
+    
+    print("\n📦 9. ORDER MANAGEMENT API")
+    print("-" * 50)
     test_results.append(tester.test_create_order())
     test_results.append(tester.test_get_customer_orders())
     test_results.append(tester.test_get_order())
     test_results.append(tester.test_update_order_status())
     
-    print("\n📊 8. STATISTICS TESTS")
-    print("-" * 50)
-    test_results.append(tester.test_get_stats())
-    
-    print("\n🗑️ 9. CRUD DELETE TESTS")
+    print("\n🗑️ 10. CRUD DELETE OPERATIONS")
     print("-" * 50)
     test_results.append(tester.test_delete_product())
     test_results.append(tester.test_delete_category())
     
-    print("\n⚠️ 10. ERROR HANDLING TESTS")
+    print("\n⚠️ 11. COMPREHENSIVE ERROR HANDLING")
     print("-" * 50)
     test_results.append(tester.test_error_handling())
     
     # Print final results
     print("\n" + "=" * 70)
-    print("📊 COMPREHENSIVE TEST RESULTS")
+    print("📊 COMPREHENSIVE BACKEND TEST RESULTS")
     print("=" * 70)
     print(f"Tests Run: {tester.tests_run}")
     print(f"Tests Passed: {tester.tests_passed}")
@@ -571,12 +581,17 @@ def main():
         for key, value in tester.created_ids.items():
             print(f"   {key}: {value}")
     
-    print(f"\n🎯 BACKEND TESTING SUMMARY:")
+    print(f"\n🎯 COMPREHENSIVE BACKEND TESTING SUMMARY:")
     print("-" * 50)
     if tester.tests_passed == tester.tests_run:
         print("✅ ALL TESTS PASSED - Backend is fully functional!")
+        print("✅ All critical endpoints validated")
+        print("✅ JSON serialization working properly")
+        print("✅ Error handling working correctly")
+        print("✅ CRUD operations fully functional")
     else:
         print(f"⚠️ {tester.tests_run - tester.tests_passed} tests failed - See details above")
+        print("❌ Backend has issues that need attention")
     
     return 0 if tester.tests_passed == tester.tests_run else 1
 
