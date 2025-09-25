@@ -256,9 +256,11 @@ class OviaHomeAPITester:
 
     def test_create_customer(self):
         """Test creating a customer"""
+        import uuid
+        unique_id = str(uuid.uuid4())[:8]
         customer_data = {
-            "name": "John Doe",
-            "email": "john.doe@example.com",
+            "name": f"John Doe {unique_id}",
+            "email": f"john.doe.{unique_id}@example.com",
             "password": "securepassword123",
             "company": "Global Textiles Corp",
             "phone": "+44 20 7946 0958",
