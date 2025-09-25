@@ -197,6 +197,10 @@ class OrderCreate(BaseModel):
     shipping_address: dict
     payment_method: Optional[str] = None
 
+# Ürün URL'sinden veri çekme için model
+class ImportProductRequest(BaseModel):
+    url: str
+
 # Product Inquiry Routes
 @api_router.post("/inquiries", response_model=ProductInquiry)
 async def create_inquiry(inquiry: ProductInquiryCreate):
