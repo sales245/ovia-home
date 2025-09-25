@@ -4,7 +4,7 @@ import { MessageCircle } from 'lucide-react';
 import axios from 'axios';
 import './App.css';
 
-// Components
+// Import components
 import Header from './components/Header';
 import Footer from './components/Footer';
 import HomePage from './components/HomePage';
@@ -14,7 +14,7 @@ import ContactPage from './components/ContactPage';
 import CustomerPanel from './components/CustomerPanel';
 import AdminPage from './components/AdminPage';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 const API = `${BACKEND_URL}/api`;
 
 // WhatsApp floating button component
@@ -37,16 +37,7 @@ const WhatsAppButton = () => {
   );
 };
 
-// Layout wrapper component to conditionally show header/footer
-const Layout = ({ children, language, setLanguage }) => {
-  const location = useLocation();
-  const isAdminPage = location.pathname.startsWith('/admin');
-
-  if (isAdminPage) {
-    // Admin pages don't need header/footer
-    return <>{children}</>;
-  }
-
+function Layout({ children, language, setLanguage }) {
   return (
     <>
       <Header language={language} setLanguage={setLanguage} />
@@ -57,14 +48,13 @@ const Layout = ({ children, language, setLanguage }) => {
       <WhatsAppButton />
     </>
   );
-};
+}
 
 function App() {
   const [language, setLanguage] = useState('en');
   const [stats, setStats] = useState({});
 
   useEffect(() => {
-    // Fetch website statistics
     const fetchStats = async () => {
       try {
         const response = await axios.get(`${API}/stats`);
@@ -78,18 +68,22 @@ function App() {
   }, []);
 
   return (
-    <div className="App" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+    <div className="App">
       <BrowserRouter>
-        <Layout language={language} setLanguage={setLanguage}>
-          <Routes>
-            <Route path="/" element={<HomePage stats={stats} language={language} />} />
-            <Route path="/products" element={<ProductsPage language={language} />} />
-            <Route path="/about" element={<AboutPage language={language} />} />
-            <Route path="/contact" element={<ContactPage language={language} />} />
-            <Route path="/customer-panel" element={<CustomerPanel language={language} />} />
-            <Route path="/admin" element={<AdminPage language={language} />} />
-          </Routes>
-        </Layout>
+        <Routes>
+          <Route path="/*" element={
+            <Layout language={language} setLanguage={setLanguage}>
+              <Routes>
+                <Route index element={<HomePage language={language} />} />
+                <Route path="products" element={<ProductsPage language={language} />} />
+                <Route path="about" element={<AboutPage language={language} />} />
+                <Route path="contact" element={<ContactPage language={language} />} />
+                <Route path="customer-panel" element={<CustomerPanel language={language} />} />
+                <Route path="admin" element={<AdminPage language={language} />} />
+              </Routes>
+            </Layout>
+          } />
+        </Routes>
       </BrowserRouter>
     </div>
   );

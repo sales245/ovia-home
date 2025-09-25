@@ -1,395 +1,147 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
-import { MessageCircle, Star, Award, Leaf, ShoppingCart, Plus, Minus } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { ShoppingCart, Search, Filter, X } from 'lucide-react';
 import { translations } from '../translations';
 
-// Multilingual product database
-const productsData = [
-  {
-    id: 1,
-    category: 'bathrobes',
-    image: 'https://images.unsplash.com/photo-1713881676551-b16f22ce4719?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDF8MHwxfHNlYXJjaHwxfHxjb3R0b24lMjBiYXRocm9iZXN8ZW58MHx8fHwxNzU3ODY5NDU1fDA&ixlib=rb-4.1.0&q=85',
-    name: {
-      en: 'Premium Cotton Bathrobe',
-      tr: 'Premium Pamuk Bornoz',
-      de: 'Premium Baumwoll-Bademantel',
-      fr: 'Peignoir en Coton Premium',
-      it: 'Accappatoio di Cotone Premium',
-      es: 'Albornoz de Algodón Premium',
-      pl: 'Szlafrok Bawełniany Premium',
-      ru: 'Премиум Хлопковый Халат',
-      bg: 'Премиум Памучен Халат',
-      el: 'Premium Βαμβακερό Μπουρνούζι',
-      pt: 'Roupão de Algodão Premium',
-      ar: 'بشكير قطني فاخر'
-    },
-    features: {
-      en: ['100% Organic Cotton', 'OEKO-TEX Certified', 'Multiple Sizes'],
-      tr: ['%100 Organik Pamuk', 'OEKO-TEX Sertifikalı', 'Çoklu Bedenler'],
-      de: ['100% Bio-Baumwolle', 'OEKO-TEX Zertifiziert', 'Mehrere Größen'],
-      fr: ['100% Coton Biologique', 'Certifié OEKO-TEX', 'Tailles Multiples'],
-      it: ['100% Cotone Biologico', 'Certificato OEKO-TEX', 'Taglie Multiple'],
-      es: ['100% Algodón Orgánico', 'Certificado OEKO-TEX', 'Múltiples Tallas'],
-      pl: ['100% Bawełna Organiczna', 'Certyfikat OEKO-TEX', 'Wiele Rozmiarów'],
-      ru: ['100% Органический Хлопок', 'Сертификат OEKO-TEX', 'Разные Размеры'],
-      bg: ['100% Органичен Памук', 'OEKO-TEX Сертификат', 'Множество Размери'],
-      el: ['100% Βιολογικό Βαμβάκι', 'Πιστοποίηση OEKO-TEX', 'Πολλαπλά Μεγέθη'],
-      pt: ['100% Algodão Orgânico', 'Certificado OEKO-TEX', 'Múltiplos Tamanhos'],
-      ar: ['قطن عضوي 100%', 'معتمد OEKO-TEX', 'أحجام متعددة']
-    },
-    badges: ['organicCotton', 'certified']
-  },
-  {
-    id: 2,
-    category: 'bathrobes',
-    image: 'https://images.unsplash.com/photo-1639654803583-7c616d7e0b6c?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDF8MHwxfHNlYXJjaHwyfHxjb3R0b24lMjBiYXRocm9iZXN8ZW58MHx8fHwxNzU3ODY5NDU1fDA&ixlib=rb-4.1.0&q=85',
-    name: {
-      en: 'Bamboo Luxury Bathrobe',
-      tr: 'Bambu Lüks Bornoz',
-      de: 'Bambus Luxus-Bademantel',
-      fr: 'Peignoir de Luxe en Bambou',
-      it: 'Accappatoio di Lusso in Bambù',
-      es: 'Albornoz de Lujo de Bambú',
-      pl: 'Luksusowy Szlafrok Bambusowy',
-      ru: 'Роскошный Бамбуковый Халат',
-      bg: 'Луксозен Бамбуков Халат',
-      el: 'Πολυτελές Μπαμπού Μπουρνούζι',
-      pt: 'Roupão de Luxo de Bambu',
-      ar: 'بشكير خيزران فاخر'
-    },
-    features: {
-      en: ['Bamboo Fiber', 'Antibacterial', 'Eco-Friendly'],
-      tr: ['Bambu Lifi', 'Antibakteriyel', 'Çevre Dostu'],
-      de: ['Bambusfaser', 'Antibakteriell', 'Umweltfreundlich'],
-      fr: ['Fibre de Bambou', 'Antibactérien', 'Écologique'],
-      it: ['Fibra di Bambù', 'Antibatterico', 'Ecologico'],
-      es: ['Fibra de Bambú', 'Antibacteriano', 'Ecológico'],
-      pl: ['Włókno Bambusowe', 'Antybakteryjne', 'Ekologiczne'],
-      ru: ['Бамбуковое Волокно', 'Антибактериальный', 'Экологичный'],
-      bg: ['Бамбуково Влакно', 'Антибактериален', 'Екологичен'],
-      el: ['Ίνα Μπαμπού', 'Αντιβακτηριδιακό', 'Φιλικό προς το Περιβάλλον'],
-      pt: ['Fibra de Bambu', 'Antibacteriano', 'Ecológico'],
-      ar: ['ألياف الخيزران', 'مضاد للبكتيريا', 'صديق للبيئة']
-    },
-    badges: ['sustainable', 'premium']
-  },
-  {
-    id: 3,
-    category: 'towels',
-    image: 'https://images.unsplash.com/photo-1649446326998-a16524cfa667?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2Mzl8MHwxfHNlYXJjaHwxfHxsdXh1cnklMjB0b3dlbHN8ZW58MHx8fHwxNzU3ODY5NDU5fDA&ixlib=rb-4.1.0&q=85',
-    name: {
-      en: 'Turkish Cotton Towel Set',
-      tr: 'Türk Pamuğu Havlu Seti',
-      de: 'Türkisches Baumwoll-Handtuch-Set',
-      fr: 'Set de Serviettes en Coton Turc',
-      it: 'Set Asciugamani in Cotone Turco',
-      es: 'Juego de Toallas de Algodón Turco',
-      pl: 'Zestaw Ręczników z Tureckiej Bawełny',
-      ru: 'Набор Полотенец из Турецкого Хлопка',
-      bg: 'Комплект Хавлии от Турски Памук',
-      el: 'Σετ Πετσέτες από Τουρκικό Βαμβάκι',
-      pt: 'Conjunto de Toalhas de Algodão Turco',
-      ar: 'طقم مناشف قطن تركي'
-    },
-    features: {
-      en: ['Turkish Cotton', 'High Absorption', 'Various Colors'],
-      tr: ['Türk Pamuğu', 'Yüksek Emicilik', 'Çeşitli Renkler'],
-      de: ['Türkische Baumwolle', 'Hohe Saugfähigkeit', 'Verschiedene Farben'],
-      fr: ['Coton Turc', 'Haute Absorption', 'Couleurs Variées'],
-      it: ['Cotone Turco', 'Alta Assorbenza', 'Vari Colori'],
-      es: ['Algodón Turco', 'Alta Absorción', 'Varios Colores'],
-      pl: ['Turecka Bawełna', 'Wysoka Chłonność', 'Różne Kolory'],
-      ru: ['Турецкий Хлопок', 'Высокая Впитываемость', 'Разные Цвета'],
-      bg: ['Турски Памук', 'Високо Поглъщане', 'Различни Цветове'],
-      el: ['Τουρκικό Βαμβάκι', 'Υψηλή Απορρόφηση', 'Διάφορα Χρώματα'],
-      pt: ['Algodão Turco', 'Alta Absorção', 'Várias Cores'],
-      ar: ['قطن تركي', 'امتصاص عالي', 'ألوان متنوعة']
-    },
-    badges: ['premium', 'certified']
-  },
-  {
-    id: 4,
-    category: 'towels',
-    image: 'https://images.unsplash.com/photo-1700918232124-f64da19e73eb?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2Mzl8MHwxfHNlYXJjaHwzfHxsdXh1cnklMjB0b3dlbHN8ZW58MHx8fHwxNzU3ODY5NDU5fDA&ixlib=rb-4.1.0&q=85',
-    name: {
-      en: 'Spa Luxury Towels',
-      tr: 'Spa Lüks Havlular',
-      de: 'Spa Luxus-Handtücher',
-      fr: 'Serviettes de Luxe Spa',
-      it: 'Asciugamani di Lusso Spa',
-      es: 'Toallas de Lujo Spa',
-      pl: 'Luksusowe Ręczniki Spa',
-      ru: 'Роскошные СПА Полотенца',
-      bg: 'Луксозни СПА Хавлии',
-      el: 'Πολυτελείς Πετσέτες Spa',
-      pt: 'Toalhas de Luxo Spa',
-      ar: 'مناشف سبا فاخرة'
-    },
-    features: {
-      en: ['Hotel Quality', 'Ultra Soft', 'Quick Dry'],
-      tr: ['Otel Kalitesi', 'Ultra Yumuşak', 'Hızlı Kuruyan'],
-      de: ['Hotelqualität', 'Ultra Weich', 'Schnell Trocknend'],
-      fr: ['Qualité Hôtel', 'Ultra Doux', 'Séchage Rapide'],
-      it: ['Qualità Hotel', 'Ultra Morbido', 'Asciugatura Rapida'],
-      es: ['Calidad Hotel', 'Ultra Suave', 'Secado Rápido'],
-      pl: ['Jakość Hotelowa', 'Ultra Miękkie', 'Szybko Schnące'],
-      ru: ['Отельное Качество', 'Ультра Мягкие', 'Быстрое Высыхание'],
-      bg: ['Хотелско Качество', 'Ултра Меки', 'Бързо Изсъхване'],
-      el: ['Ποιότητα Ξενοδοχείου', 'Υπερ Απαλό', 'Γρήγορο Στέγνωμα'],
-      pt: ['Qualidade Hotel', 'Ultra Macio', 'Secagem Rápida'],
-      ar: ['جودة فندقية', 'ناعم جداً', 'سريع الجفاف']
-    },
-    badges: ['premium', 'certified']
-  },
-  {
-    id: 5,
-    category: 'bedding',
-    image: 'https://images.unsplash.com/photo-1689626698503-47934d011285?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2Nzh8MHwxfHNlYXJjaHw0fHxiZWRkaW5nJTIwc2V0c3xlbnwwfHx8fDE3NTc4Njk0NjR8MA&ixlib=rb-4.1.0&q=85',
-    name: {
-      en: 'Premium Bedding Set',
-      tr: 'Premium Yatak Takımı',
-      de: 'Premium Bettwäsche-Set',
-      fr: 'Parure de Lit Premium',
-      it: 'Set Lenzuola Premium',
-      es: 'Juego de Sábanas Premium',
-      pl: 'Zestaw Pościeli Premium',
-      ru: 'Премиум Постельное Белье',
-      bg: 'Премиум Спално Бельо',
-      el: 'Premium Σετ Κλινοσκεπασμάτων',
-      pt: 'Conjunto de Cama Premium',
-      ar: 'طقم أسرّة فاخر'
-    },
-    features: {
-      en: ['Egyptian Cotton', 'Thread Count 800', 'Complete Set'],
-      tr: ['Mısır Pamuğu', '800 İplik Sayısı', 'Komple Set'],
-      de: ['Ägyptische Baumwolle', 'Fadenzahl 800', 'Komplettes Set'],
-      fr: ['Coton Égyptien', 'Nombre de Fils 800', 'Set Complet'],
-      it: ['Cotone Egiziano', 'Numero di Fili 800', 'Set Completo'],
-      es: ['Algodón Egipcio', 'Número de Hilos 800', 'Juego Completo'],
-      pl: ['Bawełna Egipska', 'Liczba Nici 800', 'Kompletny Zestaw'],
-      ru: ['Египетский Хлопок', 'Плотность 800', 'Полный Комплект'],
-      bg: ['Египетски Памук', 'Плътност 800', 'Пълен Комплект'],
-      el: ['Αιγυπτιακό Βαμβάκι', 'Αριθμός Νημάτων 800', 'Πλήρες Σετ'],
-      pt: ['Algodão Egípcio', 'Contagem de Fios 800', 'Conjunto Completo'],
-      ar: ['قطن مصري', 'عدد الخيوط 800', 'طقم كامل']
-    },
-    badges: ['premium', 'organicCotton']
-  },
-  {
-    id: 6,
-    category: 'bedding',
-    image: 'https://images.pexels.com/photos/6603475/pexels-photo-6603475.jpeg',
-    name: {
-      en: 'Organic Bedding Collection',
-      tr: 'Organik Yatak Koleksiyonu',
-      de: 'Bio-Bettwäsche Kollektion',
-      fr: 'Collection Literie Biologique',
-      it: 'Collezione Lenzuola Biologiche',
-      es: 'Colección de Ropa de Cama Orgánica',
-      pl: 'Kolekcja Organicznej Pościeli',
-      ru: 'Органическая Коллекция Постельного Белья',
-      bg: 'Органична Колекция Спално Бельо',
-      el: 'Οργανική Συλλογή Κλινοσκεπασμάτων',
-      pt: 'Coleção de Cama Orgânica',
-      ar: 'مجموعة أسرّة عضوية'
-    },
-    features: {
-      en: ['100% Organic', 'GOTS Certified', 'Hypoallergenic'],
-      tr: ['%100 Organik', 'GOTS Sertifikalı', 'Hipoalerjenik'],
-      de: ['100% Biologisch', 'GOTS Zertifiziert', 'Hypoallergen'],
-      fr: ['100% Biologique', 'Certifié GOTS', 'Hypoallergénique'],
-      it: ['100% Biologico', 'Certificato GOTS', 'Ipoallergenico'],
-      es: ['100% Orgánico', 'Certificado GOTS', 'Hipoalergénico'],
-      pl: ['100% Organiczne', 'Certyfikat GOTS', 'Hipoalergiczne'],
-      ru: ['100% Органический', 'Сертификат GOTS', 'Гипоаллергенный'],
-      bg: ['100% Органичен', 'GOTS Сертификат', 'Хипоалергенен'],
-      el: ['100% Βιολογικό', 'Πιστοποίηση GOTS', 'Υποαλλεργικό'],
-      pt: ['100% Orgânico', 'Certificado GOTS', 'Hipoalergênico'],
-      ar: ['عضوي 100%', 'معتمد GOTS', 'مضاد للحساسية']
-    },
-    badges: ['organicCotton', 'certified', 'sustainable']
-  },
-  {
-    id: 7,
-    category: 'home-decor',
-    image: 'https://images.unsplash.com/photo-1638368888223-4efbc65b1153?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2Nzh8MHwxfHNlYXJjaHwxfHxUdXJraXNoJTIwdGV4dGlsZXN8ZW58MHx8fHwxNzU3ODY5NDQ4fDA&ixlib=rb-4.1.0&q=85',
-    name: {
-      en: 'Traditional Turkish Carpets',
-      tr: 'Geleneksel Türk Halıları',
-      de: 'Traditionelle Türkische Teppiche',
-      fr: 'Tapis Turcs Traditionnels',
-      it: 'Tappeti Turchi Tradizionali',
-      es: 'Alfombras Turcas Tradicionales',
-      pl: 'Tradycyjne Tureckie Dywany',
-      ru: 'Традиционные Турецкие Ковры',
-      bg: 'Традиционни Турски Килими',
-      el: 'Παραδοσιακά Τουρκικά Χαλιά',
-      pt: 'Tapetes Turcos Tradicionais',
-      ar: 'سجاد تركي تقليدي'
-    },
-    features: {
-      en: ['Hand Woven', 'Traditional Patterns', 'Various Sizes'],
-      tr: ['El Dokuma', 'Geleneksel Desenler', 'Çeşitli Boyutlar'],
-      de: ['Handgewebt', 'Traditionelle Muster', 'Verschiedene Größen'],
-      fr: ['Tissé à la Main', 'Motifs Traditionnels', 'Tailles Variées'],
-      it: ['Tessuto a Mano', 'Motivi Tradizionali', 'Varie Dimensioni'],
-      es: ['Tejido a Mano', 'Patrones Tradicionales', 'Varios Tamaños'],
-      pl: ['Ręcznie Tkane', 'Tradycyjne Wzory', 'Różne Rozmiary'],
-      ru: ['Ручной Работы', 'Традиционные Узоры', 'Разные Размеры'],
-      bg: ['Ръчно Тъкани', 'Традиционни Модели', 'Различни Размери'],
-      el: ['Χειροποίητα', 'Παραδοσιακά Μοτίβα', 'Διάφορα Μεγέθη'],
-      pt: ['Tecido à Mão', 'Padrões Tradicionais', 'Vários Tamanhos'],
-      ar: ['منسوج يدوياً', 'أنماط تقليدية', 'أحجام متنوعة']
-    },
-    badges: ['premium', 'certified']
-  },
-  {
-    id: 8,
-    category: 'home-decor',
-    image: 'https://images.unsplash.com/photo-1610643073583-332a16a0968a?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2Nzh8MHwxfHNlYXJjaHwyfHxUdXJraXNoJTIwdGV4dGlsZXN8ZW58MHx8fHwxNzU3ODY5NDQ4fDA&ixlib=rb-4.1.0&q=85',
-    name: {
-      en: 'Decorative Cushions',
-      tr: 'Dekoratif Yastıklar',
-      de: 'Dekorative Kissen',
-      fr: 'Coussins Décoratifs',
-      it: 'Cuscini Decorativi',
-      es: 'Cojines Decorativos',
-      pl: 'Poduszki Dekoracyjne',
-      ru: 'Декоративные Подушки',
-      bg: 'Декоративни Възглавници',
-      el: 'Διακοσμητικά Μαξιλάρια',
-      pt: 'Almofadas Decorativas',
-      ar: 'وسائد زخرفية'
-    },
-    features: {
-      en: ['Natural Dyes', 'Embroidered', 'Multiple Designs'],
-      tr: ['Doğal Boyalar', 'İşlemeli', 'Çoklu Tasarımlar'],
-      de: ['Natürliche Farbstoffe', 'Bestickt', 'Mehrere Designs'],
-      fr: ['Teintures Naturelles', 'Brodé', 'Multiples Designs'],
-      it: ['Coloranti Naturali', 'Ricamato', 'Design Multipli'],
-      es: ['Tintes Naturales', 'Bordado', 'Múltiples Diseños'],
-      pl: ['Naturalne Barwniki', 'Haftowane', 'Wiele Wzorów'],
-      ru: ['Натуральные Красители', 'Вышитые', 'Множество Дизайнов'],
-      bg: ['Натурални Багрила', 'Бродирани', 'Множество Дизайни'],
-      el: ['Φυσικές Βαφές', 'Κεντημένα', 'Πολλαπλά Σχέδια'],
-      pt: ['Corantes Naturais', 'Bordado', 'Múltiplos Designs'],
-      ar: ['أصباغ طبيعية', 'مطرز', 'تصاميم متعددة']
-    },
-    badges: ['sustainable', 'premium']
+// Badge colors helper
+const getBadgeColors = (badge) => {
+  switch (badge) {
+    case 'organicCotton':
+      return 'bg-green-100 text-green-800';
+    case 'premium':
+      return 'bg-orange-100 text-primary';
+    case 'certified':
+      return 'bg-blue-100 text-blue-800';
+    case 'sustainable':
+      return 'bg-emerald-100 text-emerald-800';
+    default:
+      return 'bg-gray-100 text-gray-800';
   }
-];
+};
 
 const ProductsPage = ({ language }) => {
-  const [searchParams] = useSearchParams();
-  const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || 'all');
-  const [productsFromAPI, setProductsFromAPI] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showFilters, setShowFilters] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [customerType, setCustomerType] = useState('retail'); // retail or wholesale
-  const [cart, setCart] = useState({ items: [], total: 0 });
-  const [quantities, setQuantities] = useState({}); // Track quantities for each product
+  
   const t = translations[language] || translations.en;
 
-  const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-  const API = `${BACKEND_URL}/api`;
-
-  // Generate session ID for cart
-  const getSessionId = () => {
-    let sessionId = localStorage.getItem('cart_session_id');
-    if (!sessionId) {
-      sessionId = 'session_' + Math.random().toString(36).substr(2, 9);
-      localStorage.setItem('cart_session_id', sessionId);
+  // Badge translations
+  const badgeTranslations = {
+    organicCotton: {
+      en: 'Organic Cotton',
+      tr: 'Organik Pamuk',
+      de: 'Bio-Baumwolle',
+      fr: 'Coton Bio',
+      it: 'Cotone Biologico',
+      es: 'Algodón Orgánico',
+      pl: 'Bawełna Organiczna',
+      ru: 'Органический Хлопок',
+      bg: 'Органичен Памук',
+      el: 'Βιολογικό Βαμβάκι',
+      pt: 'Algodão Orgânico',
+      ar: 'قطن عضوي'
+    },
+    premium: {
+      en: 'Premium',
+      tr: 'Premium',
+      de: 'Premium',
+      fr: 'Premium',
+      it: 'Premium',
+      es: 'Premium',
+      pl: 'Premium',
+      ru: 'Премиум',
+      bg: 'Премиум',
+      el: 'Premium',
+      pt: 'Premium',
+      ar: 'فاخر'
+    },
+    certified: {
+      en: 'Certified',
+      tr: 'Sertifikalı',
+      de: 'Zertifiziert',
+      fr: 'Certifié',
+      it: 'Certificato',
+      es: 'Certificado',
+      pl: 'Certyfikowany',
+      ru: 'Сертифицированный',
+      bg: 'Сертифициран',
+      el: 'Πιστοποιημένο',
+      pt: 'Certificado',
+      ar: 'معتمد'
+    },
+    sustainable: {
+      en: 'Sustainable',
+      tr: 'Sürdürülebilir',
+      de: 'Nachhaltig',
+      fr: 'Durable',
+      it: 'Sostenibile',
+      es: 'Sostenible',
+      pl: 'Zrównoważony',
+      ru: 'Экологичный',
+      bg: 'Устойчив',
+      el: 'Βιώσιμο',
+      pt: 'Sustentável',
+      ar: 'مستدام'
     }
-    return sessionId;
   };
 
+  // WhatsApp contact for products
+  const whatsappNumber = '+905464313745';
+  
+  const handleWhatsAppClick = (product) => {
+    const productName = product.name[language] || product.name.en;
+    const message = encodeURIComponent(
+      `Merhaba! ${productName} ürününüz hakkında bilgi almak istiyorum. Toptan fiyat ve minimum sipariş miktarını öğrenebilir miyim?`
+    );
+    window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
+  };
+
+  const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+  const API = `${BACKEND_URL}/api`;
+
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch(`${API}/products`);
-        const apiProducts = await response.json();
-        setProductsFromAPI(apiProducts);
+        setLoading(true);
+        
+        // Fetch products and categories in parallel
+        const [productsResponse, categoriesResponse] = await Promise.all([
+          fetch(`${API}/products`),
+          fetch(`${API}/categories`)
+        ]);
+
+        if (productsResponse.ok) {
+          const productsData = await productsResponse.json();
+          setProducts(productsData);
+        }
+
+        if (categoriesResponse.ok) {
+          const categoriesData = await categoriesResponse.json();
+          setCategories(categoriesData);
+        }
       } catch (error) {
-        console.error('Error fetching products:', error);
-        // Fallback to hardcoded data if API fails
-        setProductsFromAPI(productsData);
+        console.error('Error fetching data:', error);
       } finally {
         setLoading(false);
       }
     };
-    fetchProducts();
+
+    fetchData();
   }, [API]);
 
-  // Load cart on component mount
-  useEffect(() => {
-    fetchCart();
-  }, []);
-
-  const fetchCart = async () => {
-    try {
-      const sessionId = getSessionId();
-      const response = await fetch(`${API}/cart/${sessionId}`);
-      const cartData = await response.json();
-      setCart(cartData);
-    } catch (error) {
-      console.error('Error fetching cart:', error);
-    }
-  };
-
-  const addToCart = async (productId, quantity = 1) => {
-    try {
-      const sessionId = getSessionId();
-      const response = await fetch(`${API}/cart/${sessionId}/add`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          product_id: productId,
-          quantity: quantity,
-          customer_type: customerType
-        })
-      });
-      
-      if (response.ok) {
-        const updatedCart = await response.json();
-        setCart(updatedCart);
-        setQuantities(prev => ({ ...prev, [productId]: 1 })); // Reset quantity selector
-      } else {
-        const error = await response.json();
-        alert(error.detail || 'Error adding to cart');
-      }
-    } catch (error) {
-      console.error('Error adding to cart:', error);
-    }
-  };
-
-  const updateQuantity = (productId, newQuantity) => {
-    if (newQuantity < 1) newQuantity = 1;
-    setQuantities(prev => ({ ...prev, [productId]: newQuantity }));
-  };
-
-  const getProductPrice = (product) => {
-    const quantity = quantities[product.id] || 1;
-    const isWholesale = customerType === 'wholesale' && quantity >= (product.min_wholesale_quantity || 50);
+  // Filter products based on selected category and search term
+  const filteredProducts = products.filter(product => {
+    const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory;
+    const matchesSearch = searchTerm === '' || 
+      (product.name[language] && product.name[language].toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (product.name.en && product.name.en.toLowerCase().includes(searchTerm.toLowerCase()));
     
-    if (isWholesale && product.wholesale_price) {
-      return product.wholesale_price;
-    } else if (product.retail_price) {
-      return product.retail_price;
-    }
-    return null;
-  };
-
-  // Transform products data with language-specific content
-  const products = (productsFromAPI.length > 0 ? productsFromAPI : productsData).map(product => ({
-    ...product,
-    name: product.name[language] || product.name.en || product.name,
-    features: product.features[language] || product.features.en || product.features
-  }));
-
-  const filteredProducts = selectedCategory === 'all' 
-    ? products 
-    : products.filter(product => product.category === selectedCategory);
+    return matchesCategory && matchesSearch;
+  });
 
   const getBadgeColor = (badge) => {
     switch (badge) {
@@ -406,296 +158,201 @@ const ProductsPage = ({ language }) => {
     }
   };
 
-  const getBadgeIcon = (badge) => {
-    switch (badge) {
-      case 'organicCotton':
-        return <Leaf size={14} />;
-      case 'premium':
-        return <Star size={14} />;
-      case 'certified':
-        return <Award size={14} />;
-      case 'sustainable':
-        return <Leaf size={14} />;
-      default:
-        return null;
-    }
-  };
-
-  // Badge translations
-  const badgeTranslations = {
-    organicCotton: {
-      en: 'Organic Cotton', tr: 'Organik Pamuk', de: 'Bio-Baumwolle', fr: 'Coton Bio', 
-      it: 'Cotone Organico', es: 'Algodón Orgánico', pl: 'Bawełna Organiczna', 
-      ru: 'Органический хлопок', bg: 'Органичен памук', el: 'Οργανικό Βαμβάκι', 
-      pt: 'Algodão Orgânico', ar: 'قطن عضوي'
-    },
-    premium: {
-      en: 'Premium', tr: 'Premium', de: 'Premium', fr: 'Premium', 
-      it: 'Premium', es: 'Premium', pl: 'Premium', 
-      ru: 'Премиум', bg: 'Премиум', el: 'Premium', 
-      pt: 'Premium', ar: 'مميز'
-    },
-    certified: {
-      en: 'Certified', tr: 'Sertifikalı', de: 'Zertifiziert', fr: 'Certifié', 
-      it: 'Certificato', es: 'Certificado', pl: 'Certyfikowany', 
-      ru: 'Сертифицированный', bg: 'Сертифициран', el: 'Πιστοποιημένο', 
-      pt: 'Certificado', ar: 'معتمد'
-    },
-    sustainable: {
-      en: 'Sustainable', tr: 'Sürdürülebilir', de: 'Nachhaltig', fr: 'Durable', 
-      it: 'Sostenibile', es: 'Sostenible', pl: 'Zrównoważony', 
-      ru: 'Устойчивый', bg: 'Устойчив', el: 'Βιώσιμο', 
-      pt: 'Sustentável', ar: 'مستدام'
-    }
-  };
+  if (loading) {
+    return (
+      <div className="header-spacing">
+        <div className="container section">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+            <p className="mt-4 text-gray-600">Loading products...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="header-spacing">
       {/* Hero Section */}
       <section className="section section-light">
-        <div className="container">
-          <div className="text-center mb-16">
-            <h1 className="mb-6">{t.ourProducts}</h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              {t.productsDesc || 'Discover our comprehensive range of premium Turkish home textiles, crafted with traditional techniques and modern quality standards.'}
-            </p>
-          </div>
-
-          {/* Category Filter */}
-          <div className="flex flex-wrap justify-center gap-4 mb-12">
-            <button
-              onClick={() => setSelectedCategory('all')}
-              className={`px-6 py-3 rounded-full transition-all ${
-                selectedCategory === 'all' 
-                  ? 'bg-primary text-white' 
-                  : 'bg-white text-ink-2 border border-gray-300 hover:border-primary hover:text-primary'
-              }`}
-            >
-              {t.allCategories || 'All Categories'}
-            </button>
-            <button
-              onClick={() => setSelectedCategory('bathrobes')}
-              className={`px-6 py-3 rounded-full transition-all ${
-                selectedCategory === 'bathrobes' 
-                  ? 'bg-primary text-white' 
-                  : 'bg-white text-ink-2 border border-gray-300 hover:border-primary hover:text-primary'
-              }`}
-            >
-              {t.bathrobes}
-            </button>
-            <button
-              onClick={() => setSelectedCategory('towels')}
-              className={`px-6 py-3 rounded-full transition-all ${
-                selectedCategory === 'towels' 
-                  ? 'bg-primary text-white' 
-                  : 'bg-white text-ink-2 border border-gray-300 hover:border-primary hover:text-primary'
-              }`}
-            >
-              {t.towels}
-            </button>
-            <button
-              onClick={() => setSelectedCategory('bedding')}
-              className={`px-6 py-3 rounded-full transition-all ${
-                selectedCategory === 'bedding' 
-                  ? 'bg-primary text-white' 
-                  : 'bg-white text-ink-2 border border-gray-300 hover:border-primary hover:text-primary'
-              }`}
-            >
-              {t.bedding}
-            </button>
-            <button
-              onClick={() => setSelectedCategory('home-decor')}
-              className={`px-6 py-3 rounded-full transition-all ${
-                selectedCategory === 'home-decor' 
-                  ? 'bg-primary text-white' 
-                  : 'bg-white text-ink-2 border border-gray-300 hover:border-primary hover:text-primary'
-              }`}
-            >
-              {t.homeDecor}
-            </button>
-          </div>
-
-          {/* Customer Type Selector and Cart Display */}
-          <div className="flex flex-col md:flex-row justify-between items-center mb-8 p-4 bg-white rounded-lg shadow-sm">
-            <div className="flex items-center space-x-4 mb-4 md:mb-0">
-              <label className="text-sm font-medium text-gray-700">
-                {t.customerType}:
-              </label>
-              <select
-                value={customerType}
-                onChange={(e) => setCustomerType(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-md text-sm"
-              >
-                <option value="retail">{t.retail}</option>
-                <option value="wholesale">{t.wholesale}</option>
-              </select>
-            </div>
-            
-            {cart.items.length > 0 && (
-              <div className="flex items-center space-x-4">
-                <div className="flex items-center space-x-2">
-                  <ShoppingCart className="text-primary" size={20} />
-                  <span className="text-sm font-medium">
-                    {cart.items.length} {cart.items.length === 1 ? 'item' : 'items'}
-                  </span>
-                </div>
-                <div className="text-lg font-semibold text-primary">
-                  {t.total}: ${cart.total.toFixed(2)}
-                </div>
+        <div className="container text-center">
+          <h1 className="mb-6">{t.ourProducts}</h1>
+          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+            {t.productsDescription}
+          </p>
+          
+          {/* Search and Filters */}
+          <div className="max-w-4xl mx-auto">
+            <div className="flex flex-col md:flex-row gap-4 items-center justify-center mb-8">
+              {/* Search */}
+              <div className="relative flex-1 max-w-md">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                <input
+                  type="text"
+                  placeholder={t.searchProducts}
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                />
               </div>
-            )}
+              
+              {/* Mobile Filter Toggle */}
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className="md:hidden flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-full hover:bg-gray-50"
+              >
+                <Filter size={18} />
+                {t.filters}
+              </button>
+            </div>
+
+            {/* Category Filters */}
+            <div className={`flex flex-wrap justify-center gap-3 mb-8 ${showFilters ? 'block' : 'hidden md:flex'}`}>
+              <button
+                onClick={() => setSelectedCategory('all')}
+                className={`px-6 py-3 rounded-full transition-all ${
+                  selectedCategory === 'all' 
+                    ? 'bg-primary text-white' 
+                    : 'bg-white text-ink-2 border border-gray-300 hover:border-primary hover:text-primary'
+                }`}
+              >
+                {t.allProducts}
+              </button>
+              <button
+                onClick={() => setSelectedCategory('bathrobes')}
+                className={`px-6 py-3 rounded-full transition-all ${
+                  selectedCategory === 'bathrobes' 
+                    ? 'bg-primary text-white' 
+                    : 'bg-white text-ink-2 border border-gray-300 hover:border-primary hover:text-primary'
+                }`}
+              >
+                {t.bathrobes}
+              </button>
+              <button
+                onClick={() => setSelectedCategory('towels')}
+                className={`px-6 py-3 rounded-full transition-all ${
+                  selectedCategory === 'towels' 
+                    ? 'bg-primary text-white' 
+                    : 'bg-white text-ink-2 border border-gray-300 hover:border-primary hover:text-primary'
+                }`}
+              >
+                {t.towels}
+              </button>
+              <button
+                onClick={() => setSelectedCategory('bedding')}
+                className={`px-6 py-3 rounded-full transition-all ${
+                  selectedCategory === 'bedding' 
+                    ? 'bg-primary text-white' 
+                    : 'bg-white text-ink-2 border border-gray-300 hover:border-primary hover:text-primary'
+                }`}
+              >
+                {t.bedding}
+              </button>
+              <button
+                onClick={() => setSelectedCategory('home-decor')}
+                className={`px-6 py-3 rounded-full transition-all ${
+                  selectedCategory === 'home-decor' 
+                    ? 'bg-primary text-white' 
+                    : 'bg-white text-ink-2 border border-gray-300 hover:border-primary hover:text-primary'
+                }`}
+              >
+                {t.homeDecor}
+              </button>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Products Grid */}
-      <section className="section section-beige">
+      <section className="section">
         <div className="container">
-          <div className="grid-3 gap-8">
-            {filteredProducts.map((product) => (
-              <div key={product.id} className="card group hover:scale-105 transition-transform duration-300">
-                <div className="relative mb-4">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-64 object-cover rounded-xl"
-                  />
-                  <div className="absolute top-3 left-3 flex flex-wrap gap-2">
-                    {product.badges.map((badge) => (
-                      <span
-                        key={badge}
-                        className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${getBadgeColor(badge)}`}
-                      >
-                        {getBadgeIcon(badge)}
-                        {badgeTranslations[badge]?.[language] || badgeTranslations[badge]?.en || badge}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-                
-                <h3 className="mb-3 group-hover:text-primary transition-colors">
-                  {product.name}
-                </h3>
-                
-                <ul className="text-sm text-gray-600 mb-4 space-y-1">
-                  {product.features.map((feature, index) => (
-                    <li key={index} className="flex items-center">
-                      <div className="w-1.5 h-1.5 bg-primary rounded-full mr-2"></div>
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-                
-                {/* Pricing and Stock Status */}
-                <div className="mb-4">
-                  {product.in_stock !== false ? (
-                    <div className="flex items-center text-sm text-green-600 mb-2">
-                      <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-                      {t.inStock}
-                    </div>
-                  ) : (
-                    <div className="flex items-center text-sm text-red-600 mb-2">
-                      <div className="w-2 h-2 bg-red-500 rounded-full mr-2"></div>
-                      {t.outOfStock}
-                    </div>
-                  )}
-                  
-                  {getProductPrice(product) ? (
-                    <div className="text-lg font-semibold text-amber-700 mb-2">
-                      ${getProductPrice(product)}
-                      {customerType === 'wholesale' && (
-                        <span className="text-sm text-gray-500 ml-2">
-                          ({t.minQuantity}: {product.min_wholesale_quantity || 50})
-                        </span>
+          {filteredProducts.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-600 text-lg">{t.noProductsFound}</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filteredProducts.map((product) => (
+                <div key={product.id} className="group">
+                  <div className="card hover:scale-105 transition-transform duration-300">
+                    <div className="relative">
+                      <img
+                        src={product.image}
+                        alt={product.name[language] || product.name.en}
+                        className="w-full h-64 object-cover rounded-xl mb-4"
+                      />
+                      
+                      {/* Badges */}
+                      {product.badges && (
+                        <div className="absolute top-3 left-3 flex flex-col gap-2">
+                          {product.badges.map((badge) => (
+                            <span
+                              key={badge}
+                              className={`px-2 py-1 text-xs font-medium rounded-full ${getBadgeColor(badge)}`}
+                            >
+                              {badgeTranslations[badge]?.[language] || badgeTranslations[badge]?.en || badge}
+                            </span>
+                          ))}
+                        </div>
                       )}
                     </div>
-                  ) : (
-                    <div className="text-center text-sm text-gray-500 mb-2">
-                      {t.contactForPricing || 'Contact for Wholesale Pricing'}
-                    </div>
-                  )}
-                </div>
-
-                {/* Quantity Selector and Add to Cart */}
-                {getProductPrice(product) && product.in_stock !== false ? (
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-center space-x-3">
-                      <button
-                        onClick={() => updateQuantity(product.id, (quantities[product.id] || 1) - 1)}
-                        className="w-8 h-8 flex items-center justify-center border border-gray-300 rounded-md hover:bg-gray-100"
-                      >
-                        <Minus size={16} />
-                      </button>
-                      <span className="w-12 text-center font-medium">
-                        {quantities[product.id] || 1}
-                      </span>
-                      <button
-                        onClick={() => updateQuantity(product.id, (quantities[product.id] || 1) + 1)}
-                        className="w-8 h-8 flex items-center justify-center border border-gray-300 rounded-md hover:bg-gray-100"
-                      >
-                        <Plus size={16} />
-                      </button>
+                    
+                    <h3 className="mb-3 group-hover:text-primary transition-colors">
+                      {product.name[language] || product.name.en}
+                    </h3>
+                    
+                    {/* Features */}
+                    {product.features && product.features[language] && (
+                      <ul className="text-gray-600 mb-4 space-y-1">
+                        {product.features[language].slice(0, 3).map((feature, index) => (
+                          <li key={index} className="flex items-center text-sm">
+                            <div className="w-1.5 h-1.5 bg-primary rounded-full mr-2"></div>
+                            {feature}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    
+                    {/* Price Info */}
+                    <div className="mb-4">
+                      {product.retail_price && (
+                        <div className="text-lg font-semibold text-primary">
+                          ${product.retail_price}
+                        </div>
+                      )}
+                      {product.min_wholesale_quantity && (
+                        <div className="text-sm text-gray-600">
+                          Min. {product.min_wholesale_quantity} pieces
+                        </div>
+                      )}
                     </div>
                     
-                    <button
-                      onClick={() => addToCart(product.id, quantities[product.id] || 1)}
-                      className="btn-primary w-full"
+                    {/* WhatsApp Button */}
+                    <button 
+                      onClick={() => handleWhatsAppClick(product)}
+                      className="btn-primary w-full flex items-center justify-center py-3"
                     >
-                      <ShoppingCart className="inline mr-2" size={16} />
-                      {t.addToCart}
+                      <ShoppingCart className="text-primary" size={20} />
+                      <span className="ml-2">{t.getQuote}</span>
                     </button>
                   </div>
-                ) : (
-                  <Link
-                    to={`/contact?product=${encodeURIComponent(product.name)}`}
-                    className="btn-primary w-full text-center"
-                  >
-                    <MessageCircle className="inline mr-2" size={16} />
-                    {t.inquireNow || 'Inquire Now'}
-                  </Link>
-                )}
-              </div>
-            ))}
-          </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
-      {/* Product Features */}
-      <section className="section section-light">
-        <div className="container">
-          <div className="text-center mb-16">
-            <h2 className="mb-6">{t.productFeatures || 'Product Features'}</h2>
-          </div>
-          <div className="grid-4">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-green-100 to-green-200 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Leaf className="text-green-600" size={24} />
-              </div>
-              <h3 className="mb-3">{t.qualityMaterials || 'Quality Materials'}</h3>
-              <p className="text-gray-600">Premium natural fibers sourced sustainably</p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-amber-100 to-amber-200 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Star className="text-amber-600" size={24} />
-              </div>
-              <h3 className="mb-3">{t.expertCraftsmanship || 'Expert Craftsmanship'}</h3>
-              <p className="text-gray-600">Traditional Turkish weaving techniques</p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Award className="text-blue-600" size={24} />
-              </div>
-              <h3 className="mb-3">{t.certifiedSafe || 'Certified Safe'}</h3>
-              <p className="text-gray-600">OEKO-TEX and GOTS certified products</p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Leaf className="text-emerald-600" size={24} />
-              </div>
-              <h3 className="mb-3">{t.sustainableProduction || 'Sustainable Production'}</h3>
-              <p className="text-gray-600">Environmentally responsible manufacturing</p>
-            </div>
-          </div>
+      {/* Contact CTA */}
+      <section className="section section-beige">
+        <div className="container text-center">
+          <h2 className="mb-4">{t.customOrdersTitle}</h2>
+          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+            {t.customOrdersDescription}
+          </p>
+          <Link to="/contact" className="btn-primary">
+            {t.contactUs}
+          </Link>
         </div>
       </section>
     </div>
