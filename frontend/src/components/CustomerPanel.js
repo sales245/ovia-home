@@ -166,6 +166,14 @@ const CustomerPanel = ({ language }) => {
   const [showRegister, setShowRegister] = useState(false);
   const [registerError, setRegisterError] = useState('');
   const [registerSuccess, setRegisterSuccess] = useState('');
+  const [registerData, setRegisterData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    company: '',
+    phone: '',
+    country: ''
+  });
   
   const t = translations[language];
 
