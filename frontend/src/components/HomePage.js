@@ -5,7 +5,7 @@ import { translations } from '../translations';
 
 
 
-const HomePage = ({ stats, language }) => {
+const HomePage = ({ stats = {}, language }) => {
   const t = translations[language];
 
   return (
