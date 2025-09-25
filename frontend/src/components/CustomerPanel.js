@@ -162,6 +162,11 @@ const CustomerPanel = ({ language }) => {
   const [customerPassword, setCustomerPassword] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   
+  // Registration states
+  const [showRegister, setShowRegister] = useState(false);
+  const [registerError, setRegisterError] = useState('');
+  const [registerSuccess, setRegisterSuccess] = useState('');
+  
   const t = translations[language];
 
   // Gerçek müşteri login
