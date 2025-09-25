@@ -1,67 +1,28 @@
-from fastapi import Body
-import httpx
-from bs4 import BeautifulSoup
-# Ürün URL'sinden veri çekme endpointi (örnek scraping, demo amaçlı)
-class ImportProductRequest(BaseModel):
-    url: str
-
-@api_router.post("/import-product-from-url")
-async def import_product_from_url(request: ImportProductRequest):
-    url = request.url
-    # Sadece demo: Amazon veya Alibaba ise örnek veri döndür
-    if "amazon" in url:
-        return {
-            "name": {"en": "Premium Cotton Bathrobe", "tr": "Premium Pamuk Bornoz"},
-            "features": {"en": ["100% Cotton", "Machine Washable", "Soft & Comfortable"]},
-            "image": "https://via.placeholder.com/400x400/4f46e5/ffffff?text=Amazon+Product",
-            "badges": ["premium", "organicCotton"]
-        }
-    elif "alibaba" in url:
-        return {
-            "name": {"en": "Bulk Hotel Towel Set", "tr": "Toplu Otel Havlu Seti"},
-            "features": {"en": ["Bulk Price", "Hotel Quality", "Customizable"]},
-            "image": "https://via.placeholder.com/400x400/f59e42/ffffff?text=Alibaba+Product",
-            "badges": ["bulk", "customizable"]
-        }
-    # Gerçek scraping örneği (çok basit, sadece başlık ve ilk görsel)
-    try:
-        async with httpx.AsyncClient(timeout=10) as client:
-            resp = await client.get(url)
-            soup = BeautifulSoup(resp.text, 'html.parser')
-            title = soup.title.string if soup.title else "Imported Product"
-            img = soup.find('img')
-            image_url = img['src'] if img and img.has_attr('src') else ''
-            return {
-                "name": {"en": title},
-                "features": {"en": ["Imported from URL"]},
-                "image": image_url,
-                "badges": ["imported"]
-            }
-    except Exception as e:
-        return {"error": f"Failed to import product: {str(e)}"}
-from fastapi import FastAPI, APIRouter, HTTPException, Depends
-from dotenv import load_dotenv
-from starlette.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, APIRouter, HTTPException, Depends, Body
+from fastapi.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
-import os
-import logging
-from pathlib import Path
 from pydantic import BaseModel, Field, EmailStr
 from typing import List, Optional
+from datetime import datetime, timezone, timedelta
+import os
+import logging
 import uuid
-from datetime import datetime, timezone
+import hashlib
+import secrets
+from pathlib import Path
+from dotenv import load_dotenv
+import httpx
+from bs4 import BeautifulSoup
 
-# Import cart and payment system
-# from cart_payment_system import setup_cart_payment_routes, timedelta
-from datetime import timedelta
-
+# Load environment variables
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
-# MongoDB connection
-mongo_url = os.environ['MONGO_URL']
+# MongoDB connection - with defaults if env vars not set
+mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
+db_name = os.environ.get('DB_NAME', 'ovia_home')
 client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ['DB_NAME']]
+db = client[db_name]
 
 # Create the main app without a prefix
 app = FastAPI()
