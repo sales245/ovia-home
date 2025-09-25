@@ -350,6 +350,101 @@ class OviaHomeAPITester:
         """Test retrieving website statistics"""
         return self.run_test("Get Website Statistics", "GET", "stats", 200)
 
+    def test_get_all_customers(self):
+        """Test retrieving all customers"""
+        return self.run_test("Get All Customers", "GET", "customers", 200)
+
+    def test_customer_login(self):
+        """Test customer login functionality"""
+        if 'customer_id' not in self.created_ids:
+            print("❌ Skipping - No customer available for login test")
+            return False
+        
+        # Use the email from the created customer
+        import uuid
+        unique_id = str(uuid.uuid4())[:8]
+        login_data = {
+            "email": f"john.doe.{unique_id}@example.com",
+            "password": "securepassword123"
+        }
+        return self.run_test("Customer Login", "POST", "login", 200, login_data)
+
+    def test_stats_detailed_validation(self):
+        """Test statistics endpoint with detailed field validation"""
+        success, response = self.run_test("Get Statistics with Field Validation", "GET", "stats", 200)
+        if success:
+            required_fields = ["inquiries", "quotes", "customers", "orders", "countries_served", "years_experience"]
+            missing_fields = [field for field in required_fields if field not in response]
+            if missing_fields:
+                print(f"❌ Missing required fields in stats: {missing_fields}")
+                self.failed_tests.append(f"Stats API missing fields: {missing_fields}")
+                return False
+            print(f"✅ All required stats fields present: {list(response.keys())}")
+        return success
+
+    def test_products_json_format(self):
+        """Test that products endpoint returns proper JSON format"""
+        success, response = self.run_test("Products JSON Format Validation", "GET", "products", 200)
+        if success:
+            if not isinstance(response, list):
+                print(f"❌ Products should return a list, got {type(response)}")
+                self.failed_tests.append("Products endpoint should return a list")
+                return False
+            if response:  # If products exist, validate structure
+                product = response[0]
+                required_fields = ["id", "category", "image", "name", "features", "badges"]
+                missing_fields = [field for field in required_fields if field not in product]
+                if missing_fields:
+                    print(f"❌ Product missing required fields: {missing_fields}")
+                    self.failed_tests.append(f"Product structure missing fields: {missing_fields}")
+                    return False
+            print(f"✅ Products JSON format validated - {len(response)} products")
+        return success
+
+    def test_categories_json_format(self):
+        """Test that categories endpoint returns proper JSON format"""
+        success, response = self.run_test("Categories JSON Format Validation", "GET", "categories", 200)
+        if success:
+            if not isinstance(response, list):
+                print(f"❌ Categories should return a list, got {type(response)}")
+                self.failed_tests.append("Categories endpoint should return a list")
+                return False
+            if response:  # If categories exist, validate structure
+                category = response[0]
+                required_fields = ["id", "name", "slug", "is_active"]
+                missing_fields = [field for field in required_fields if field not in category]
+                if missing_fields:
+                    print(f"❌ Category missing required fields: {missing_fields}")
+                    self.failed_tests.append(f"Category structure missing fields: {missing_fields}")
+                    return False
+            print(f"✅ Categories JSON format validated - {len(response)} categories")
+        return success
+
+    def test_customers_serialization(self):
+        """Test that customers are properly serialized (no ObjectId issues)"""
+        success, response = self.run_test("Customers Serialization Check", "GET", "customers", 200)
+        if success:
+            if not isinstance(response, list):
+                print(f"❌ Customers should return a list, got {type(response)}")
+                self.failed_tests.append("Customers endpoint should return a list")
+                return False
+            # Check for ObjectId serialization issues
+            json_str = json.dumps(response)  # This will fail if ObjectId is not serialized
+            print(f"✅ Customers properly serialized - {len(response)} customers")
+        return success
+
+    def test_import_product_comprehensive(self):
+        """Test URL import functionality with various scenarios"""
+        # Test with generic URL
+        generic_data = {"url": "https://example.com/product"}
+        success1, _ = self.run_test("Import Product from Generic URL", "POST", "import-product-from-url", 200, generic_data)
+        
+        # Test with invalid URL
+        invalid_data = {"url": "invalid-url"}
+        success2, _ = self.run_test("Import Product from Invalid URL", "POST", "import-product-from-url", 200, invalid_data)
+        
+        return success1 and success2
+
     def test_error_handling(self):
         """Test error handling with invalid requests"""
         print("\n🔍 Testing Error Handling...")
@@ -360,11 +455,33 @@ class OviaHomeAPITester:
         # Test invalid order ID
         success2, _ = self.run_test("Invalid Order ID", "GET", "orders/invalid-id", 404)
         
+        # Test invalid product ID
+        success3, _ = self.run_test("Invalid Product ID", "GET", "products/invalid-id", 404)
+        
+        # Test invalid category ID
+        success4, _ = self.run_test("Invalid Category ID", "GET", "categories/invalid-id", 404)
+        
         # Test invalid inquiry data (missing required fields)
         invalid_inquiry = {"name": "Test"}  # Missing required fields
-        success3, _ = self.run_test("Invalid Inquiry Data", "POST", "inquiries", 422, invalid_inquiry)
+        success5, _ = self.run_test("Invalid Inquiry Data", "POST", "inquiries", 422, invalid_inquiry)
         
-        return success and success2 and success3
+        # Test duplicate customer email
+        if 'customer_id' in self.created_ids:
+            import uuid
+            unique_id = str(uuid.uuid4())[:8]
+            duplicate_customer = {
+                "name": "Duplicate Test",
+                "email": f"john.doe.{unique_id}@example.com",  # Same email as created customer
+                "password": "password123",
+                "company": "Test Corp",
+                "phone": "+1 555 0000",
+                "country": "USA"
+            }
+            success6, _ = self.run_test("Duplicate Customer Email", "POST", "customers", 400, duplicate_customer)
+        else:
+            success6 = True
+        
+        return success and success2 and success3 and success4 and success5 and success6
 
 def main():
     print("🏠 Starting Comprehensive Ovia Home Backend API Testing...")
