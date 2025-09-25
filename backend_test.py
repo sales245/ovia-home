@@ -360,52 +360,99 @@ class OviaHomeAPITester:
         return success and success2 and success3
 
 def main():
-    print("🏠 Starting Ovia Home API Testing...")
-    print("=" * 60)
+    print("🏠 Starting Comprehensive Ovia Home Backend API Testing...")
+    print("=" * 70)
     
     tester = OviaHomeAPITester()
     
-    # Test sequence
+    # Test sequence based on review request
     test_results = []
     
-    # Basic API tests
-    test_results.append(tester.test_api_status())
-    test_results.append(tester.test_get_stats())
+    print("\n📊 1. DATABASE CONNECTION TESTS")
+    print("-" * 50)
+    test_results.append(tester.test_database_connection())
     
-    # Inquiry tests
+    print("\n📂 2. ADMIN INITIALIZATION TESTS")
+    print("-" * 50)
+    test_results.append(tester.test_admin_init_categories())
+    test_results.append(tester.test_admin_init_products())
+    test_results.append(tester.test_admin_seed_data())
+    
+    print("\n📋 3. CATEGORY API TESTS")
+    print("-" * 50)
+    test_results.append(tester.test_get_categories())
+    test_results.append(tester.test_create_category())
+    test_results.append(tester.test_get_single_category())
+    test_results.append(tester.test_update_category())
+    
+    print("\n🛍️ 4. PRODUCT API TESTS")
+    print("-" * 50)
+    test_results.append(tester.test_get_products())
+    test_results.append(tester.test_create_product())
+    test_results.append(tester.test_get_single_product())
+    test_results.append(tester.test_update_product())
+    
+    print("\n🌐 5. URL IMPORT TESTS")
+    print("-" * 50)
+    test_results.append(tester.test_import_product_from_amazon_url())
+    test_results.append(tester.test_import_product_from_alibaba_url())
+    
+    print("\n📞 6. INQUIRY & QUOTE TESTS")
+    print("-" * 50)
     test_results.append(tester.test_create_inquiry())
     test_results.append(tester.test_get_inquiries())
-    
-    # Quote tests
     test_results.append(tester.test_create_quote_request())
     test_results.append(tester.test_get_quotes())
     
-    # Customer tests
+    print("\n👥 7. CUSTOMER & ORDER TESTS")
+    print("-" * 50)
     test_results.append(tester.test_create_customer())
     test_results.append(tester.test_get_customer())
-    
-    # Order tests
     test_results.append(tester.test_create_order())
     test_results.append(tester.test_get_customer_orders())
     test_results.append(tester.test_get_order())
     test_results.append(tester.test_update_order_status())
     
-    # Error handling tests
+    print("\n📊 8. STATISTICS TESTS")
+    print("-" * 50)
+    test_results.append(tester.test_get_stats())
+    
+    print("\n🗑️ 9. CRUD DELETE TESTS")
+    print("-" * 50)
+    test_results.append(tester.test_delete_product())
+    test_results.append(tester.test_delete_category())
+    
+    print("\n⚠️ 10. ERROR HANDLING TESTS")
+    print("-" * 50)
     test_results.append(tester.test_error_handling())
     
     # Print final results
-    print("\n" + "=" * 60)
-    print("📊 FINAL TEST RESULTS")
-    print("=" * 60)
+    print("\n" + "=" * 70)
+    print("📊 COMPREHENSIVE TEST RESULTS")
+    print("=" * 70)
     print(f"Tests Run: {tester.tests_run}")
     print(f"Tests Passed: {tester.tests_passed}")
     print(f"Tests Failed: {tester.tests_run - tester.tests_passed}")
     print(f"Success Rate: {(tester.tests_passed/tester.tests_run)*100:.1f}%")
     
+    if tester.failed_tests:
+        print(f"\n❌ FAILED TESTS DETAILS:")
+        print("-" * 50)
+        for i, failure in enumerate(tester.failed_tests, 1):
+            print(f"{i}. {failure}")
+    
     if tester.created_ids:
-        print(f"\n📝 Created Resources:")
+        print(f"\n📝 CREATED RESOURCES:")
+        print("-" * 50)
         for key, value in tester.created_ids.items():
             print(f"   {key}: {value}")
+    
+    print(f"\n🎯 BACKEND TESTING SUMMARY:")
+    print("-" * 50)
+    if tester.tests_passed == tester.tests_run:
+        print("✅ ALL TESTS PASSED - Backend is fully functional!")
+    else:
+        print(f"⚠️ {tester.tests_run - tester.tests_passed} tests failed - See details above")
     
     return 0 if tester.tests_passed == tester.tests_run else 1
 
