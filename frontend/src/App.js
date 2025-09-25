@@ -54,6 +54,7 @@ const Layout = ({ children, language, setLanguage }) => {
         {children}
       </main>
       <Footer language={language} />
+      <WhatsAppButton />
     </>
   );
 };
