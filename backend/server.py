@@ -19,10 +19,16 @@ ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
 # MongoDB connection - with defaults if env vars not set
-mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
+mongo_url = os.environ.get('MONGODB_URI', 'mongodb+srv://${MONGODB_USER}:${MONGODB_PASSWORD}@cluster0.mongodb.net/ovia_home?retryWrites=true&w=majority')
 db_name = os.environ.get('DB_NAME', 'ovia_home')
-client = AsyncIOMotorClient(mongo_url)
-db = client[db_name]
+
+try:
+    client = AsyncIOMotorClient(mongo_url)
+    db = client[db_name]
+    logging.info("Successfully connected to MongoDB")
+except Exception as e:
+    logging.error(f"Failed to connect to MongoDB: {str(e)}")
+    raise
 
 # Create the main app without a prefix
 app = FastAPI()
@@ -971,6 +977,25 @@ app.add_middleware(
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+
+@app.get('/health')
+async def health_check():
+    try:
+        # Test database connection
+        await db.command('ping')
+        return {
+            'status': 'healthy',
+            'database': 'connected',
+            'timestamp': datetime.now(timezone.utc).isoformat()
+        }
+    except Exception as e:
+        return {
+            'status': 'unhealthy',
+            'database': 'disconnected',
+            'error': str(e),
+            'timestamp': datetime.now(timezone.utc).isoformat()
+        }
 )
 logger = logging.getLogger(__name__)
 
