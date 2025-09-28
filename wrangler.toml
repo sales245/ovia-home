@@ -1,6 +1,10 @@
 name = "ovia-home"
 compatibility_date = "2023-01-01"
-workers_dev = true
+compatibility_flags = ["nodejs_compat"]
+
+[build]
+command = "npm install && npm run build"
+pages_build_output_dir = "build"
 
 [vars]
 SPREADSHEET_ID = "1Za8CAl0QQmYLAub6AFJUdtiK5Qry1Ono8qyYwE5EWfI"
