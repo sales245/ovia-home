@@ -57,10 +57,10 @@ class SheetsDB:
             
             # Set headers based on sheet type
             headers = {
-                'Products': ['id', 'category', 'name', 'features', 'badges', 'retail_price', 'wholesale_price', 'stock', 'created_at'],
-                'Inquiries': ['id', 'name', 'email', 'company', 'phone', 'message', 'created_at'],
-                'Orders': ['id', 'customer_id', 'products', 'total', 'status', 'created_at'],
-                'Customers': ['id', 'name', 'email', 'company', 'phone', 'country', 'created_at']
+                'Products': ['id', 'category', 'image', 'name_en', 'name_tr', 'features_en', 'features_tr', 'badges', 'retail_price', 'wholesale_price', 'min_wholesale_quantity', 'in_stock', 'stock_quantity', 'created_at', 'updated_at'],
+                'Inquiries': ['id', 'name', 'email', 'phone', 'message', 'product_id', 'status', 'created_at', 'updated_at'],
+                'Orders': ['id', 'customer_id', 'products', 'total_amount', 'status', 'shipping_address', 'billing_address', 'payment_status', 'payment_method', 'created_at', 'updated_at'],
+                'Customers': ['id', 'name', 'email', 'phone', 'company_name', 'is_wholesale', 'default_shipping_address', 'default_billing_address', 'created_at', 'updated_at']
             }
             
             worksheet.append_row(headers.get(title, ['id', 'created_at']))
