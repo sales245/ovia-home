@@ -17,34 +17,6 @@ const API = `${BACKEND_URL}/api`;
 console.log('🔧 DEBUG - BACKEND_URL:', BACKEND_URL);
 console.log('🔧 DEBUG - API:', API);
 
-const fetchJSON = async (url, options = {}) => {
-  const res = await fetch(url, {
-    // cookie tabanlı auth varsa şunu da aç: credentials: 'include',
-    headers: {
-      'Accept': 'application/json',
-      ...(options.headers || {}),
-    },
-    ...options,
-  });
-
-  if (!res.ok) {
-    // JSON olmayan hata body’lerini daha görünür yap
-    const ct = res.headers.get('content-type') || '';
-    const raw = await res.text();
-    console.error(`[${res.status}] ${url} non-OK response:`, raw.slice(0, 200));
-    throw new Error(`HTTP ${res.status} from ${url}`);
-  }
-
-  const contentType = res.headers.get('content-type') || '';
-  if (!contentType.includes('application/json')) {
-    const raw = await res.text();
-    console.error(`Non-JSON response from ${url}:`, raw.slice(0, 200));
-    throw new Error('Response is not JSON');
-  }
-
-  return res.json();
-};
-
 const AdminPage = ({ language }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loginData, setLoginData] = useState({ username: '', password: '' });
@@ -295,7 +267,7 @@ const AdminPage = ({ language }) => {
     setLoginData({ username: '', password: '' });
   };
 
-  /*const fetchDashboardData = async () => {
+  const fetchDashboardData = async () => {
     setRefreshing(true);
     try {
       // Fetch all data in parallel
@@ -329,38 +301,7 @@ const AdminPage = ({ language }) => {
     } finally {
       setRefreshing(false);
     }
-  };*/
-
-  const fetchDashboardData = async () => {
-  setRefreshing(true);
-  try {
-    const [stats, inquiries, quotes, customers, products, categories] = await Promise.all([
-      fetchJSON(`${API}/stats`),
-      fetchJSON(`${API}/inquiries`),
-      fetchJSON(`${API}/quotes`),
-      fetchJSON(`${API}/customers`),
-      fetchJSON(`${API}/products`),
-      fetchJSON(`${API}/categories`)
-    ]);
-
-    setDashboardData({
-      stats,
-      inquiries: (inquiries || []).slice(0, 10),
-      quotes: (quotes || []).slice(0, 10),
-      customers: (customers || []).slice(0, 10),
-      orders: [],
-      products: products || [],
-      categories: categories || []
-    });
-  } catch (error) {
-    console.error('Error fetching dashboard data:', error);
-    // İstersen kullanıcıya göstermek için bir state de tutabilirsin
-    // setGlobalError('Veriler alınamadı. Detaylar konsolda.');
-  } finally {
-    setRefreshing(false);
-  }
-};
-
+  };
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString(language === 'tr' ? 'tr-TR' : 'en-US', {
@@ -391,14 +332,9 @@ const AdminPage = ({ language }) => {
   const extractProductDataFromURL = async (url) => {
     setUrlIntegrationData(prev => ({ ...prev, loading: true, error: null }));
     try {
-      /*const res = await fetch(`${API}/import-product-from-url`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url })
-      });*/
       const res = await fetch(`${API}/import-product-from-url`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url })
       });
       if (!res.ok) throw new Error('Failed to fetch product data');
@@ -534,8 +470,7 @@ const AdminPage = ({ language }) => {
     
     try {
       const response = await fetch(`${API}/products/${productId}`, {
-        method: 'DELETE',
-        headers: { 'Accept': 'application/json' }
+        method: 'DELETE'
       });
       
       if (response.ok) {
@@ -564,16 +499,11 @@ const AdminPage = ({ language }) => {
         ? `${API}/products/${editingProduct.id}`
         : `${API}/products`;
       const method = editingProduct ? 'PUT' : 'POST';
-      /*const response = await fetch(url, {
+      const response = await fetch(url, {
         method,
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(productFormData)
-      });*/
-      const response = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify(productFormData)
       });
       if (response.ok) {

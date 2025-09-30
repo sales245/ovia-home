@@ -7,10 +7,8 @@ import os
 class OviaHomeAPITester:
     def __init__(self, base_url=None):
         # Use the same URL as frontend for consistency
-        const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
         if base_url is None:
-            base_url = BACKEND_URL+"/api"
-            
+            base_url = "http://localhost:8001/api"
         self.base_url = base_url
         self.tests_run = 0
         self.tests_passed = 0
