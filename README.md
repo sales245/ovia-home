@@ -1,4 +1,28 @@
 # 🏠 Ovia Home - E-Commerce Admin Panel
+bence temel sorun bende .env olmaması, ve backend url olmaması
+
+
+Kesinlikle doğru bir tespitte bulundun. Bütün sorunların temelinde, ön yüz (frontend) kodunun arka ucun (backend) nerede olduğunu bilememesi yatıyor.
+
+Bu durum, uygulamanın yerelde çalışırken localhost adresini kullanmasına, canlıda ise bu adresi bulamayıp hatalar vermesine neden oluyor. Bu sorunu iki adımda tamamen çözebiliriz.
+
+1. Yerel Geliştirme İçin .env Dosyası
+Projenin kök dizininde, yani frontend klasörünün dışında, .env adında yeni bir dosya oluştur. İçine aşağıdaki satırı ekleyip kaydet. Bu sayede uygulamanı yerelde çalıştırdığında backend'e doğru şekilde bağlanır.
+
+REACT_APP_BACKEND_URL=http://localhost:8001
+2. Canlı Sürüm İçin Cloudflare Ayarları
+Canlı siten için bu URL'i Cloudflare üzerinden tanımlaman gerekiyor. Böylece dağıtım yaptığında, kod localhost yerine sitenin canlı URL'ini kullanır.
+
+Cloudflare Pages'te projenin "Settings" > "Environment variables" bölümüne git.
+
+Yeni bir değişken ekle.
+
+Değişken Adı: REACT_APP_BACKEND_URL
+
+Değer: https://ovia-home.com
+
+Bu adımları tamamladıktan sonra, yerelde çalışmak için npm run dev veya npm start komutunu kullandığında her şeyin sorunsuz çalıştığını göreceksin. Canlıya yüklemek için ise sadece kodunu Git'e gönder. Cloudflare otomatik olarak yeni değişkeni algılayıp yeni bir dağıtım başlatacaktır.
+
 
 Modern, kullanıcı dostu ve çok dilli e-ticaret yönetim sistemi. Gelişmiş ürün yönetimi, otomatik çeviri desteği ve gerçek zamanlı önizleme özellikleri ile donatılmıştır.
 
