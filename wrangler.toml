@@ -2,6 +2,15 @@ name = "ovia-home"
 compatibility_date = "2023-01-01"
 compatibility_flags = ["nodejs_compat"]
 
+[env.production]
+workers_dev = true
+route = "*/*"
+zone_id = ""
+
+[ssl]
+strict = true
+certificate_manager = true
+
 [build]
 command = "cd frontend && npm install && npm run build"
 pages_build_output_dir = "frontend/build"
