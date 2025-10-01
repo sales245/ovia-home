@@ -1,27 +1,72 @@
 # 🏠 Ovia Home - E-Commerce Admin Panel
-bence temel sorun bende .env olmaması, ve backend url olmaması
 
+## 📊 Sprint Update - October 1, 2025
 
-Kesinlikle doğru bir tespitte bulundun. Bütün sorunların temelinde, ön yüz (frontend) kodunun arka ucun (backend) nerede olduğunu bilememesi yatıyor.
+### ✅ Completed Tasks
+- **Backend Architecture Migration**
+  - Migrated from Python (FastAPI) to JavaScript (Cloudflare Pages Functions)
+  - Reason: Better integration with Cloudflare Pages, edge computing performance
+  - Removed deprecated Python files (backend_test.py, server.py, cart_payment_system.py, etc.)
 
-Bu durum, uygulamanın yerelde çalışırken localhost adresini kullanmasına, canlıda ise bu adresi bulamayıp hatalar vermesine neden oluyor. Bu sorunu iki adımda tamamen çözebiliriz.
+- **Cloudflare Functions Backend Implementation**
+  - Created 5 API endpoints under `/functions/api/`:
+    - ✅ `products.js` - Product management (GET/POST)
+    - ✅ `categories.js` - Category listing
+    - ✅ `stats.js` - Statistics dashboard
+    - ✅ `inquiries.js` - Customer inquiries (GET/POST)
+    - ✅ `sheets.js` - Google Sheets integration
+  - Implemented CORS middleware (`_middleware.js`)
+  - All endpoints tested locally and deployed successfully
 
-1. Yerel Geliştirme İçin .env Dosyası
-Projenin kök dizininde, yani frontend klasörünün dışında, .env adında yeni bir dosya oluştur. İçine aşağıdaki satırı ekleyip kaydet. Bu sayede uygulamanı yerelde çalıştırdığında backend'e doğru şekilde bağlanır.
+- **Environment Configuration**
+  - Created `.env` file with Google Sheets credentials
+  - Configured `wrangler.toml` for Cloudflare Pages deployment
+  - Set up `SPREADSHEET_ID` environment variable
 
-REACT_APP_BACKEND_URL=http://localhost:8001
-2. Canlı Sürüm İçin Cloudflare Ayarları
-Canlı siten için bu URL'i Cloudflare üzerinden tanımlaman gerekiyor. Böylece dağıtım yaptığında, kod localhost yerine sitenin canlı URL'ini kullanır.
+- **Local Testing**
+  - Successfully tested all endpoints on `http://localhost:8789`
+  - Verified CORS headers and response formats
+  - Confirmed API responses match expected schema
 
-Cloudflare Pages'te projenin "Settings" > "Environment variables" bölümüne git.
+- **Deployment**
+  - ✅ Pushed to GitHub (main branch)
+  - ✅ Cloudflare Pages auto-deployed
+  - ✅ All API endpoints live at `https://ovia-home.com/api/*`
 
-Yeni bir değişken ekle.
+### 🔄 In Progress
+- None
 
-Değişken Adı: REACT_APP_BACKEND_URL
+### 📋 Next Steps (Backlog)
 
-Değer: https://ovia-home.com
+1. **Google Sheets Integration** (HIGH PRIORITY)
+   - [ ] Create Google API Key in Google Cloud Console
+   - [ ] Restrict API Key to Google Sheets API only
+   - [ ] Add `GOOGLE_API_KEY` to Cloudflare Pages Environment Variables
+   - [ ] Test `/api/sheets` endpoint with real data
+   - [ ] Verify data structure matches frontend expectations
 
-Bu adımları tamamladıktan sonra, yerelde çalışmak için npm run dev veya npm start komutunu kullandığında her şeyin sorunsuz çalıştığını göreceksin. Canlıya yüklemek için ise sadece kodunu Git'e gönder. Cloudflare otomatik olarak yeni değişkeni algılayıp yeni bir dağıtım başlatacaktır.
+2. **Frontend-Backend Connection**
+   - [ ] Update frontend to call Cloudflare Functions endpoints
+   - [ ] Replace mock data with real API calls
+   - [ ] Test product listing, categories, and inquiries
+   - [ ] Implement error handling and loading states
+
+3. **Production Optimization**
+   - [ ] Add rate limiting to API endpoints (currently placeholder)
+   - [ ] Implement caching strategy for Google Sheets data
+   - [ ] Add logging and monitoring
+   - [ ] Set up error tracking (Sentry or similar)
+
+4. **Documentation**
+   - [ ] Update API documentation in `/functions/README.md`
+   - [ ] Create deployment guide for future updates
+   - [ ] Document environment variables setup
+
+### 🐛 Known Issues
+- Google Cloud Build warnings (deprecated Python backend, can be ignored)
+- Frontend not yet connected to new backend APIs (still using mock data or no API calls)
+
+---
 
 
 Modern, kullanıcı dostu ve çok dilli e-ticaret yönetim sistemi. Gelişmiş ürün yönetimi, otomatik çeviri desteği ve gerçek zamanlı önizleme özellikleri ile donatılmıştır.
