@@ -1,6 +1,7 @@
 name = "ovia-home-web-page"
 compatibility_date = "2024-03-04"
 
-[vars]
-SPREADSHEET_ID = "1Za8CAl0QQmYLAub6AFJUdtiK5Qry1Ono8qyYwE5EWfI"
-GOOGLE_API_KEY = "AIzaSyD5rcSOii2UerZhrYBCMRF9BjH55zTEoHQ"
+[[d1_databases]]
+binding = "DB"
+database_name = "database1"
+database_id = "0b15235a-7d29-4b85-a75f-90c982440b74"
