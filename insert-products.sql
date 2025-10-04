@@ -1,0 +1,3 @@
+INSERT INTO products (category, name_en, name_tr, features_en, features_tr, badges, retail_price, wholesale_price, min_wholesale_quantity, stock_quantity) VALUES 
+('bathrobes', 'Premium Cotton Bathrobe', 'Premium Pamuklu Bornoz', '["100% Turkish Cotton", "Ultra Soft", "Quick Dry"]', '["100% Türk Pamuğu", "Ekstra Yumuşak", "Hızlı Kuruyan"]', 'premium,organic', 99.99, 79.99, 50, 150),
+('towels', 'Turkish Towel Set', 'Türk Havlu Seti', '["600 GSM", "Highly Absorbent", "Durable"]', '["600 GSM", "Yüksek Emici", "Dayanıklı"]', 'bestseller', 49.99, 39.99, 100, 300);
