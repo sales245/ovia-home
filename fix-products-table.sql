@@ -1,10 +1,4 @@
--- Check what tables exist
-.tables
 
--- Check the structure of products table
-.schema products
-
--- Drop and recreate the products table with correct structure
 DROP TABLE IF EXISTS products;
 
 CREATE TABLE products (
