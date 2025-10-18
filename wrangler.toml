@@ -3,5 +3,5 @@ compatibility_date = "2024-03-04"
 
 [[d1_databases]]
 binding = "DB"
-database_name = "ovia-products"
-database_id = "c63df2c8-aea8-4312-9307-0c6cd7501e15"
+database_name = "database1"
+database_id = "0b15235a-7d29-4b85-a75f-90c982440b74"
