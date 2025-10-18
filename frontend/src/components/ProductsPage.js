@@ -21,11 +21,11 @@ const getBadgeColors = (badge) => {
 
 const ProductsPage = ({ language }) => {
   const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
-  const [showFilters, setShowFilters] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [sortBy, setSortBy] = useState('default');
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   
   const t = translations[language] || translations.en;
 
@@ -113,29 +113,33 @@ const ProductsPage = ({ language }) => {
     window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
   };
 
-  // API endpoint is at the same domain as the frontend in production
-  const API = '/api';
+  // API endpoint (production URL)
+  const API = 'https://ovia-home-web-page.pages.dev/api';
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
         
-        // Fetch products and categories in parallel
-        const [productsResponse, categoriesResponse] = await Promise.all([
-          fetch(`${API}/products`),
-          fetch(`${API}/categories`)
-        ]);
-
-        if (productsResponse.ok) {
-          const productsData = await productsResponse.json();
-          setProducts(productsData);
+        // Debug API call
+        console.log('Fetching from:', `${API}/products`);
+        
+        const productsResponse = await fetch(`${API}/products`);
+        console.log('Response status:', productsResponse.status);
+        
+        // Log response text for debugging
+        const text = await productsResponse.text();
+        console.log('Response text:', text);
+        
+        if (!productsResponse.ok) {
+          throw new Error(`HTTP error! status: ${productsResponse.status}`);
         }
+        
+        // Try to parse as JSON
+        const productsData = JSON.parse(text);
+        console.log('Parsed products:', productsData);
+        setProducts(productsData);
 
-        if (categoriesResponse.ok) {
-          const categoriesData = await categoriesResponse.json();
-          setCategories(categoriesData);
-        }
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
