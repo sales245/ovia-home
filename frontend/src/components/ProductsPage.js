@@ -113,8 +113,8 @@ const ProductsPage = ({ language }) => {
     window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
   };
 
-  const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
-  const API = `${BACKEND_URL}/api`;
+  // API endpoint is at the same domain as the frontend in production
+  const API = '/api';
 
   useEffect(() => {
     const fetchData = async () => {
