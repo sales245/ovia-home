@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ShoppingCart, Search, Filter } from 'lucide-react';
 import { translations } from '../translations';
-import WholesaleLoginRequired from './WholesaleLoginRequired';
 
 // Badge colors helper
 const getBadgeColors = (badge) => {
@@ -26,37 +25,8 @@ const WholesalePage = ({ language }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   
   const t = translations[language] || translations.en;
-
-  useEffect(() => {
-    // Burada gerçek oturum kontrolü yapılacak
-    const checkLoginStatus = async () => {
-      try {
-        // Örnek: localStorage'dan token kontrolü
-        const token = localStorage.getItem('userToken');
-        // Örnek: API'den token doğrulama
-        // const response = await fetch(`${API}/verify-token`, {
-        //   headers: { Authorization: `Bearer ${token}` }
-        // });
-        // setIsLoggedIn(response.ok);
-        
-        // Şimdilik basit token varlığı kontrolü
-        setIsLoggedIn(!!token);
-      } catch (error) {
-        console.error('Login check failed:', error);
-        setIsLoggedIn(false);
-      }
-    };
-
-    checkLoginStatus();
-  }, []);
-
-  // Eğer kullanıcı giriş yapmamışsa, giriş ekranını göster
-  if (!isLoggedIn) {
-    return <WholesaleLoginRequired language={language} />;
-  }
 
   // Badge translations
   const badgeTranslations = {
@@ -329,15 +299,26 @@ const WholesalePage = ({ language }) => {
                       </ul>
                     )}
                     
-                    {/* Price Info */}
-                    <div className="mb-4">
-                      {product.wholesale_price && (
-                        <div className="text-lg font-semibold text-primary">
-                          ${product.wholesale_price} <span className="text-sm text-gray-600">({t.wholesale})</span>
+                    {/* Price Tiers */}
+                    <div className="mb-4 space-y-2">
+                      {product.priceTiers && (
+                        <div className="grid grid-cols-2 gap-2 text-sm">
+                          {product.priceTiers.map((tier, index) => (
+                            <div key={index} className={`p-2 rounded ${
+                              index === 0 ? 'bg-orange-50' : 'bg-gray-50'
+                            }`}>
+                              <div className="font-semibold text-primary">
+                                ${tier.price}
+                              </div>
+                              <div className="text-gray-600 text-xs">
+                                {tier.minQuantity} - {tier.maxQuantity || '∞'} {t.pieces}
+                              </div>
+                            </div>
+                          ))}
                         </div>
                       )}
                       {product.min_wholesale_quantity && (
-                        <div className="text-sm text-gray-600">
+                        <div className="text-xs text-gray-600">
                           {t.minOrder}: {product.min_wholesale_quantity} {t.pieces}
                         </div>
                       )}

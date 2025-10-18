@@ -1,4 +1,42 @@
-// Cloudflare Pages Function - Products API with D1 Database
+// Cloudflare Pages Function - Products          // Transf          // Transform data to match frontend expectations
+        const products = results.map(product => ({
+          id: product.id.toString(),
+          category: product.category,
+          image: product.image || "https://via.placeholder.com/300x200",
+          name: {
+            en: product.name_en,
+            tr: product.name_tr,
+            de: product.name_de || product.name_en
+          },
+          features: {
+            en: JSON.parse(product.features_en || '[]'),
+            tr: JSON.parse(product.features_tr || '[]')
+          },
+          badges: product.badges ? product.badges.split(',') : [],
+          retail_price: product.retail_price,
+          min_wholesale_quantity: product.min_wholesale_quantity,
+          in_stock: Boolean(product.in_stock),
+          stock_quantity: product.stock_quantity,
+          priceTiers: JSON.parse(product.price_tiers || '[]')ontend expectations
+        const products = results.map(product => ({
+          id: product.id.toString(),
+          category: product.category,
+          image: product.image || "https://via.placeholder.com/300x200",
+          name: {
+            en: product.name_en,
+            tr: product.name_tr,
+            de: product.name_de || product.name_en
+          },
+          features: {
+            en: JSON.parse(product.features_en || '[]'),
+            tr: JSON.parse(product.features_tr || '[]')
+          },
+          badges: product.badges ? product.badges.split(',') : [],
+          retail_price: product.retail_price,
+          min_wholesale_quantity: product.min_wholesale_quantity,
+          in_stock: Boolean(product.in_stock),
+          stock_quantity: product.stock_quantity,
+          priceTiers: JSON.parse(product.price_tiers || '[]')e
 // This file automatically creates /api/products endpoint
 
 export async function onRequest(context) {
@@ -53,10 +91,10 @@ export async function onRequest(context) {
           },
           badges: product.badges ? product.badges.split(',') : [],
           retail_price: product.retail_price,
-          wholesale_price: product.wholesale_price,
           min_wholesale_quantity: product.min_wholesale_quantity,
           in_stock: Boolean(product.in_stock),
-          stock_quantity: product.stock_quantity
+          stock_quantity: product.stock_quantity,
+          priceTiers: JSON.parse(product.price_tiers || '[]')
         }));
 
         return new Response(JSON.stringify({
