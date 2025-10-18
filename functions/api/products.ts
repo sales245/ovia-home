@@ -1,5 +1,13 @@
 interface Product {
-  id: string;
+  export async function onRequestGet(context: { env: any }): Promise<Response> {
+  // Always return JSON and handle CORS
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Content-Type': 'application/json',
+    'Access-Control-Max-Age': '86400'
+  };ing;
   category: string;
   image: string;
   name: {
