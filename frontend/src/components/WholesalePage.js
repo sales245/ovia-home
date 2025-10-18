@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ShoppingCart, Search, Filter } from 'lucide-react';
 import { translations } from '../translations';
+import WholesaleLoginRequired from './WholesaleLoginRequired';
 
 // Badge colors helper
 const getBadgeColors = (badge) => {
@@ -25,8 +26,37 @@ const WholesalePage = ({ language }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   
   const t = translations[language] || translations.en;
+
+  useEffect(() => {
+    // Burada gerçek oturum kontrolü yapılacak
+    const checkLoginStatus = async () => {
+      try {
+        // Örnek: localStorage'dan token kontrolü
+        const token = localStorage.getItem('userToken');
+        // Örnek: API'den token doğrulama
+        // const response = await fetch(`${API}/verify-token`, {
+        //   headers: { Authorization: `Bearer ${token}` }
+        // });
+        // setIsLoggedIn(response.ok);
+        
+        // Şimdilik basit token varlığı kontrolü
+        setIsLoggedIn(!!token);
+      } catch (error) {
+        console.error('Login check failed:', error);
+        setIsLoggedIn(false);
+      }
+    };
+
+    checkLoginStatus();
+  }, []);
+
+  // Eğer kullanıcı giriş yapmamışsa, giriş ekranını göster
+  if (!isLoggedIn) {
+    return <WholesaleLoginRequired language={language} />;
+  }
 
   // Badge translations
   const badgeTranslations = {
