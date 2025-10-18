@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
-    "@cloudflare/workers-types": "4.20240208.0",
     "@react-oauth/google": "0.12.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -11,6 +10,7 @@
     "react-scripts": "5.0.1"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^4.20251011.0",
     "@typescript-eslint/eslint-plugin": "5.5.0",
     "@typescript-eslint/parser": "5.5.0",
     "eslint": "8.57.1",

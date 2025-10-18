@@ -7,10 +7,38 @@ import {
   Package
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { translations } from '../translations';
+import { translations, Language } from '../translations';
+
+type BadgeType = 'organicCotton' | 'premium' | 'certified' | 'sustainable';
+
+interface PriceTier {
+  quantity: number;
+  price: number;
+}
+
+interface Product {
+  id: string;
+  name: {
+    [key in Language]?: string;
+  };
+  category: string;
+  image?: string;
+  badges?: BadgeType[];
+  priceTiers?: PriceTier[];
+  in_stock?: boolean;
+  retail_price?: number;
+  min_wholesale_quantity?: number;
+  features?: {
+    [key in Language]?: string[];
+  };
+}
+
+interface ProductsPageProps {
+  language: Language;
+}
 
 // Badge colors helper
-const getBadgeColors = (badge) => {
+const getBadgeColors = (badge: BadgeType): string => {
   switch (badge) {
     case 'organicCotton':
       return 'bg-green-100 text-green-800';
@@ -25,13 +53,13 @@ const getBadgeColors = (badge) => {
   }
 };
 
-const ProductsPage = ({ language }) => {
-  const [products, setProducts] = useState([]);
+const ProductsPage: React.FC<ProductsPageProps> = ({ language }) => {
+  const [products, setProducts] = useState<Product[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [sortBy, setSortBy] = useState('default');
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
   
   const t = translations[language] || translations.en;
@@ -99,7 +127,7 @@ const ProductsPage = ({ language }) => {
   // WhatsApp contact for products
   const whatsappNumber = '+905464313745';
   
-  const handleWhatsAppClick = (product) => {
+  const handleWhatsAppClick = (product: Product) => {
     const productName = product.name[language] || product.name.en;
     
     let messageText = `Merhaba! ${productName} ürününüz hakkında bilgi almak istiyorum.`;
@@ -139,12 +167,13 @@ const ProductsPage = ({ language }) => {
           throw new Error(`HTTP error! status: ${productsResponse.status}`);
         }
         
-        const productsData = JSON.parse(text);
+        const productsData = JSON.parse(text) as Product[];
         console.log('Parsed products:', productsData);
         setProducts(productsData);
 
       } catch (error) {
         console.error('Error fetching data:', error);
+        setError(error instanceof Error ? error.message : 'An unknown error occurred');
       } finally {
         setLoading(false);
       }
@@ -426,7 +455,7 @@ const ProductsPage = ({ language }) => {
             {t.customOrdersDescription}
           </p>
           <Link to="/contact" className="btn-primary">
-            {t.contactUs}
+            {t.contact}
           </Link>
         </div>
       </div>

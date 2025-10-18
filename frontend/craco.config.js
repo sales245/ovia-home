@@ -1,10 +1,12 @@
-// Load configuration from environment or config file
 const path = require('path');
 
 // Environment variable overrides
 const config = {
   disableHotReload: process.env.DISABLE_HOT_RELOAD === 'true',
 };
+
+// Add TypeScript and JSX support
+process.env.TSC_COMPILE_ON_ERROR = 'true';
 
 module.exports = {
   webpack: {

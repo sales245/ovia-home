@@ -1,0 +1,28 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Product {
+  id        String      @id @default(cuid())
+  slug      String      @unique
+  name      String
+  currency  String      @default("TRY") 
+  tiers     PriceTier[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
+model PriceTier {
+  id        String   @id @default(cuid())
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String
+  mode      String  // "RETAIL" or "WHOLESALE"
+  min       Int
+  price     Float
+  @@index([productId, mode, min])
+}

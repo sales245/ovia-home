@@ -1,105 +1,5 @@
-// functions/api/products.ts
-
-// --- Veri Tipleri ---
-export type Product = {
-  id: string;
-  name: string;
-  price: number;
-};
-
-const mock: Product[] = [{ id: "1", name: "Sample", price: 99.9 }];
-
-/* =========================
-   B) Next.js API Route kullanıyorsan
-   (Bunu kullanıyorsan dosya konumu genelde pages/api/products.ts olur,
-    ama burada örnek olsun diye bırakıyorum.)
-========================= */
-import type { NextApiRequest, NextApiResponse } from "next";
-
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method === "GET") {
-    res.status(200).json({ items: mock });
-  } else {
-    res.status(405).json({ message: "Method not allowed" });
-  }
-}
-  };
-  image?: string;
-  features?: {
-    en: string[];
-    tr: string[];
-  };
-  badges?: string[];
-  retail_price: number;
-  min_wholesale_quantity: number;
-  stock_quantity?: number;
-  in_stock: boolean;
-  priceTiers?: Array<{
-    quantity: number;
-    price: number;
-  }>;
-}
-
-interface DBProduct {
-  id: number;
-  category: string;
-  name_en: string;
-  name_tr: string;
-  name_de?: string;
-  image?: string;
-  features_en: string;
-  features_tr: string;
-  badges?: string;
-  retail_price: number;
-  min_wholesale_quantity: number;
-  stock_quantity: number;
-  in_stock: number;
-  price_tiers: string;
-  created_at: string;
-}
-
-interface Env {
-  DB: D1Database;
-}
-
-interface D1PreparedStatement {
-  bind(...values: any[]): D1PreparedStatement;
-  first<T = unknown>(column?: string): Promise<T>;
-  run<T = unknown>(): Promise<D1Response>;
-  all<T = Record<string, unknown>>(): Promise<D1Result<T>>;
-}
-
-interface D1Response {
-  success: boolean;
-  error?: string;
-  meta?: {
-    changes: number;
-    last_row_id: number;
-  };
-}
-
-interface D1Result<T> {
-  results?: T[];
-  success: boolean;
-  error?: string;
-  meta?: {
-    changes: number;
-    last_row_id: number;
-  };
-}
-
-interface ApiResponse {
-  success?: boolean;
-  error?: string;
-  message?: string;
-  data?: any;
-  count?: number;
-  id?: number;
-}
-
-export async function onRequest(
-  context: EventContext<Env, string, Record<string, unknown>>
-): Promise<Response> {
+// Cloudflare Pages Function - Products API Endpoint
+export async function onRequest(context) {
   const { request, env } = context;
   
   // CORS headers for all responses
@@ -131,21 +31,21 @@ export async function onRequest(
 
     // Handle different HTTP methods
     switch (request.method) {
-      case 'GET': {
+      case 'GET':
         // Get all products
-        const result = await DB.prepare(
+        const { results } = await DB.prepare(
           'SELECT * FROM products ORDER BY created_at DESC'
-        ).all<DBProduct>();
+        ).all();
         
         // Transform data to match frontend expectations
-        const products = result.results?.map((product: DBProduct): ProductData => ({
+        const products = results.map(product => ({
           id: product.id.toString(),
           category: product.category,
           image: product.image || "https://via.placeholder.com/300x200",
           name: {
             en: product.name_en,
             tr: product.name_tr,
-            de: product.name_de || product.name_en
+            de: product.name_de || product.name.en
           },
           features: {
             en: JSON.parse(product.features_en || '[]'),
@@ -157,21 +57,20 @@ export async function onRequest(
           in_stock: Boolean(product.in_stock),
           stock_quantity: product.stock_quantity,
           priceTiers: JSON.parse(product.price_tiers || '[]')
-        })) || [];
+        }));
 
         return new Response(JSON.stringify({
           success: true,
           data: products,
           count: products.length
-        } as ApiResponse), {
+        }), {
           status: 200,
           headers: corsHeaders
         });
-      }
 
-      case 'POST': {
+      case 'POST':
         // Add new product
-        const productData = await request.json() as ProductData;
+        const productData = await request.json();
         
         try {
           const insertResult = await DB.prepare(`
@@ -199,19 +98,19 @@ export async function onRequest(
             productData.image || "https://via.placeholder.com/300x200",
             JSON.stringify(productData.features?.en || []),
             JSON.stringify(productData.features?.tr || []),
-            productData.badges?.join(',') || '',
+            Array.isArray(productData.badges) ? productData.badges.join(',') : '',
             productData.retail_price,
             productData.min_wholesale_quantity,
             productData.stock_quantity || 0,
-            Number(productData.in_stock),
+            Boolean(productData.in_stock),
             JSON.stringify(productData.priceTiers || [])
           ).run();
 
           return new Response(JSON.stringify({
             success: true,
             message: 'Product created successfully',
-            id: insertResult.meta?.last_row_id
-          } as ApiResponse), {
+            id: insertResult.lastRowId
+          }), {
             status: 201,
             headers: corsHeaders
           });
@@ -220,22 +119,21 @@ export async function onRequest(
           console.error('Error inserting product:', error);
           return new Response(JSON.stringify({
             error: 'Failed to create product',
-            message: error instanceof Error ? error.message : 'Unknown error'
-          } as ApiResponse), {
+            message: error.message
+          }), {
             status: 400,
             headers: corsHeaders
           });
         }
-      }
 
-      case 'PUT': {
+      case 'PUT':
         // Update existing product
-        const { id, ...updateData } = await request.json() as ProductData & { id: string };
+        const { id, ...updateData } = await request.json();
         if (!id) {
           return new Response(JSON.stringify({
             error: 'Invalid request',
             message: 'Product ID is required'
-          } as ApiResponse), {
+          }), {
             status: 400,
             headers: corsHeaders
           });
@@ -266,20 +164,20 @@ export async function onRequest(
             updateData.image || "https://via.placeholder.com/300x200",
             JSON.stringify(updateData.features?.en || []),
             JSON.stringify(updateData.features?.tr || []),
-            updateData.badges?.join(',') || '',
+            Array.isArray(updateData.badges) ? updateData.badges.join(',') : '',
             updateData.retail_price,
             updateData.min_wholesale_quantity,
             updateData.stock_quantity || 0,
-            Number(updateData.in_stock),
+            Boolean(updateData.in_stock),
             JSON.stringify(updateData.priceTiers || []),
             id
           ).run();
 
-          if (updateResult.meta?.changes === 0) {
+          if (updateResult.changes === 0) {
             return new Response(JSON.stringify({
               error: 'Not found',
               message: 'Product not found'
-            } as ApiResponse), {
+            }), {
               status: 404,
               headers: corsHeaders
             });
@@ -288,7 +186,7 @@ export async function onRequest(
           return new Response(JSON.stringify({
             success: true,
             message: 'Product updated successfully'
-          } as ApiResponse), {
+          }), {
             status: 200,
             headers: corsHeaders
           });
@@ -297,22 +195,21 @@ export async function onRequest(
           console.error('Error updating product:', error);
           return new Response(JSON.stringify({
             error: 'Failed to update product',
-            message: error instanceof Error ? error.message : 'Unknown error'
-          } as ApiResponse), {
+            message: error.message
+          }), {
             status: 400,
             headers: corsHeaders
           });
         }
-      }
 
-      case 'DELETE': {
+      case 'DELETE':
         // Delete product
-        const deleteData = await request.json() as { id: string };
+        const deleteData = await request.json();
         if (!deleteData.id) {
           return new Response(JSON.stringify({
             error: 'Invalid request',
             message: 'Product ID is required'
-          } as ApiResponse), {
+          }), {
             status: 400,
             headers: corsHeaders
           });
@@ -323,11 +220,11 @@ export async function onRequest(
             .bind(deleteData.id)
             .run();
 
-          if (deleteResult.meta?.changes === 0) {
+          if (deleteResult.changes === 0) {
             return new Response(JSON.stringify({
               error: 'Not found',
               message: 'Product not found'
-            } as ApiResponse), {
+            }), {
               status: 404,
               headers: corsHeaders
             });
@@ -336,7 +233,7 @@ export async function onRequest(
           return new Response(JSON.stringify({
             success: true,
             message: 'Product deleted successfully'
-          } as ApiResponse), {
+          }), {
             status: 200,
             headers: corsHeaders
           });
@@ -345,19 +242,18 @@ export async function onRequest(
           console.error('Error deleting product:', error);
           return new Response(JSON.stringify({
             error: 'Failed to delete product',
-            message: error instanceof Error ? error.message : 'Unknown error'
-          } as ApiResponse), {
+            message: error.message
+          }), {
             status: 400,
             headers: corsHeaders
           });
         }
-      }
 
       default:
         return new Response(JSON.stringify({
           error: 'Method not allowed',
           message: `${request.method} is not supported`
-        } as ApiResponse), {
+        }), {
           status: 405,
           headers: corsHeaders
         });
@@ -367,8 +263,8 @@ export async function onRequest(
     console.error('Server error:', error);
     return new Response(JSON.stringify({
       error: 'Internal Server Error',
-      message: error instanceof Error ? error.message : 'Unknown error'
-    } as ApiResponse), {
+      message: error.message
+    }), {
       status: 500,
       headers: corsHeaders
     });

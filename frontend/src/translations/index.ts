@@ -1,0 +1,895 @@
+export type Language = 'en' | 'tr' | 'de' | 'fr' | 'it' | 'es' | 'pl' | 'ru' | 'bg' | 'el' | 'pt' | 'ar';
+
+export type TranslationType = {
+  [key in Language]: {
+    // Common
+    home: string;
+    products: string;
+    about: string;
+    contact: string;
+    addToCart: string;
+    cart: string;
+    quantity: string;
+    total: string;
+    customerType: string;
+    retail: string;
+    wholesale: string;
+    price: string;
+    unitPrice: string;
+    orderQuantity: string;
+    customerPanel: string;
+    getQuote: string;
+    language: string;
+    login: string;
+    register: string;
+    pieces: string;
+    
+    // Hero Section
+    heroTitle: string;
+    heroSubtitle: string;
+    exploreProducts: string;
+    whyChooseUs: string;
+    qualityCraftsmanship: string;
+    qualityDesc: string;
+    naturalMaterials: string;
+    materialsDesc: string;
+    certifiedQuality: string;
+    certifiedDesc: string;
+    globalReach: string;
+    reachDesc: string;
+    
+    // Products
+    ourProducts: string;
+    allProducts: string;
+    allCategories: string;
+    productsDesc: string;
+    searchProducts: string;
+    filters: string;
+    sortDefault: string;
+    sortPriceLow: string;
+    sortPriceHigh: string;
+    noProductsFound: string;
+    tryDifferentSearch: string;
+    inStock: string;
+    outOfStock: string;
+    customOrdersTitle: string;
+    customOrdersDescription: string;
+    bathrobes: string;
+    towels: string;
+    bedding: string;
+    homeDecor: string;
+    bathrobesDesc: string;
+    towelsDesc: string;
+    beddingDesc: string;
+    decorDesc: string;
+    contactForPricing: string;
+    inquireNow: string;
+  }
+};
+
+// frontend/src/translations/index.ts
+
+export type Locale = "tr" | "en";
+
+export type Messages = {
+  hello: string;
+  // ihtiyacına göre başka metin anahtarları ekle
+};
+
+export const translations: Record<Locale, Messages> = {
+  en: {
+    // Common
+    home: 'Home',
+    products: 'Products',
+    about: 'About',
+    contact: 'Contact',
+    
+    // Cart and Shopping
+    addToCart: 'Add to Cart',
+    cart: 'Cart',
+    quantity: 'Quantity',
+    total: 'Total',
+    customerType: 'Customer Type',
+    retail: 'Retail',
+    wholesale: 'Wholesale',
+    price: 'Price',
+    unitPrice: 'Unit Price',
+    orderQuantity: 'Order Quantity',
+    customerPanel: 'Customer Panel',
+    getQuote: 'Get Quote',
+    language: 'Language',
+    login: 'Login',
+    register: 'Register',
+    wholesaleLoginRequired: 'Wholesale Login Required',
+    wholesaleLoginMessage: 'To access wholesale prices and product information, please log in or contact us to create a wholesale account.',
+    contactForAccount: 'Contact Us for Wholesale Account',
+    retailProducts: 'Retail Products',
+    wholesaleProducts: 'Wholesale Products',
+    retailDescription: 'Premium quality home textiles available for individual buyers',
+    wholesaleDescription: 'Bulk purchase options for businesses with competitive pricing',
+    getRetailQuote: 'Get Retail Quote',
+    getWholesaleQuote: 'Get Wholesale Quote',
+    minOrder: 'Minimum Order',
+    pieces: 'pieces',
+    
+    // Homepage
+    heroTitle: 'Premium Turkish Home Textiles',
+    heroSubtitle: 'Discover the finest cotton, bamboo, and linen textiles crafted with traditional Turkish artistry for wholesale partners worldwide.',
+    exploreProducts: 'Explore Products',
+    whyChooseUs: 'Why Choose Ovia Home',
+    qualityCraftsmanship: 'Quality Craftsmanship',
+    qualityDesc: 'Traditional Turkish weaving techniques passed down through generations',
+    naturalMaterials: 'Natural Materials',
+    materialsDesc: 'Premium cotton, bamboo, and linen sourced from sustainable farms',
+    certifiedQuality: 'Certified Quality',
+    certifiedDesc: 'OEKO-TEX, GOTS, and organic cotton certifications ensure safety',
+    globalReach: 'Global Reach',
+    reachDesc: 'Trusted by wholesalers in 30+ countries worldwide',
+    ourProducts: 'Our Product Categories',
+    allCategories: 'All Categories',
+    productsDesc: 'Discover our comprehensive range of premium Turkish home textiles, crafted with traditional techniques and modern quality standards.',
+    contactForPricing: 'Contact for Wholesale Pricing',
+    inquireNow: 'Inquire Now',
+    // Cart and Shopping
+    addToCart: 'Add to Cart',
+    cart: 'Cart',
+    quantity: 'Quantity',
+    total: 'Total',
+    customerType: 'Customer Type',
+    retail: 'Retail',
+    wholesale: 'Wholesale',
+    price: 'Price',
+    unitPrice: 'Unit Price',
+    orderQuantity: 'Order Quantity',
+    retailPrice: 'Retail Price',
+    wholesalePrice: 'Wholesale Price',
+    minQuantity: 'Min Quantity',
+    inStock: 'In Stock',
+    outOfStock: 'Out of Stock',
+    units: 'units',
+    productFeatures: 'Product Features',
+    qualityMaterials: 'Quality Materials',
+    expertCraftsmanship: 'Expert Craftsmanship',
+    certifiedSafe: 'Certified Safe',
+    sustainableProduction: 'Sustainable Production',
+    bathrobes: 'Bathrobes',
+    bathrobesDesc: 'Luxurious cotton and bamboo bathrobes for ultimate comfort',
+    towels: 'Towels',
+    towelsDesc: 'Absorbent and soft towels in various sizes and colors',
+    bedding: 'Bedding',
+    beddingDesc: 'Premium bed linens and comforters for restful sleep',
+    homeDecor: 'Home Décor',
+    decorDesc: 'Beautiful curtains, cushions, and decorative textiles',
+    trustIndicators: 'Trusted by Global Partners',
+    countries: 'Countries Served',
+    yearsExp: 'Years Experience',
+    certificates: 'Certificates',
+    customers: 'Happy Customers',
+    
+    // Contact
+    contactUs: 'Contact Us',
+    productInquiry: 'Product Inquiry',
+    bulkQuote: 'Bulk Quote Request',
+    contactInfo: 'Contact Information',
+    name: 'Full Name',
+    email: 'Email Address',
+    company: 'Company Name',
+    phone: 'Phone Number',
+    country: 'Country',
+    message: 'Message',
+    sendInquiry: 'Send Inquiry',
+    requestQuote: 'Request Quote'
+  },
+  
+  tr: {
+    // Common
+    home: 'Ana Sayfa',
+    products: 'Ürünler',
+    about: 'Hakkımızda',
+    contact: 'İletişim',
+    customerPanel: 'Müşteri Paneli',
+    getQuote: 'Teklif Al',
+    language: 'Dil',
+    login: 'Giriş Yap',
+    register: 'Kayıt Ol',
+    wholesaleLoginRequired: 'Toptan Satış İçin Giriş Gerekli',
+    wholesaleLoginMessage: 'Toptan fiyatları ve ürün bilgilerini görüntülemek için lütfen giriş yapın veya toptan satış hesabı oluşturmak için bizimle iletişime geçin.',
+    contactForAccount: 'Toptan Satış Hesabı İçin İletişime Geçin',
+    retailProducts: 'Perakende Ürünler',
+    wholesaleProducts: 'Toptan Ürünler',
+    retailDescription: 'Bireysel alıcılar için premium kalitede ev tekstili ürünleri',
+    wholesaleDescription: 'İşletmeler için uygun fiyatlı toplu alım seçenekleri',
+    getRetailQuote: 'Perakende Fiyat Al',
+    getWholesaleQuote: 'Toptan Fiyat Al',
+    minOrder: 'Minimum Sipariş',
+    pieces: 'adet',
+    
+    // Homepage
+    heroTitle: 'Premium Türk Ev Tekstilleri',
+    heroSubtitle: 'Dünya çapındaki toptan ortaklar için geleneksel Türk sanatıyla üretilmiş en kaliteli pamuk, bambu ve keten tekstilleri keşfedin.',
+    exploreProducts: 'Ürünleri Keşfet',
+    whyChooseUs: 'Neden Ovia Home?',
+    qualityCraftsmanship: 'Kaliteli İşçilik',
+    qualityDesc: 'Nesillerden nesilere aktarılan geleneksel Türk dokuma teknikleri',
+    naturalMaterials: 'Doğal Malzemeler',
+    materialsDesc: 'Sürdürülebilir çiftliklerden temin edilen premium pamuk, bambu ve keten',
+    certifiedQuality: 'Sertifikalı Kalite',
+    certifiedDesc: 'OEKO-TEX, GOTS ve organik pamuk sertifikaları güvenliği garanti eder',
+    globalReach: 'Küresel Erişim',
+    reachDesc: '30+ ülkede toptancılar tarafından güvenilen marka',
+    ourProducts: 'Ürün Kategorilerimiz',
+    allCategories: 'Tüm Kategoriler',
+    productsDesc: 'Geleneksel teknikler ve modern kalite standartlarıyla üretilen kapsamlı premium Türk ev tekstilleri yelpazemizi keşfedin.',
+    contactForPricing: 'Toptan Fiyatlandırma İçin İletişime Geçin',
+    inquireNow: 'Şimdi Sorgula',
+    // Cart and Shopping
+    addToCart: 'Sepete Ekle',
+    cart: 'Sepet',
+    quantity: 'Miktar',
+    total: 'Toplam',
+    customerType: 'Müşteri Tipi',
+    retail: 'Perakende',
+    wholesale: 'Toptan',
+    price: 'Fiyat',
+    retailPrice: 'Perakende Fiyatı',
+    wholesalePrice: 'Toptan Fiyatı',
+    minQuantity: 'Min Miktar',
+    inStock: 'Stokta',
+    outOfStock: 'Stokta Yok',
+    units: 'adet',
+    productFeatures: 'Ürün Özellikleri',
+    qualityMaterials: 'Kaliteli Malzemeler',
+    expertCraftsmanship: 'Uzman İşçilik',
+    certifiedSafe: 'Sertifikalı Güvenli',
+    sustainableProduction: 'Sürdürülebilir Üretim',
+    bathrobes: 'Bornozlar',
+    bathrobesDesc: 'Nihai konfor için lüks pamuk ve bambu bornozları',
+    towels: 'Havlular',
+    towelsDesc: 'Çeşitli boyut ve renklerde emici ve yumuşak havlular',
+    bedding: 'Yatak Takımları',
+    beddingDesc: 'Rahat uyku için premium yatak örtüleri ve yorganlar',
+    homeDecor: 'Ev Dekorasyonu',
+    decorDesc: 'Güzel perdeler, yastıklar ve dekoratif tekstiller',
+    trustIndicators: 'Küresel Ortaklar Tarafından Güvenilen',
+    countries: 'Hizmet Verilen Ülke',
+    yearsExp: 'Yıl Deneyim',
+    certificates: 'Sertifika',
+    customers: 'Mutlu Müşteri',
+    
+    // Contact
+    contactUs: 'İletişim',
+    productInquiry: 'Ürün Sorgusu',
+    bulkQuote: 'Toptan Teklif Talebi',
+    contactInfo: 'İletişim Bilgileri',
+    name: 'Ad Soyad',
+    email: 'E-posta Adresi',
+    company: 'Şirket Adı',
+    phone: 'Telefon Numarası',
+    country: 'Ülke',
+    message: 'Mesaj',
+    sendInquiry: 'Sorgula',
+    requestQuote: 'Teklif İste'
+  },
+  
+  de: {
+    // Common
+    home: 'Startseite',
+    products: 'Produkte',
+    about: 'Über uns',
+    contact: 'Kontakt',
+    customerPanel: 'Kundenbereich',
+    getQuote: 'Angebot erhalten',
+    language: 'Sprache',
+    
+    // Homepage
+    heroTitle: 'Premium Türkische Heimtextilien',
+    heroSubtitle: 'Entdecken Sie die feinsten Baumwoll-, Bambus- und Leinentextilien, die mit traditioneller türkischer Handwerkskunst für Großhandelspartner weltweit gefertigt werden.',
+    exploreProducts: 'Produkte erkunden',
+    whyChooseUs: 'Warum Ovia Home wählen?',
+    qualityCraftsmanship: 'Hochwertige Handwerkskunst',
+    qualityDesc: 'Traditionelle türkische Webtechniken, die über Generationen weitergegeben wurden',
+    naturalMaterials: 'Natürliche Materialien',
+    materialsDesc: 'Premium Baumwolle, Bambus und Leinen aus nachhaltigen Betrieben',
+    certifiedQuality: 'Zertifizierte Qualität',
+    certifiedDesc: 'OEKO-TEX, GOTS und Bio-Baumwoll-Zertifizierungen gewährleisten Sicherheit',
+    globalReach: 'Globale Reichweite',
+    reachDesc: 'Vertrauen von Großhändlern in über 30 Ländern weltweit',
+    ourProducts: 'Unsere Produktkategorien',
+    allCategories: 'Alle Kategorien',
+    productsDesc: 'Entdecken Sie unser umfassendes Sortiment an hochwertigen türkischen Heimtextilien, gefertigt mit traditionellen Techniken und modernen Qualitätsstandards.',
+    contactForPricing: 'Kontakt für Großhandelspreise',
+    inquireNow: 'Jetzt anfragen',
+    productFeatures: 'Produkteigenschaften',
+    qualityMaterials: 'Hochwertige Materialien',
+    expertCraftsmanship: 'Fachkundige Handwerkskunst',
+    certifiedSafe: 'Zertifiziert sicher',
+    sustainableProduction: 'Nachhaltige Produktion',
+    bathrobes: 'Bademäntel',
+    bathrobesDesc: 'Luxuriöse Baumwoll- und Bambusbademäntel für ultimativen Komfort',
+    towels: 'Handtücher',
+    towelsDesc: 'Saugfähige und weiche Handtücher in verschiedenen Größen und Farben',
+    bedding: 'Bettwäsche',
+    beddingDesc: 'Premium Bettwäsche und Bettdecken für erholsamen Schlaf',
+    homeDecor: 'Wohndekoration',
+    decorDesc: 'Schöne Vorhänge, Kissen und dekorative Textilien',
+    trustIndicators: 'Vertrauen globaler Partner',
+    countries: 'Bediente Länder',
+    yearsExp: 'Jahre Erfahrung',
+    certificates: 'Zertifikate',
+    customers: 'Zufriedene Kunden',
+    
+    // Contact
+    contactUs: 'Kontaktieren Sie uns',
+    productInquiry: 'Produktanfrage',
+    bulkQuote: 'Großmengen-Angebot anfordern',
+    contactInfo: 'Kontaktinformationen',
+    name: 'Vollständiger Name',
+    email: 'E-Mail-Adresse',
+    company: 'Firmenname',
+    phone: 'Telefonnummer',
+    country: 'Land',
+    message: 'Nachricht',
+    sendInquiry: 'Anfrage senden',
+    requestQuote: 'Angebot anfordern'
+  },
+  
+  fr: {
+    // Common
+    home: 'Accueil',
+    products: 'Produits',
+    about: 'À propos',
+    contact: 'Contact',
+    customerPanel: 'Espace Client',
+    getQuote: 'Obtenir un devis',
+    language: 'Langue',
+    
+    // Homepage
+    heroTitle: 'Textiles de Maison Turcs Premium',
+    heroSubtitle: 'Découvrez les plus beaux textiles en coton, bambou et lin fabriqués avec l\'artisanat traditionnel turc pour les partenaires grossistes du monde entier.',
+    exploreProducts: 'Explorer les produits',
+    whyChooseUs: 'Pourquoi choisir Ovia Home?',
+    qualityCraftsmanship: 'Artisanat de qualité',
+    qualityDesc: 'Techniques de tissage traditionnelles turques transmises de génération en génération',
+    naturalMaterials: 'Matériaux naturels',
+    materialsDesc: 'Coton, bambou et lin premium provenant de fermes durables',
+    certifiedQuality: 'Qualité certifiée',
+    certifiedDesc: 'Les certifications OEKO-TEX, GOTS et coton biologique garantissent la sécurité',
+    globalReach: 'Portée mondiale',
+    reachDesc: 'Approuvé par des grossistes dans plus de 30 pays',
+    ourProducts: 'Nos catégories de produits',
+    allCategories: 'Toutes les catégories',
+    productsDesc: 'Découvrez notre gamme complète de textiles de maison turcs premium, fabriqués avec des techniques traditionnelles et des standards de qualité modernes.',
+    contactForPricing: 'Contact pour les prix de gros',
+    inquireNow: 'Demander maintenant',
+    productFeatures: 'Caractéristiques du produit',
+    qualityMaterials: 'Matériaux de qualité',
+    expertCraftsmanship: 'Artisanat expert',
+    certifiedSafe: 'Certifié sûr',
+    sustainableProduction: 'Production durable',
+    bathrobes: 'Peignoirs',
+    bathrobesDesc: 'Peignoirs luxueux en coton et bambou pour un confort ultime',
+    towels: 'Serviettes',
+    towelsDesc: 'Serviettes absorbantes et douces dans diverses tailles et couleurs',
+    bedding: 'Literie',
+    beddingDesc: 'Linge de lit et couettes premium pour un sommeil réparateur',
+    homeDecor: 'Décoration intérieure',
+    decorDesc: 'Beaux rideaux, coussins et textiles décoratifs',
+    trustIndicators: 'Approuvé par des partenaires mondiaux',
+    countries: 'Pays desservis',
+    yearsExp: 'Années d\'expérience',
+    certificates: 'Certificats',
+    customers: 'Clients satisfaits',
+    
+    // Contact
+    contactUs: 'Contactez-nous',
+    productInquiry: 'Demande de produit',
+    bulkQuote: 'Demande de devis en gros',
+    contactInfo: 'Informations de contact',
+    name: 'Nom complet',
+    email: 'Adresse e-mail',
+    company: 'Nom de l\'entreprise',
+    phone: 'Numéro de téléphone',
+    country: 'Pays',
+    message: 'Message',
+    sendInquiry: 'Envoyer la demande',
+    requestQuote: 'Demander un devis'
+  },
+  
+  it: {
+    // Common
+    home: 'Home',
+    products: 'Prodotti',
+    about: 'Chi siamo',
+    contact: 'Contatti',
+    customerPanel: 'Area Cliente',
+    getQuote: 'Richiedi preventivo',
+    language: 'Lingua',
+    
+    // Homepage
+    heroTitle: 'Tessili per la Casa Turchi Premium',
+    heroSubtitle: 'Scopri i più raffinati tessuti di cotone, bambù e lino realizzati con l\'artigianato tradizionale turco per partner all\'ingrosso in tutto il mondo.',
+    exploreProducts: 'Esplora i prodotti',
+    whyChooseUs: 'Perché scegliere Ovia Home?',
+    qualityCraftsmanship: 'Artigianato di qualità',
+    qualityDesc: 'Tecniche di tessitura tradizionali turche tramandate attraverso le generazioni',
+    naturalMaterials: 'Materiali naturali',
+    materialsDesc: 'Cotone, bambù e lino premium provenienti da aziende agricole sostenibili',
+    certifiedQuality: 'Qualità certificata',
+    certifiedDesc: 'Le certificazioni OEKO-TEX, GOTS e cotone biologico garantiscono la sicurezza',
+    globalReach: 'Portata globale',
+    reachDesc: 'Fidato dai grossisti in oltre 30 paesi nel mondo',
+    ourProducts: 'Le nostre categorie di prodotti',
+    bathrobes: 'Accappatoi',
+    bathrobesDesc: 'Accappatoi lussuosi in cotone e bambù per il massimo comfort',
+    towels: 'Asciugamani',
+    towelsDesc: 'Asciugamani assorbenti e morbidi in varie dimensioni e colori',
+    bedding: 'Biancheria da letto',
+    beddingDesc: 'Lenzuola e piumoni premium per un sonno riposante',
+    homeDecor: 'Arredamento casa',
+    decorDesc: 'Bellissime tende, cuscini e tessuti decorativi',
+    trustIndicators: 'Fidato da partner globali',
+    countries: 'Paesi serviti',
+    yearsExp: 'Anni di esperienza',
+    certificates: 'Certificati',
+    customers: 'Clienti soddisfatti',
+    
+    // Contact
+    contactUs: 'Contattaci',
+    productInquiry: 'Richiesta prodotto',
+    bulkQuote: 'Richiesta preventivo all\'ingrosso',
+    contactInfo: 'Informazioni di contatto',
+    name: 'Nome completo',
+    email: 'Indirizzo email',
+    company: 'Nome azienda',
+    phone: 'Numero di telefono',
+    country: 'Paese',
+    message: 'Messaggio',
+    sendInquiry: 'Invia richiesta',
+    requestQuote: 'Richiedi preventivo'
+  },
+  
+  es: {
+    // Common
+    home: 'Inicio',
+    products: 'Productos',
+    about: 'Acerca de',
+    contact: 'Contacto',
+    customerPanel: 'Panel del Cliente',
+    getQuote: 'Obtener cotización',
+    language: 'Idioma',
+    
+    // Homepage
+    heroTitle: 'Textiles para el Hogar Turcos Premium',
+    heroSubtitle: 'Descubre los más finos textiles de algodón, bambú y lino elaborados con artesanía tradicional turca para socios mayoristas en todo el mundo.',
+    exploreProducts: 'Explorar productos',
+    whyChooseUs: '¿Por qué elegir Ovia Home?',
+    qualityCraftsmanship: 'Artesanía de calidad',
+    qualityDesc: 'Técnicas de tejido tradicionales turcas transmitidas a través de generaciones',
+    naturalMaterials: 'Materiales naturales',
+    materialsDesc: 'Algodón, bambú y lino premium de granjas sostenibles',
+    certifiedQuality: 'Calidad certificada',
+    certifiedDesc: 'Las certificaciones OEKO-TEX, GOTS y algodón orgánico garantizan la seguridad',
+    globalReach: 'Alcance global',
+    reachDesc: 'Confiado por mayoristas en más de 30 países en todo el mundo',
+    ourProducts: 'Nuestras categorías de productos',
+    bathrobes: 'Albornoces',
+    bathrobesDesc: 'Albornoces lujosos de algodón y bambú para la máxima comodidad',
+    towels: 'Toallas',
+    towelsDesc: 'Toallas absorbentes y suaves en varios tamaños y colores',
+    bedding: 'Ropa de cama',
+    beddingDesc: 'Sábanas y edredones premium para un sueño reparador',
+    homeDecor: 'Decoración del hogar',
+    decorDesc: 'Hermosas cortinas, cojines y textiles decorativos',
+    trustIndicators: 'Confiado por socios globales',
+    countries: 'Países atendidos',
+    yearsExp: 'Años de experiencia',
+    certificates: 'Certificados',
+    customers: 'Clientes satisfechos',
+    
+    // Contact
+    contactUs: 'Contáctanos',
+    productInquiry: 'Consulta de producto',
+    bulkQuote: 'Solicitud de cotización al por mayor',
+    contactInfo: 'Información de contacto',
+    name: 'Nombre completo',
+    email: 'Dirección de correo',
+    company: 'Nombre de la empresa',
+    phone: 'Número de teléfono',
+    country: 'País',
+    message: 'Mensaje',
+    sendInquiry: 'Enviar consulta',
+    requestQuote: 'Solicitar cotización'
+  },
+  
+  pl: {
+    // Common
+    home: 'Strona główna',
+    products: 'Produkty',
+    about: 'O nas',
+    contact: 'Kontakt',
+    customerPanel: 'Panel Klienta',
+    getQuote: 'Otrzymaj wycenę',
+    language: 'Język',
+    
+    // Homepage
+    heroTitle: 'Premium Tureckie Tekstylia Domowe',
+    heroSubtitle: 'Odkryj najlepsze tekstylia z bawełny, bambusa i lnu wykonane z tradycyjną turecką rzemiosłem dla partnerów hurtowych na całym świecie.',
+    exploreProducts: 'Przeglądaj produkty',
+    whyChooseUs: 'Dlaczego wybierać Ovia Home?',
+    qualityCraftsmanship: 'Wysokiej jakości rzemiosło',
+    qualityDesc: 'Tradycyjne tureckie techniki tkania przekazywane z pokolenia na pokolenie',
+    naturalMaterials: 'Naturalne materiały',
+    materialsDesc: 'Premium bawełna, bambus i len z zrównoważonych farm',
+    certifiedQuality: 'Certyfikowana jakość',
+    certifiedDesc: 'Certyfikaty OEKO-TEX, GOTS i bawełny organicznej zapewniają bezpieczeństwo',
+    globalReach: 'Globalny zasięg',
+    reachDesc: 'Zaufanie hurtowników w ponad 30 krajach na świecie',
+    ourProducts: 'Nasze kategorie produktów',
+    bathrobes: 'Szlafroki',
+    bathrobesDesc: 'Luksusowe szlafroki z bawełny i bambusa dla najwyższego komfortu',
+    towels: 'Ręczniki',
+    towelsDesc: 'Chłonne i miękkie ręczniki w różnych rozmiarach i kolorach',
+    bedding: 'Pościel',
+    beddingDesc: 'Premium pościel i kołdry dla spokojnego snu',
+    homeDecor: 'Dekoracje domu',
+    decorDesc: 'Piękne zasłony, poduszki i tekstylia dekoracyjne',
+    trustIndicators: 'Zaufanie globalnych partnerów',
+    countries: 'Obsługiwane kraje',
+    yearsExp: 'Lat doświadczenia',
+    certificates: 'Certyfikaty',
+    customers: 'Zadowoleni klienci',
+    
+    // Contact
+    contactUs: 'Skontaktuj się z nami',
+    productInquiry: 'Zapytanie o produkt',
+    bulkQuote: 'Zapytanie o wycenę hurtową',
+    contactInfo: 'Informacje kontaktowe',
+    name: 'Imię i nazwisko',
+    email: 'Adres email',
+    company: 'Nazwa firmy',
+    phone: 'Numer telefonu',
+    country: 'Kraj',
+    message: 'Wiadomość',
+    sendInquiry: 'Wyślij zapytanie',
+    requestQuote: 'Poproś o wycenę'
+  },
+  
+  ru: {
+    // Common
+    home: 'Главная',
+    products: 'Продукты',
+    about: 'О нас',
+    contact: 'Контакты',
+    customerPanel: 'Панель клиента',
+    getQuote: 'Получить предложение',
+    language: 'Язык',
+    
+    // Homepage
+    heroTitle: 'Премиум турецкий домашний текстиль',
+    heroSubtitle: 'Откройте для себя лучшие хлопковые, бамбуковые и льняные ткани, созданные с традиционным турецким мастерством для оптовых партнеров по всему миру.',
+    exploreProducts: 'Изучить продукты',
+    whyChooseUs: 'Почему выбирают Ovia Home?',
+    qualityCraftsmanship: 'Качественное мастерство',
+    qualityDesc: 'Традиционные турецкие техники ткачества, передаваемые из поколения в поколение',
+    naturalMaterials: 'Натуральные материалы',
+    materialsDesc: 'Премиум хлопок, бамбук и лен с устойчивых ферм',
+    certifiedQuality: 'Сертифицированное качество',
+    certifiedDesc: 'Сертификации OEKO-TEX, GOTS и органического хлопка обеспечивают безопасность',
+    globalReach: 'Глобальный охват',
+    reachDesc: 'Доверие оптовиков в более чем 30 странах мира',
+    ourProducts: 'Наши категории продуктов',
+    bathrobes: 'Халаты',
+    bathrobesDesc: 'Роскошные хлопковые и бамбуковые халаты для максимального комфорта',
+    towels: 'Полотенца',
+    towelsDesc: 'Впитывающие и мягкие полотенца различных размеров и цветов',
+    bedding: 'Постельное белье',
+    beddingDesc: 'Премиум постельное белье и одеяла для спокойного сна',
+    homeDecor: 'Домашний декор',
+    decorDesc: 'Красивые шторы, подушки и декоративные ткани',
+    trustIndicators: 'Доверие глобальных партнеров',
+    countries: 'Обслуживаемые страны',
+    yearsExp: 'Лет опыта',
+    certificates: 'Сертификаты',
+    customers: 'Довольные клиенты',
+    
+    // Contact
+    contactUs: 'Свяжитесь с нами',
+    productInquiry: 'Запрос продукта',
+    bulkQuote: 'Запрос оптового предложения',
+    contactInfo: 'Контактная информация',
+    name: 'Полное имя',
+    email: 'Адрес электронной почты',
+    company: 'Название компании',
+    phone: 'Номер телефона',
+    country: 'Страна',
+    message: 'Сообщение',
+    sendInquiry: 'Отправить запрос',
+    requestQuote: 'Запросить предложение'
+  },
+  
+  bg: {
+    // Common
+    home: 'Начало',
+    products: 'Продукти',
+    about: 'За нас',
+    contact: 'Контакти',
+    customerPanel: 'Клиентски панел',
+    getQuote: 'Получи оферта',
+    language: 'Език',
+    
+    // Homepage
+    heroTitle: 'Премиум турски домашни текстили',
+    heroSubtitle: 'Открийте най-фините памучни, бамбукови и ленени текстили, изработени с традиционно турско майсторство за търговски партньори по света.',
+    exploreProducts: 'Разгледай продукти',
+    whyChooseUs: 'Защо да изберете Ovia Home?',
+    qualityCraftsmanship: 'Качествено майсторство',
+    qualityDesc: 'Традиционни турски техники на тъкане, предавани през поколенията',
+    naturalMaterials: 'Естествени материали',
+    materialsDesc: 'Премиум памук, бамбук и лен от устойчиви ферми',
+    certifiedQuality: 'Сертифицирано качество',
+    certifiedDesc: 'Сертификатите OEKO-TEX, GOTS и органичен памук гарантират безопасност',
+    globalReach: 'Глобален обхват',
+    reachDesc: 'Доверие от търговци на едро в над 30 страни по света',
+    ourProducts: 'Нашите категории продукти',
+    bathrobes: 'Халати',
+    bathrobesDesc: 'Луксозни памучни и бамбукови халати за максимален комфорт',
+    towels: 'Хавлии',
+    towelsDesc: 'Попиващи и меки хавлии в различни размери и цветове',
+    bedding: 'Спално бельо',
+    beddingDesc: 'Премиум спално бельо и завивки за спокоен сън',
+    homeDecor: 'Домашна декорация',
+    decorDesc: 'Красиви завеси, възглавници и декоративни текстили',
+    trustIndicators: 'Доверие от глобални партньори',
+    countries: 'Обслужвани страни',
+    yearsExp: 'Години опит',
+    certificates: 'Сертификати',
+    customers: 'Доволни клиенти',
+    
+    // Contact
+    contactUs: 'Свържете се с нас',
+    productInquiry: 'Запитване за продукт',
+    bulkQuote: 'Заявка за търговска оферта',
+    contactInfo: 'Контактна информация',
+    name: 'Пълно име',
+    email: 'Имейл адрес',
+    company: 'Име на компанията',
+    phone: 'Телефонен номер',
+    country: 'Страна',
+    message: 'Съобщение',
+    sendInquiry: 'Изпрати запитване',
+    requestQuote: 'Заяви оферта'
+  },
+  
+  el: {
+    // Common
+    home: 'Αρχική',
+    products: 'Προϊόντα',
+    about: 'Σχετικά με εμάς',
+    contact: 'Επικοινωνία',
+    customerPanel: 'Πάνελ Πελάτη',
+    getQuote: 'Λάβετε προσφορά',
+    language: 'Γλώσσα',
+    
+    // Homepage
+    heroTitle: 'Πριμ Τουρκικά Οικιακά Υφάσματα',
+    heroSubtitle: 'Ανακαλύψτε τα καλύτερα βαμβακερά, μπαμπού και λινά υφάσματα φτιαγμένα με παραδοσιακή τουρκική τεχνοτροπία για χονδρεμπορικούς συνεργάτες παγκοσμίως.',
+    exploreProducts: 'Εξερευνήστε προϊόντα',
+    whyChooseUs: 'Γιατί να επιλέξετε το Ovia Home;',
+    qualityCraftsmanship: 'Ποιοτική τεχνοτροπία',
+    qualityDesc: 'Παραδοσιακές τουρκικές τεχνικές ύφανσης που μεταδίδονται από γενιά σε γενιά',
+    naturalMaterials: 'Φυσικά υλικά',
+    materialsDesc: 'Πριμ βαμβάκι, μπαμπού και λινό από βιώσιμες φάρμες',
+    certifiedQuality: 'Πιστοποιημένη ποιότητα',
+    certifiedDesc: 'Οι πιστοποιήσεις OEKO-TEX, GOTS και οργανικού βαμβακιού εξασφαλίζουν ασφάλεια',
+    globalReach: 'Παγκόσμια εμβέλεια',
+    reachDesc: 'Εμπιστοσύνη από χονδρεμπόρους σε περισσότερες από 30 χώρες παγκοσμίως',
+    ourProducts: 'Οι κατηγορίες προϊόντων μας',
+    bathrobes: 'Μπουρνούζια',
+    bathrobesDesc: 'Πολυτελή βαμβακερά και μπαμπού μπουρνούζια για απόλυτη άνεση',
+    towels: 'Πετσέτες',
+    towelsDesc: 'Απορροφητικές και μαλακές πετσέτες σε διάφορα μεγέθη και χρώματα',
+    bedding: 'Κλινοσκεπάσματα',
+    beddingDesc: 'Πριμ κλινοσκεπάσματα και παπλώματα για ήρεμο ύπνο',
+    homeDecor: 'Διακόσμηση σπιτιού',
+    decorDesc: 'Όμορφες κουρτίνες, μαξιλάρια και διακοσμητικά υφάσματα',
+    trustIndicators: 'Εμπιστοσύνη από παγκόσμιους συνεργάτες',
+    countries: 'Χώρες που εξυπηρετούνται',
+    yearsExp: 'Χρόνια εμπειρίας',
+    certificates: 'Πιστοποιητικά',
+    customers: 'Ευχαριστημένοι πελάτες',
+    
+    // Contact
+    contactUs: 'Επικοινωνήστε μαζί μας',
+    productInquiry: 'Ερώτημα προϊόντος',
+    bulkQuote: 'Αίτημα χονδρικής προσφοράς',
+    contactInfo: 'Στοιχεία επικοινωνίας',
+    name: 'Πλήρες όνομα',
+    email: 'Διεύθυνση email',
+    company: 'Όνομα εταιρείας',
+    phone: 'Αριθμός τηλεφώνου',
+    country: 'Χώρα',
+    message: 'Μήνυμα',
+    sendInquiry: 'Αποστολή ερωτήματος',
+    requestQuote: 'Αίτημα προσφοράς'
+  },
+  
+  pt: {
+    // Common
+    home: 'Início',
+    products: 'Produtos',
+    about: 'Sobre nós',
+    contact: 'Contato',
+    customerPanel: 'Painel do Cliente',
+    getQuote: 'Obter orçamento',
+    language: 'Idioma',
+    
+    // Homepage
+    heroTitle: 'Têxteis Domésticos Turcos Premium',
+    heroSubtitle: 'Descubra os mais finos têxteis de algodão, bambu e linho elaborados com artesanato tradicional turco para parceiros atacadistas em todo o mundo.',
+    exploreProducts: 'Explorar produtos',
+    whyChooseUs: 'Por que escolher Ovia Home?',
+    qualityCraftsmanship: 'Artesanato de qualidade',
+    qualityDesc: 'Técnicas tradicionais turcas de tecelagem transmitidas através das gerações',
+    naturalMaterials: 'Materiais naturais',
+    materialsDesc: 'Algodão, bambu e linho premium de fazendas sustentáveis',
+    certifiedQuality: 'Qualidade certificada',
+    certifiedDesc: 'Certificações OEKO-TEX, GOTS e algodão orgânico garantem segurança',
+    globalReach: 'Alcance global',
+    reachDesc: 'Confiança de atacadistas em mais de 30 países pelo mundo',
+    ourProducts: 'Nossas categorias de produtos',
+    bathrobes: 'Roupões',
+    bathrobesDesc: 'Roupões luxuosos de algodão e bambu para máximo conforto',
+    towels: 'Toalhas',
+    towelsDesc: 'Toalhas absorventes e macias em vários tamanhos e cores',
+    bedding: 'Roupas de cama',
+    beddingDesc: 'Roupas de cama e edredons premium para sono reparador',
+    homeDecor: 'Decoração para casa',
+    decorDesc: 'Lindas cortinas, almofadas e têxteis decorativos',
+    trustIndicators: 'Confiança de parceiros globais',
+    countries: 'Países atendidos',
+    yearsExp: 'Anos de experiência',
+    certificates: 'Certificados',
+    customers: 'Clientes satisfeitos',
+    
+    // Contact
+    contactUs: 'Entre em contato',
+    productInquiry: 'Consulta de produto',
+    bulkQuote: 'Solicitação de orçamento em lote',
+    contactInfo: 'Informações de contato',
+    name: 'Nome completo',
+    email: 'Endereço de email',
+    company: 'Nome da empresa',
+    phone: 'Número de telefone',
+    country: 'País',
+    message: 'Mensagem',
+    sendInquiry: 'Enviar consulta',
+    requestQuote: 'Solicitar orçamento'
+  },
+  
+  nl: {
+    // Common
+    home: 'Home',
+    products: 'Products',
+    about: 'About',
+    contact: 'Contact',
+    customerPanel: 'Customer Panel',
+    getQuote: 'Get Quote',
+    language: 'Taal',
+    // Homepage
+    heroTitle: 'Premium Turkish Home Textiles',
+    heroSubtitle: 'Discover the finest cotton, bamboo, and linen textiles crafted with traditional Turkish artistry for wholesale partners worldwide.',
+    exploreProducts: 'Ontdek Producten',
+    whyChooseUs: 'Waarom Ovia Home',
+    qualityCraftsmanship: 'Kwaliteitsvakmanschap',
+    qualityDesc: 'Traditional Turkish weaving techniques passed down through generations',
+    naturalMaterials: 'Natuurlijke Materialen',
+    materialsDesc: 'Premium cotton, bamboo, and linen sourced from sustainable farms',
+    certifiedQuality: 'Gecertificeerde Kwaliteit',
+    certifiedDesc: 'OEKO-TEX, GOTS, and organic cotton certifications ensure safety',
+    globalReach: 'Wereldwijde Bereik',
+    reachDesc: 'Trusted by wholesalers in 30+ countries worldwide',
+    ourProducts: 'Onze Productcategorieën',
+    allCategories: 'Alle Categorieën',
+    productsDesc: 'Discover our comprehensive range of premium Turkish home textiles, crafted with traditional techniques and modern quality standards.',
+    contactForPricing: 'Contact voor Groothandelsprijzen',
+    inquireNow: 'Nu Informeren',
+    // Cart and Shopping
+    addToCart: 'Toevoegen aan Winkelwagen',
+    cart: 'Winkelwagen',
+    quantity: 'Aantal',
+    total: 'Totaal',
+    customerType: 'Klanttype',
+    retail: 'Detailhandel',
+    wholesale: 'Groothandel',
+    price: 'Prijs',
+    retailPrice: 'Detailhandelsprijs',
+    wholesalePrice: 'Groothandelsprijs',
+    minQuantity: 'Minimale Aantal',
+    inStock: 'Op Voorraad',
+    outOfStock: 'Niet op Voorraad',
+    units: 'eenheden',
+    productFeatures: 'Producteigenschappen',
+    qualityMaterials: 'Kwaliteitsmaterialen',
+    expertCraftsmanship: 'Expert Vakmanschap',
+    certifiedSafe: 'Gecertificeerd Veilig',
+    sustainableProduction: 'Duurzame Productie',
+    bathrobes: 'Badjassen',
+    bathrobesDesc: 'Luxurious cotton and bamboo bathrobes for ultimate comfort',
+    towels: 'Handdoeken',
+    towelsDesc: 'Absorbent and soft towels in various sizes and colors',
+    bedding: 'Beddengoed',
+    beddingDesc: 'Premium bed linens and comforters for restful sleep',
+    homeDecor: 'Woondecoratie',
+    decorDesc: 'Beautiful curtains, cushions, and decorative textiles',
+    trustIndicators: 'Vertrouwd door Wereldwijde Partners',
+    countries: 'Landen Bedient',
+    yearsExp: 'Jaren Ervaring',
+    certificates: 'Certificaten',
+    customers: 'Tevreden Klanten',
+    // Contact
+    contactUs: 'Neem Contact Op',
+    productInquiry: 'Productaanvraag',
+    bulkQuote: 'Groothandelsaanvraag',
+    contactInfo: 'Contactinformatie',
+    name: 'Volledige Naam',
+    email: 'E-mailadres',
+    company: 'Bedrijfsnaam',
+    phone: 'Telefoonnummer',
+    country: 'Land',
+    message: 'Bericht',
+    sendInquiry: 'Verstuur Aanvraag',
+    requestQuote: 'Offerte Aanvragen'
+  },
+  ar: {
+    // Common
+    home: 'الرئيسية',
+    products: 'المنتجات',
+    about: 'معلومات عنا',
+    contact: 'اتصل بنا',
+    customerPanel: 'لوحة العميل',
+    getQuote: 'احصل على عرض أسعار',
+    language: 'اللغة',
+    
+    // Homepage
+    heroTitle: 'منسوجات منزلية تركية فاخرة',
+    heroSubtitle: 'اكتشف أفضل المنسوجات القطنية والخيزران والكتان المصنوعة بالحرفية التركية التقليدية لشركاء الجملة في جميع أنحاء العالم.',
+    exploreProducts: 'استكشف المنتجات',
+    whyChooseUs: 'لماذا تختار أوفيا هوم؟',
+    qualityCraftsmanship: 'حرفية عالية الجودة',
+    qualityDesc: 'تقنيات النسيج التركية التقليدية المتوارثة عبر الأجيال',
+    naturalMaterials: 'مواد طبيعية',
+    materialsDesc: 'قطن وخيزران وكتان فاخر من مزارع مستدامة',
+    certifiedQuality: 'جودة معتمدة',
+    certifiedDesc: 'شهادات OEKO-TEX و GOTS والقطن العضوي تضمن السلامة',
+    globalReach: 'وصول عالمي',
+    reachDesc: 'ثقة تجار الجملة في أكثر من 30 دولة حول العالم',
+    ourProducts: 'فئات منتجاتنا',
+    bathrobes: 'أرواب الحمام',
+    bathrobesDesc: 'أرواب حمام فاخرة من القطن والخيزران للراحة القصوى',
+    towels: 'المناشف',
+    towelsDesc: 'مناشف ماصة وناعمة بأحجام وألوان مختلفة',
+    bedding: 'أطقم السرير',
+    beddingDesc: 'أطقم سرير ولحف فاخرة للنوم المريح',
+    homeDecor: 'ديكور المنزل',
+    decorDesc: 'ستائر جميلة ووسائد ومنسوجات زخرفية',
+    trustIndicators: 'ثقة الشركاء العالميين',
+    countries: 'البلدان المخدومة',
+    yearsExp: 'سنوات الخبرة',
+    certificates: 'الشهادات',
+    customers: 'العملاء الراضون',
+    
+    // Contact
+    contactUs: 'اتصل بنا',
+    productInquiry: 'استفسار عن المنتج',
+    bulkQuote: 'طلب عرض أسعار بالجملة',
+    contactInfo: 'معلومات الاتصال',
+    name: 'الاسم الكامل',
+    email: 'عنوان البريد الإلكتروني',
+    company: 'اسم الشركة',
+    phone: 'رقم الهاتف',
+    country: 'البلد',
+    message: 'الرسالة',
+    sendInquiry: 'إرسال الاستفسار',
+    requestQuote: 'طلب عرض أسعار'
+  }
+};
