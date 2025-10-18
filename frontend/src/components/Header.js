@@ -53,14 +53,32 @@ const Header = ({ language, setLanguage }) => {
             >
               {t.home}
             </Link>
-            <Link
-              to="/products"
-              className={`text-sm font-medium transition-colors hover:text-primary ${
-                isActive('/products') ? 'text-ink border-b-2 border-primary pb-1' : 'text-ink-2'
-              }`}
-            >
-              {t.products}
-            </Link>
+            <div className="relative group">
+              <Link
+                to="/products"
+                className={`text-sm font-medium transition-colors hover:text-primary ${
+                  isActive('/products') || isActive('/products/retail') || isActive('/products/wholesale') 
+                    ? 'text-ink border-b-2 border-primary pb-1' 
+                    : 'text-ink-2'
+                }`}
+              >
+                {t.products}
+              </Link>
+              <div className="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                <Link
+                  to="/products/retail"
+                  className="block px-4 py-2 text-sm text-ink-2 hover:bg-gray-50 hover:text-primary"
+                >
+                  {t.retailProducts}
+                </Link>
+                <Link
+                  to="/products/wholesale"
+                  className="block px-4 py-2 text-sm text-ink-2 hover:bg-gray-50 hover:text-primary"
+                >
+                  {t.wholesaleProducts}
+                </Link>
+              </div>
+            </div>
             <Link
               to="/about"
               className={`text-sm font-medium transition-colors hover:text-primary ${
@@ -171,15 +189,37 @@ const Header = ({ language, setLanguage }) => {
               >
                 {t.home}
               </Link>
-              <Link
-                to="/products"
-                className={`text-sm font-medium ${
-                  isActive('/products') ? 'text-ink' : 'text-ink-2'
-                }`}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {t.products}
-              </Link>
+              <div className="space-y-2">
+                <Link
+                  to="/products"
+                  className={`text-sm font-medium ${
+                    isActive('/products') ? 'text-ink' : 'text-ink-2'
+                  }`}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {t.products}
+                </Link>
+                <div className="pl-4 space-y-2">
+                  <Link
+                    to="/products/retail"
+                    className={`block text-sm ${
+                      isActive('/products/retail') ? 'text-primary' : 'text-ink-2'
+                    }`}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {t.retailProducts}
+                  </Link>
+                  <Link
+                    to="/products/wholesale"
+                    className={`block text-sm ${
+                      isActive('/products/wholesale') ? 'text-primary' : 'text-ink-2'
+                    }`}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {t.wholesaleProducts}
+                  </Link>
+                </div>
+              </div>
               <Link
                 to="/about"
                 className={`text-sm font-medium ${

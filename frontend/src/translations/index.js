@@ -8,6 +8,14 @@ export const translations = {
     customerPanel: 'Customer Panel',
     getQuote: 'Get Quote',
     language: 'Language',
+    retailProducts: 'Retail Products',
+    wholesaleProducts: 'Wholesale Products',
+    retailDescription: 'Premium quality home textiles available for individual buyers',
+    wholesaleDescription: 'Bulk purchase options for businesses with competitive pricing',
+    getRetailQuote: 'Get Retail Quote',
+    getWholesaleQuote: 'Get Wholesale Quote',
+    minOrder: 'Minimum Order',
+    pieces: 'pieces',
     
     // Homepage
     heroTitle: 'Premium Turkish Home Textiles',
@@ -85,6 +93,14 @@ export const translations = {
     customerPanel: 'Müşteri Paneli',
     getQuote: 'Teklif Al',
     language: 'Dil',
+    retailProducts: 'Perakende Ürünler',
+    wholesaleProducts: 'Toptan Ürünler',
+    retailDescription: 'Bireysel alıcılar için premium kalitede ev tekstili ürünleri',
+    wholesaleDescription: 'İşletmeler için uygun fiyatlı toplu alım seçenekleri',
+    getRetailQuote: 'Perakende Fiyat Al',
+    getWholesaleQuote: 'Toptan Fiyat Al',
+    minOrder: 'Minimum Sipariş',
+    pieces: 'adet',
     
     // Homepage
     heroTitle: 'Premium Türk Ev Tekstilleri',
