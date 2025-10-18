@@ -94,9 +94,22 @@ const ProductsPage = ({ language }) => {
   
   const handleWhatsAppClick = (product) => {
     const productName = product.name[language] || product.name.en;
-    const message = encodeURIComponent(
-      `Merhaba! ${productName} ürününüz hakkında bilgi almak istiyorum. Toptan fiyat ve minimum sipariş miktarını öğrenebilir miyim?`
-    );
+    
+    let messageText = `Merhaba! ${productName} ürününüz hakkında bilgi almak istiyorum.`;
+    
+    // Add price tier information if available
+    if (product.priceTiers && product.priceTiers.length > 0) {
+      const lowestTier = product.priceTiers[0];
+      const highestTier = product.priceTiers[product.priceTiers.length - 1];
+      messageText += `\n\nMiktara bağlı fiyatlandırmayı inceledim:\n`;
+      messageText += `${lowestTier.quantity} adet: $${lowestTier.price}\n`;
+      messageText += `${highestTier.quantity}+ adet: $${highestTier.price}\n\n`;
+      messageText += `Bu fiyatlar güncel mi? Sipariş vermek istiyorum.`;
+    } else {
+      messageText += ` Toptan fiyat ve minimum sipariş miktarını öğrenebilir miyim?`;
+    }
+
+    const message = encodeURIComponent(messageText);
     window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
   };
 
@@ -313,17 +326,44 @@ const ProductsPage = ({ language }) => {
                       </ul>
                     )}
                     
-                    {/* Price Info */}
+                    {/* Price Info - Alibaba Style */}
                     <div className="mb-4">
-                      {product.retail_price && (
-                        <div className="text-lg font-semibold text-primary">
-                          ${product.retail_price}
+                      {product.priceTiers && product.priceTiers.length > 0 ? (
+                        <div className="border rounded-lg overflow-hidden">
+                          <table className="w-full">
+                            <thead className="bg-gray-50 border-b">
+                              <tr>
+                                <th className="px-4 py-2 text-sm text-gray-600">{t.orderQuantity}</th>
+                                <th className="px-4 py-2 text-sm text-gray-600">{t.unitPrice}</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {product.priceTiers.map((tier, index) => (
+                                <tr key={index} className="border-b last:border-b-0">
+                                  <td className="px-4 py-2 text-sm text-gray-800">
+                                    ≥ {tier.quantity} {t.pieces}
+                                  </td>
+                                  <td className="px-4 py-2 text-sm font-semibold text-primary">
+                                    ${tier.price.toFixed(2)}
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
                         </div>
-                      )}
-                      {product.min_wholesale_quantity && (
-                        <div className="text-sm text-gray-600">
-                          Min. {product.min_wholesale_quantity} pieces
-                        </div>
+                      ) : (
+                        <>
+                          {product.retail_price && (
+                            <div className="text-lg font-semibold text-primary">
+                              ${product.retail_price}
+                            </div>
+                          )}
+                          {product.min_wholesale_quantity && (
+                            <div className="text-sm text-gray-600">
+                              Min. {product.min_wholesale_quantity} {t.pieces}
+                            </div>
+                          )}
+                        </>
                       )}
                     </div>
                     

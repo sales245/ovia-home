@@ -299,26 +299,36 @@ const WholesalePage = ({ language }) => {
                       </ul>
                     )}
                     
-                    {/* Price Tiers */}
-                    <div className="mb-4 space-y-2">
+                    {/* Price Tiers Table */}
+                    <div className="mb-4">
                       {product.priceTiers && (
-                        <div className="grid grid-cols-2 gap-2 text-sm">
-                          {product.priceTiers.map((tier, index) => (
-                            <div key={index} className={`p-2 rounded ${
-                              index === 0 ? 'bg-orange-50' : 'bg-gray-50'
-                            }`}>
-                              <div className="font-semibold text-primary">
-                                ${tier.price}
-                              </div>
-                              <div className="text-gray-600 text-xs">
-                                {tier.minQuantity} - {tier.maxQuantity || '∞'} {t.pieces}
-                              </div>
-                            </div>
-                          ))}
+                        <div className="border rounded-lg overflow-hidden">
+                          <table className="w-full text-sm">
+                            <thead>
+                              <tr className="bg-gray-50 border-b">
+                                <th className="py-2 px-3 text-left font-medium text-gray-600">{t.quantity}</th>
+                                <th className="py-2 px-3 text-right font-medium text-gray-600">{t.unitPrice}</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {product.priceTiers.map((tier, index) => (
+                                <tr key={index} className={`border-b last:border-b-0 ${
+                                  index === 0 ? 'bg-orange-50' : 'hover:bg-gray-50'
+                                }`}>
+                                  <td className="py-2 px-3 text-gray-600">
+                                    {tier.minQuantity} - {tier.maxQuantity || '∞'}
+                                  </td>
+                                  <td className="py-2 px-3 text-right">
+                                    <span className="font-semibold text-primary">${tier.price}</span>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
                         </div>
                       )}
                       {product.min_wholesale_quantity && (
-                        <div className="text-xs text-gray-600">
+                        <div className="mt-2 text-xs text-gray-600">
                           {t.minOrder}: {product.min_wholesale_quantity} {t.pieces}
                         </div>
                       )}
