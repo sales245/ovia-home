@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { ShoppingCart, Search, Filter, X } from 'lucide-react';
+import { 
+  ShoppingCart, 
+  Search, 
+  Filter, 
+  X, 
+  ChevronUp, 
+  ChevronDown, 
+  Tag, 
+  Package
+} from 'lucide-react';
 import { translations } from '../translations';
 
 // Badge colors helper
@@ -190,15 +198,59 @@ const ProductsPage = ({ language }) => {
 
   return (
     <div className="header-spacing">
-      {/* Hero Section */}
-      <section className="section section-light">
-        <div className="container text-center">
-          <h1 className="mb-6">{t.ourProducts}</h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-            {t.productsDescription}
-          </p>
+      {/* Products Section */}
+      <section className="header-spacing py-12">
+        <div className="container">
+          <h1 className="text-4xl font-bold mb-8">{t.ourProducts}</h1>
           
-          {/* Search and Filters */}
+          {/* Search and Filters Bar */}
+          <div className="bg-white rounded-xl shadow-sm p-4 mb-8">
+            <div className="flex flex-col md:flex-row gap-4 items-stretch">
+              {/* Search */}
+              <div className="flex-1">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                  <input
+                    type="text"
+                    placeholder={t.searchProducts}
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                  />
+                </div>
+              </div>
+              
+              {/* Category Filter */}
+              <div className="min-w-[200px]">
+                <select
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  className="w-full py-2 px-4 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                >
+                  <option value="all">{t.allCategories}</option>
+                  <option value="bathrobes">{t.bathrobes}</option>
+                  <option value="towels">{t.towels}</option>
+                  <option value="bedding">{t.bedding}</option>
+                  <option value="homeDecor">{t.homeDecor}</option>
+                </select>
+              </div>
+              
+              {/* Sort Options */}
+              <div className="min-w-[200px]">
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="w-full py-2 px-4 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                >
+                  <option value="default">{t.sortDefault}</option>
+                  <option value="price_asc">{t.sortPriceLow}</option>
+                  <option value="price_desc">{t.sortPriceHigh}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          
+          {/* Products Grid */}
           <div className="max-w-4xl mx-auto">
             <div className="flex flex-col md:flex-row gap-4 items-center justify-center mb-8">
               {/* Search */}
@@ -291,32 +343,41 @@ const ProductsPage = ({ language }) => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredProducts.map((product) => (
                 <div key={product.id} className="group">
-                  <div className="card hover:scale-105 transition-transform duration-300">
-                    <div className="relative">
+                  <div className="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-all duration-300">
+                    {/* Product Image */}
+                    <div className="relative aspect-w-4 aspect-h-3">
                       <img
                         src={product.image}
                         alt={product.name[language] || product.name.en}
-                        className="w-full h-64 object-cover rounded-xl mb-4"
+                        className="w-full h-full object-cover"
                       />
                       
                       {/* Badges */}
                       {product.badges && (
-                        <div className="absolute top-3 left-3 flex flex-col gap-2">
+                        <div className="absolute top-3 left-3 flex flex-wrap gap-2">
                           {product.badges.map((badge) => (
                             <span
                               key={badge}
-                              className={`px-2 py-1 text-xs font-medium rounded-full ${getBadgeColor(badge)}`}
+                              className={`px-3 py-1 text-xs font-medium rounded-full shadow-sm ${getBadgeColors(badge)}`}
                             >
                               {badgeTranslations[badge]?.[language] || badgeTranslations[badge]?.en || badge}
                             </span>
                           ))}
                         </div>
                       )}
+                      
+                      {/* Stock Status */}
+                      <div className={`absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-medium shadow-sm
+                        ${product.in_stock ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                        {product.in_stock ? t.inStock : t.outOfStock}
+                      </div>
                     </div>
                     
-                    <h3 className="mb-3 group-hover:text-primary transition-colors">
-                      {product.name[language] || product.name.en}
-                    </h3>
+                    {/* Product Info */}
+                    <div className="p-4">
+                      <h3 className="text-lg font-semibold mb-2 group-hover:text-primary transition-colors">
+                        {product.name[language] || product.name.en}
+                      </h3>
                     
                     {/* Features */}
                     {product.features && product.features[language] && (

@@ -9,8 +9,6 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import HomePage from './components/HomePage';
 import ProductsPage from './components/ProductsPage';
-import RetailPage from './components/RetailPage';
-import WholesalePage from './components/WholesalePage';
 import AboutPage from './components/AboutPage';
 import ContactPage from './components/ContactPage';
 import CustomerPanel from './components/CustomerPanel';
@@ -78,8 +76,6 @@ function App() {
               <Routes>
                 <Route index element={<HomePage language={language} stats={stats} />} />
                 <Route path="products" element={<ProductsPage language={language} />} />
-                <Route path="products/retail" element={<RetailPage language={language} />} />
-                <Route path="products/wholesale" element={<WholesalePage language={language} />} />
                 <Route path="about" element={<AboutPage language={language} />} />
                 <Route path="contact" element={<ContactPage language={language} />} />
                 <Route path="customer-panel" element={<CustomerPanel language={language} />} />
