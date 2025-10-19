@@ -148,39 +148,27 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ language }) => {
     window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
   };
 
-  // API endpoint (production URL)
-  const API = 'https://ovia-home-web-page.pages.dev/api';
-
+  // Use relative API path so it works both locally (dev server proxy) and on Pages
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        console.log('Fetching from:', `${API}/products`);
-        
-        const productsResponse = await fetch(`${API}/products`);
-        console.log('Response status:', productsResponse.status);
-        
-        const text = await productsResponse.text();
-        console.log('Response text:', text);
-        
-        if (!productsResponse.ok) {
-          throw new Error(`HTTP error! status: ${productsResponse.status}`);
-        }
-        
-        const productsData = JSON.parse(text) as Product[];
-        console.log('Parsed products:', productsData);
-        setProducts(productsData);
-
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        setError(error instanceof Error ? error.message : 'An unknown error occurred');
+        const resp = await fetch('/api/products');
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+  const payload = await resp.json() as any;
+  // payload shape: { success: true, data: Product[] }
+  const productsData = payload?.data || [];
+        setProducts(productsData as Product[]);
+      } catch (err) {
+        console.error('Error fetching products', err);
+        setError(err instanceof Error ? err.message : 'Unknown error');
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [API]);
+  }, []);
 
   // Filter products based on selected category and search term
   const filteredProducts = products.filter(product => {
@@ -356,7 +344,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ language }) => {
                                 key={badge}
                                 className={`px-3 py-1 text-xs font-medium rounded-full shadow-sm ${getBadgeColors(badge)}`}
                               >
-                                {badgeTranslations[badge]?.[language] || badgeTranslations[badge]?.en || badge}
+                                {((badgeTranslations as any)[badge] && ((badgeTranslations as any)[badge][language] || (badgeTranslations as any)[badge].en)) || badge}
                               </span>
                             ))}
                           </div>

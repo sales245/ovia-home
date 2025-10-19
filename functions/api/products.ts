@@ -1,376 +1,134 @@
+/// <reference types="@cloudflare/workers-types" />
 // functions/api/products.ts
+import { basicAuth, corsHeaders } from '../_middlewares.js';
 
-// --- Veri Tipleri ---
-export type Product = {
-  id: string;
-  name: string;
-  price: number;
-};
-
-const mock: Product[] = [{ id: "1", name: "Sample", price: 99.9 }];
-
-/* =========================
-   B) Next.js API Route kullanıyorsan
-   (Bunu kullanıyorsan dosya konumu genelde pages/api/products.ts olur,
-    ama burada örnek olsun diye bırakıyorum.)
-========================= */
-import type { NextApiRequest, NextApiResponse } from "next";
-
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method === "GET") {
-    res.status(200).json({ items: mock });
-  } else {
-    res.status(405).json({ message: "Method not allowed" });
-  }
-}
-  };
+export type ProductData = {
+  id?: string;
+  category: string;
   image?: string;
-  features?: {
-    en: string[];
-    tr: string[];
-  };
+  name: { en: string; tr: string; de?: string };
+  features?: { en?: string[]; tr?: string[] };
   badges?: string[];
   retail_price: number;
   min_wholesale_quantity: number;
   stock_quantity?: number;
   in_stock: boolean;
-  priceTiers?: Array<{
-    quantity: number;
-    price: number;
-  }>;
-}
-
-interface DBProduct {
-  id: number;
-  category: string;
-  name_en: string;
-  name_tr: string;
-  name_de?: string;
-  image?: string;
-  features_en: string;
-  features_tr: string;
-  badges?: string;
-  retail_price: number;
-  min_wholesale_quantity: number;
-  stock_quantity: number;
-  in_stock: number;
-  price_tiers: string;
-  created_at: string;
-}
+  priceTiers?: Array<{ quantity: number; price: number }>;
+};
 
 interface Env {
   DB: D1Database;
 }
 
-interface D1PreparedStatement {
-  bind(...values: any[]): D1PreparedStatement;
-  first<T = unknown>(column?: string): Promise<T>;
-  run<T = unknown>(): Promise<D1Response>;
-  all<T = Record<string, unknown>>(): Promise<D1Result<T>>;
-}
+export async function onRequest(context: any) {
+  const { request, env } = context as any;
 
-interface D1Response {
-  success: boolean;
-  error?: string;
-  meta?: {
-    changes: number;
-    last_row_id: number;
-  };
-}
-
-interface D1Result<T> {
-  results?: T[];
-  success: boolean;
-  error?: string;
-  meta?: {
-    changes: number;
-    last_row_id: number;
-  };
-}
-
-interface ApiResponse {
-  success?: boolean;
-  error?: string;
-  message?: string;
-  data?: any;
-  count?: number;
-  id?: number;
-}
-
-export async function onRequest(
-  context: EventContext<Env, string, Record<string, unknown>>
-): Promise<Response> {
-  const { request, env } = context;
-  
-  // CORS headers for all responses
-  const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Content-Type': 'application/json'
-  };
-
-  // Handle OPTIONS requests for CORS preflight
+  // Handle CORS preflight
   if (request.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
+  const DB = env.DB;
+  if (!DB) {
+    return new Response(JSON.stringify({ error: 'D1 binding not found' }), { status: 500, headers: { ...corsHeaders, 'Content-Type':'application/json' } });
+  }
+
   try {
-    const { DB } = env;
-    
-    // Check if database is configured
-    if (!DB) {
-      return new Response(JSON.stringify({
-        error: 'Database not configured',
-        message: 'D1 database binding not found'
-      }), {
-        status: 500,
-        headers: corsHeaders
-      });
+    if (request.method === 'GET') {
+      const res = await DB.prepare('SELECT * FROM products ORDER BY created_at DESC').all();
+      const rows = res.results || [];
+      const data = rows.map((r: any) => ({
+        id: String(r.id),
+        category: r.category,
+        image: r.image,
+        name: { en: r.name_en, tr: r.name_tr, de: r.name_de },
+        features: { en: JSON.parse(r.features_en || '[]'), tr: JSON.parse(r.features_tr || '[]') },
+        badges: r.badges ? r.badges.split(',') : [],
+        retail_price: r.retail_price,
+        min_wholesale_quantity: r.min_wholesale_quantity,
+        stock_quantity: r.stock_quantity,
+        in_stock: Boolean(r.in_stock),
+        priceTiers: JSON.parse(r.price_tiers || '[]')
+      }));
+
+      return new Response(JSON.stringify({ success: true, data, count: data.length }), { status: 200, headers: { ...corsHeaders, 'Content-Type':'application/json' } });
     }
 
-    // Handle different HTTP methods
-    switch (request.method) {
-      case 'GET': {
-        // Get all products
-        const result = await DB.prepare(
-          'SELECT * FROM products ORDER BY created_at DESC'
-        ).all<DBProduct>();
-        
-        // Transform data to match frontend expectations
-        const products = result.results?.map((product: DBProduct): ProductData => ({
-          id: product.id.toString(),
-          category: product.category,
-          image: product.image || "https://via.placeholder.com/300x200",
-          name: {
-            en: product.name_en,
-            tr: product.name_tr,
-            de: product.name_de || product.name_en
-          },
-          features: {
-            en: JSON.parse(product.features_en || '[]'),
-            tr: JSON.parse(product.features_tr || '[]')
-          },
-          badges: product.badges ? product.badges.split(',') : [],
-          retail_price: product.retail_price,
-          min_wholesale_quantity: product.min_wholesale_quantity,
-          in_stock: Boolean(product.in_stock),
-          stock_quantity: product.stock_quantity,
-          priceTiers: JSON.parse(product.price_tiers || '[]')
-        })) || [];
+    if (request.method === 'POST') {
+      // Require admin auth for write operations
+      const auth = basicAuth(request, env as any);
+      if (!auth.ok) return auth.response;
 
-        return new Response(JSON.stringify({
-          success: true,
-          data: products,
-          count: products.length
-        } as ApiResponse), {
-          status: 200,
-          headers: corsHeaders
-        });
-      }
+      const body = await request.json() as ProductData;
+      const insert = await DB.prepare(`INSERT INTO products (
+        category, name_en, name_tr, name_de, image, features_en, features_tr, badges, retail_price, min_wholesale_quantity, stock_quantity, in_stock, price_tiers, created_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))`).bind(
+        body.category,
+        body.name.en,
+        body.name.tr,
+        body.name.de || body.name.en,
+        body.image || '',
+        JSON.stringify(body.features?.en || []),
+        JSON.stringify(body.features?.tr || []),
+        (body.badges || []).join(','),
+        body.retail_price,
+        body.min_wholesale_quantity,
+        body.stock_quantity || 0,
+        Number(body.in_stock),
+        JSON.stringify(body.priceTiers || [])
+      ).run();
 
-      case 'POST': {
-        // Add new product
-        const productData = await request.json() as ProductData;
-        
-        try {
-          const insertResult = await DB.prepare(`
-            INSERT INTO products (
-              category, 
-              name_en, 
-              name_tr, 
-              name_de, 
-              image, 
-              features_en, 
-              features_tr, 
-              badges, 
-              retail_price, 
-              min_wholesale_quantity, 
-              stock_quantity, 
-              in_stock,
-              price_tiers,
-              created_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
-          `).bind(
-            productData.category,
-            productData.name.en,
-            productData.name.tr,
-            productData.name.de || productData.name.en,
-            productData.image || "https://via.placeholder.com/300x200",
-            JSON.stringify(productData.features?.en || []),
-            JSON.stringify(productData.features?.tr || []),
-            productData.badges?.join(',') || '',
-            productData.retail_price,
-            productData.min_wholesale_quantity,
-            productData.stock_quantity || 0,
-            Number(productData.in_stock),
-            JSON.stringify(productData.priceTiers || [])
-          ).run();
-
-          return new Response(JSON.stringify({
-            success: true,
-            message: 'Product created successfully',
-            id: insertResult.meta?.last_row_id
-          } as ApiResponse), {
-            status: 201,
-            headers: corsHeaders
-          });
-
-        } catch (error) {
-          console.error('Error inserting product:', error);
-          return new Response(JSON.stringify({
-            error: 'Failed to create product',
-            message: error instanceof Error ? error.message : 'Unknown error'
-          } as ApiResponse), {
-            status: 400,
-            headers: corsHeaders
-          });
-        }
-      }
-
-      case 'PUT': {
-        // Update existing product
-        const { id, ...updateData } = await request.json() as ProductData & { id: string };
-        if (!id) {
-          return new Response(JSON.stringify({
-            error: 'Invalid request',
-            message: 'Product ID is required'
-          } as ApiResponse), {
-            status: 400,
-            headers: corsHeaders
-          });
-        }
-
-        try {
-          const updateResult = await DB.prepare(`
-            UPDATE products SET
-              category = ?,
-              name_en = ?,
-              name_tr = ?,
-              name_de = ?,
-              image = ?,
-              features_en = ?,
-              features_tr = ?,
-              badges = ?,
-              retail_price = ?,
-              min_wholesale_quantity = ?,
-              stock_quantity = ?,
-              in_stock = ?,
-              price_tiers = ?
-            WHERE id = ?
-          `).bind(
-            updateData.category,
-            updateData.name.en,
-            updateData.name.tr,
-            updateData.name.de || updateData.name.en,
-            updateData.image || "https://via.placeholder.com/300x200",
-            JSON.stringify(updateData.features?.en || []),
-            JSON.stringify(updateData.features?.tr || []),
-            updateData.badges?.join(',') || '',
-            updateData.retail_price,
-            updateData.min_wholesale_quantity,
-            updateData.stock_quantity || 0,
-            Number(updateData.in_stock),
-            JSON.stringify(updateData.priceTiers || []),
-            id
-          ).run();
-
-          if (updateResult.meta?.changes === 0) {
-            return new Response(JSON.stringify({
-              error: 'Not found',
-              message: 'Product not found'
-            } as ApiResponse), {
-              status: 404,
-              headers: corsHeaders
-            });
-          }
-
-          return new Response(JSON.stringify({
-            success: true,
-            message: 'Product updated successfully'
-          } as ApiResponse), {
-            status: 200,
-            headers: corsHeaders
-          });
-
-        } catch (error) {
-          console.error('Error updating product:', error);
-          return new Response(JSON.stringify({
-            error: 'Failed to update product',
-            message: error instanceof Error ? error.message : 'Unknown error'
-          } as ApiResponse), {
-            status: 400,
-            headers: corsHeaders
-          });
-        }
-      }
-
-      case 'DELETE': {
-        // Delete product
-        const deleteData = await request.json() as { id: string };
-        if (!deleteData.id) {
-          return new Response(JSON.stringify({
-            error: 'Invalid request',
-            message: 'Product ID is required'
-          } as ApiResponse), {
-            status: 400,
-            headers: corsHeaders
-          });
-        }
-
-        try {
-          const deleteResult = await DB.prepare('DELETE FROM products WHERE id = ?')
-            .bind(deleteData.id)
-            .run();
-
-          if (deleteResult.meta?.changes === 0) {
-            return new Response(JSON.stringify({
-              error: 'Not found',
-              message: 'Product not found'
-            } as ApiResponse), {
-              status: 404,
-              headers: corsHeaders
-            });
-          }
-
-          return new Response(JSON.stringify({
-            success: true,
-            message: 'Product deleted successfully'
-          } as ApiResponse), {
-            status: 200,
-            headers: corsHeaders
-          });
-
-        } catch (error) {
-          console.error('Error deleting product:', error);
-          return new Response(JSON.stringify({
-            error: 'Failed to delete product',
-            message: error instanceof Error ? error.message : 'Unknown error'
-          } as ApiResponse), {
-            status: 400,
-            headers: corsHeaders
-          });
-        }
-      }
-
-      default:
-        return new Response(JSON.stringify({
-          error: 'Method not allowed',
-          message: `${request.method} is not supported`
-        } as ApiResponse), {
-          status: 405,
-          headers: corsHeaders
-        });
+      return new Response(JSON.stringify({ success: true, id: insert.meta?.last_row_id }), { status: 201, headers: { ...corsHeaders, 'Content-Type':'application/json' } });
     }
 
-  } catch (error) {
-    console.error('Server error:', error);
-    return new Response(JSON.stringify({
-      error: 'Internal Server Error',
-      message: error instanceof Error ? error.message : 'Unknown error'
-    } as ApiResponse), {
-      status: 500,
-      headers: corsHeaders
-    });
+    if (request.method === 'PUT') {
+      const auth = basicAuth(request, env as any);
+      if (!auth.ok) return auth.response;
+
+      const body = await request.json() as ProductData & { id: string };
+      if (!body.id) return new Response(JSON.stringify({ error: 'ID required' }), { status: 400, headers: { ...corsHeaders, 'Content-Type':'application/json' } });
+
+      const res = await DB.prepare(`UPDATE products SET
+        category = ?, name_en = ?, name_tr = ?, name_de = ?, image = ?, features_en = ?, features_tr = ?, badges = ?, retail_price = ?, min_wholesale_quantity = ?, stock_quantity = ?, in_stock = ?, price_tiers = ?
+        WHERE id = ?
+      `).bind(
+        body.category,
+        body.name.en,
+        body.name.tr,
+        body.name.de || body.name.en,
+        body.image || '',
+        JSON.stringify(body.features?.en || []),
+        JSON.stringify(body.features?.tr || []),
+        (body.badges || []).join(','),
+        body.retail_price,
+        body.min_wholesale_quantity,
+        body.stock_quantity || 0,
+        Number(body.in_stock),
+        JSON.stringify(body.priceTiers || []),
+        body.id
+      ).run();
+
+      if (res.meta?.changes === 0) return new Response(JSON.stringify({ error: 'Not found' }), { status: 404, headers: { ...corsHeaders, 'Content-Type':'application/json' } });
+
+      return new Response(JSON.stringify({ success: true }), { status: 200, headers: { ...corsHeaders, 'Content-Type':'application/json' } });
+    }
+
+    if (request.method === 'DELETE') {
+      const auth = basicAuth(request, env as any);
+      if (!auth.ok) return auth.response;
+
+      const body = await request.json() as { id?: string };
+      if (!body?.id) return new Response(JSON.stringify({ error: 'ID required' }), { status: 400, headers: { ...corsHeaders, 'Content-Type':'application/json' } });
+
+      const res = await DB.prepare('DELETE FROM products WHERE id = ?').bind(body.id).run();
+      if (res.meta?.changes === 0) return new Response(JSON.stringify({ error: 'Not found' }), { status: 404, headers: { ...corsHeaders, 'Content-Type':'application/json' } });
+
+      return new Response(JSON.stringify({ success: true }), { status: 200, headers: { ...corsHeaders, 'Content-Type':'application/json' } });
+    }
+
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405, headers: { ...corsHeaders, 'Content-Type':'application/json' } });
+  } catch (e) {
+    console.error(e);
+    return new Response(JSON.stringify({ error: 'Server error', message: e instanceof Error ? e.message : String(e) }), { status: 500, headers: { ...corsHeaders, 'Content-Type':'application/json' } });
   }
 }

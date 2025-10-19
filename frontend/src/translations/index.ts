@@ -1,82 +1,6 @@
-export type Language = 'en' | 'tr' | 'de' | 'fr' | 'it' | 'es' | 'pl' | 'ru' | 'bg' | 'el' | 'pt' | 'ar';
+export type Language = 'en' | 'tr' | 'de' | 'fr' | 'it' | 'es' | 'pl' | 'ru' | 'bg' | 'el' | 'pt' | 'ar' | 'nl';
 
-export type TranslationType = {
-  [key in Language]: {
-    // Common
-    home: string;
-    products: string;
-    about: string;
-    contact: string;
-    addToCart: string;
-    cart: string;
-    quantity: string;
-    total: string;
-    customerType: string;
-    retail: string;
-    wholesale: string;
-    price: string;
-    unitPrice: string;
-    orderQuantity: string;
-    customerPanel: string;
-    getQuote: string;
-    language: string;
-    login: string;
-    register: string;
-    pieces: string;
-    
-    // Hero Section
-    heroTitle: string;
-    heroSubtitle: string;
-    exploreProducts: string;
-    whyChooseUs: string;
-    qualityCraftsmanship: string;
-    qualityDesc: string;
-    naturalMaterials: string;
-    materialsDesc: string;
-    certifiedQuality: string;
-    certifiedDesc: string;
-    globalReach: string;
-    reachDesc: string;
-    
-    // Products
-    ourProducts: string;
-    allProducts: string;
-    allCategories: string;
-    productsDesc: string;
-    searchProducts: string;
-    filters: string;
-    sortDefault: string;
-    sortPriceLow: string;
-    sortPriceHigh: string;
-    noProductsFound: string;
-    tryDifferentSearch: string;
-    inStock: string;
-    outOfStock: string;
-    customOrdersTitle: string;
-    customOrdersDescription: string;
-    bathrobes: string;
-    towels: string;
-    bedding: string;
-    homeDecor: string;
-    bathrobesDesc: string;
-    towelsDesc: string;
-    beddingDesc: string;
-    decorDesc: string;
-    contactForPricing: string;
-    inquireNow: string;
-  }
-};
-
-// frontend/src/translations/index.ts
-
-export type Locale = "tr" | "en";
-
-export type Messages = {
-  hello: string;
-  // ihtiyacına göre başka metin anahtarları ekle
-};
-
-export const translations: Record<Locale, Messages> = {
+export const translations: Record<Language, any> = {
   en: {
     // Common
     home: 'Home',
@@ -130,41 +54,7 @@ export const translations: Record<Locale, Messages> = {
     productsDesc: 'Discover our comprehensive range of premium Turkish home textiles, crafted with traditional techniques and modern quality standards.',
     contactForPricing: 'Contact for Wholesale Pricing',
     inquireNow: 'Inquire Now',
-    // Cart and Shopping
-    addToCart: 'Add to Cart',
-    cart: 'Cart',
-    quantity: 'Quantity',
-    total: 'Total',
-    customerType: 'Customer Type',
-    retail: 'Retail',
-    wholesale: 'Wholesale',
-    price: 'Price',
-    unitPrice: 'Unit Price',
-    orderQuantity: 'Order Quantity',
-    retailPrice: 'Retail Price',
-    wholesalePrice: 'Wholesale Price',
-    minQuantity: 'Min Quantity',
-    inStock: 'In Stock',
-    outOfStock: 'Out of Stock',
-    units: 'units',
-    productFeatures: 'Product Features',
-    qualityMaterials: 'Quality Materials',
-    expertCraftsmanship: 'Expert Craftsmanship',
-    certifiedSafe: 'Certified Safe',
-    sustainableProduction: 'Sustainable Production',
-    bathrobes: 'Bathrobes',
-    bathrobesDesc: 'Luxurious cotton and bamboo bathrobes for ultimate comfort',
-    towels: 'Towels',
-    towelsDesc: 'Absorbent and soft towels in various sizes and colors',
-    bedding: 'Bedding',
-    beddingDesc: 'Premium bed linens and comforters for restful sleep',
-    homeDecor: 'Home Décor',
-    decorDesc: 'Beautiful curtains, cushions, and decorative textiles',
-    trustIndicators: 'Trusted by Global Partners',
-    countries: 'Countries Served',
-    yearsExp: 'Years Experience',
-    certificates: 'Certificates',
-    customers: 'Happy Customers',
+  // merged cart and homepage keys (avoid duplicates)
     
     // Contact
     contactUs: 'Contact Us',
