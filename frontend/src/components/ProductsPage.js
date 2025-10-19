@@ -120,8 +120,8 @@ const ProductsPage = ({ language }) => {
     window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
   };
 
-  // API endpoint (production URL)
-  const API = 'https://ovia-home-web-page.pages.dev/api';
+  // API endpoint - Use environment variable or fallback to current domain
+  const API = process.env.REACT_APP_BACKEND_URL ? `${process.env.REACT_APP_BACKEND_URL}/api` : '/api';
 
   useEffect(() => {
     const fetchData = async () => {
