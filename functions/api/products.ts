@@ -1,6 +1,6 @@
 /// <reference types="@cloudflare/workers-types" />
 // functions/api/products.ts
-import { basicAuth, corsHeaders } from '../_middlewares.js';
+import { corsHeaders } from '../_middlewares.js';
 
 export type ProductData = {
   id?: string;
