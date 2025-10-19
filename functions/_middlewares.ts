@@ -1,40 +1,47 @@
-/// <reference types="@cloudflare/workers-types" />
-// functions/_middlewares.ts
-// Global middleware helpers for Cloudflare Pages Functions
+export type PagesFunction = (context: any) => Promise<Response> | Response;
 
-export interface Env {
-  DB: D1Database;
-  DB_PREVIEW?: D1Database;
-  ADMIN_USER?: string;
-  ADMIN_PASS?: string;
-}
+export const onRequest: PagesFunction = async (context) => {
+  const url = new URL(context.request.url);
+  
+  // Only apply to /admin paths
+  if (!url.pathname.startsWith('/admin')) {
+    return context.next();
+  }
 
-export function basicAuth(request: Request, env: Env) {
-  const auth = request.headers.get('Authorization');
-  const user = env.ADMIN_USER || (typeof process !== 'undefined' ? (process.env as any).ADMIN_USER : undefined);
-  const pass = env.ADMIN_PASS || (typeof process !== 'undefined' ? (process.env as any).ADMIN_PASS : undefined);
+  const auth = context.request.headers.get('Authorization');
+  const user = context.env.ADMIN_USER;
+  const pass = context.env.ADMIN_PASS;
 
-  if (!user || !pass) return { ok: false, response: new Response('Admin not configured', { status: 500 }) };
+  // Check if admin credentials are configured
+  if (!user || !pass) {
+    return new Response('Admin credentials not configured', { status: 500 });
+  }
 
+  // Request authentication if no/invalid Authorization header
   if (!auth || !auth.startsWith('Basic ')) {
-    const headers = new Headers({ 'WWW-Authenticate': 'Basic realm="Admin"' });
-    return { ok: false, response: new Response('Authentication required', { status: 401, headers }) };
+    return new Response('Authentication required', {
+      status: 401,
+      headers: {
+        'WWW-Authenticate': 'Basic realm="Admin Area"'
+      }
+    });
   }
 
   try {
-    const b64 = auth.slice(6);
-    // atob exists in Workers runtime
-    const [u, p] = (globalThis as any).atob(b64).split(':');
-    if (u === user && p === pass) return { ok: true };
-    const headers = new Headers({ 'WWW-Authenticate': 'Basic realm="Admin"' });
-    return { ok: false, response: new Response('Invalid credentials', { status: 401, headers }) };
-  } catch (e) {
-    return { ok: false, response: new Response('Invalid auth header', { status: 400 }) };
-  }
-}
+    // Decode and verify credentials
+    const [providedUser, providedPass] = atob(auth.slice(6)).split(':');
+    
+    if (providedUser === user && providedPass === pass) {
+      return context.next();
+    }
 
-export const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+    return new Response('Invalid credentials', {
+      status: 401,
+      headers: {
+        'WWW-Authenticate': 'Basic realm="Admin Area"'
+      }
+    });
+  } catch {
+    return new Response('Invalid authorization header', { status: 400 });
+  }
 };

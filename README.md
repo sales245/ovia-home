@@ -122,9 +122,13 @@ Modern, kullanıcı dostu ve çok dilli e-ticaret yönetim sistemi. Gelişmiş �
 
 ## 📁 Proje Yapısı
 
+> **Not**: Kökteki eski SQL dosyaları (`create-tables.sql`, `insert-products.sql`, `fix-products-table.sql`, `db-setup.sql`, `update-products-price-tiers.sql`, `insert-product.sql`) artık kullanılmıyor. Yalnızca `schema.sql` ve `seed.sql` dosyalarını kullanın.
+
 ```
 ovia-home/
-├── frontend/                 # React uygulaması
+├── schema.sql               # Güncel veritabanı şeması
+├── seed.sql                 # Güncel örnek veri
+├── frontend/                # React uygulaması
 │   ├── src/
 │   │   ├── components/      # React componentleri
 │   │   │   ├── AdminPage.js # Admin panel ana component

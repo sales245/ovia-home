@@ -1,23 +1,18 @@
-name = "ovia-home-web-page"
-compatibility_date = "2025-10-01"
+name = "ovia-home"
+compatibility_date = "2024-09-01"
 
 # Built for Cloudflare Pages Functions + D1
-type = "javascript"
-
-[vars]
-	# Admin credentials read from environment in Pages dashboard or via wrangler secret
-	ADMIN_USER = "${ADMIN_USER}"
-	ADMIN_PASS = "${ADMIN_PASS}"
+# Note: In both Production and Preview environments, make sure to set 
+# the D1 binding name as 'DB' in Pages Settings → Functions → D1 Bindings
 
 [[d1_databases]]
 binding = "DB"
-database_name = "ovia_prod_db"
-database_id = "0b15235a-7d29-4b85-a75f-90c982440b74"
+database_name = "database1"        # Name created in Cloudflare D1 dashboard
+database_id = "<D1_DATABASE_ID>"   # TODO: Replace with your actual D1 database ID
 
-[[d1_databases]]
-binding = "DB_PREVIEW"
-database_name = "ovia_preview_db"
-database_id = "00000000-0000-0000-0000-000000000000"
+[vars]
+ADMIN_USER = "admin"
+ADMIN_PASS = "change-me"
 
 [build]
 command = "npm --prefix frontend run build"
