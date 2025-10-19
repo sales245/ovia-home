@@ -108,9 +108,6 @@ export async function onRequest(context: any) {
     }
 
     if (request.method === 'DELETE') {
-      const auth = basicAuth(request, env as any);
-      if (!auth.ok) return auth.response;
-
       const body = await request.json() as { id?: string };
       if (!body?.id) return new Response(JSON.stringify({ error: 'ID required' }), { status: 400, headers: { ...corsHeaders, 'Content-Type':'application/json' } });
 
