@@ -240,54 +240,54 @@ const ProductsPage = ({ language }) => {
               {t.filters}
             </button>
 
-            {/* Category Filters */}
+            {/* Category Filters - Improved visibility */}
             <div className={`mt-4 flex flex-wrap justify-center gap-3 ${showFilters ? 'block' : 'hidden md:flex'}`}>
               <button
                 onClick={() => setSelectedCategory('all')}
-                className={`px-6 py-3 rounded-full transition-all ${
+                className={`px-6 py-3 rounded-full transition-all font-medium ${
                   selectedCategory === 'all' 
-                    ? 'bg-primary text-white' 
-                    : 'bg-white text-ink-2 border border-gray-300 hover:border-primary hover:text-primary'
+                    ? 'bg-primary text-white shadow-md' 
+                    : 'bg-gray-100 text-gray-800 border-2 border-gray-300 hover:border-primary hover:bg-primary/10 hover:text-primary'
                 }`}
               >
                 {t.allProducts}
               </button>
               <button
                 onClick={() => setSelectedCategory('bathrobes')}
-                className={`px-6 py-3 rounded-full transition-all ${
+                className={`px-6 py-3 rounded-full transition-all font-medium ${
                   selectedCategory === 'bathrobes' 
-                    ? 'bg-primary text-white' 
-                    : 'bg-white text-ink-2 border border-gray-300 hover:border-primary hover:text-primary'
+                    ? 'bg-primary text-white shadow-md' 
+                    : 'bg-gray-100 text-gray-800 border-2 border-gray-300 hover:border-primary hover:bg-primary/10 hover:text-primary'
                 }`}
               >
                 {t.bathrobes}
               </button>
               <button
                 onClick={() => setSelectedCategory('towels')}
-                className={`px-6 py-3 rounded-full transition-all ${
+                className={`px-6 py-3 rounded-full transition-all font-medium ${
                   selectedCategory === 'towels' 
-                    ? 'bg-primary text-white' 
-                    : 'bg-white text-ink-2 border border-gray-300 hover:border-primary hover:text-primary'
+                    ? 'bg-primary text-white shadow-md' 
+                    : 'bg-gray-100 text-gray-800 border-2 border-gray-300 hover:border-primary hover:bg-primary/10 hover:text-primary'
                 }`}
               >
                 {t.towels}
               </button>
               <button
                 onClick={() => setSelectedCategory('bedding')}
-                className={`px-6 py-3 rounded-full transition-all ${
+                className={`px-6 py-3 rounded-full transition-all font-medium ${
                   selectedCategory === 'bedding' 
-                    ? 'bg-primary text-white' 
-                    : 'bg-white text-ink-2 border border-gray-300 hover:border-primary hover:text-primary'
+                    ? 'bg-primary text-white shadow-md' 
+                    : 'bg-gray-100 text-gray-800 border-2 border-gray-300 hover:border-primary hover:bg-primary/10 hover:text-primary'
                 }`}
               >
                 {t.bedding}
               </button>
               <button
                 onClick={() => setSelectedCategory('home-decor')}
-                className={`px-6 py-3 rounded-full transition-all ${
+                className={`px-6 py-3 rounded-full transition-all font-medium ${
                   selectedCategory === 'home-decor' 
-                    ? 'bg-primary text-white' 
-                    : 'bg-white text-ink-2 border border-gray-300 hover:border-primary hover:text-primary'
+                    ? 'bg-primary text-white shadow-md' 
+                    : 'bg-gray-100 text-gray-800 border-2 border-gray-300 hover:border-primary hover:bg-primary/10 hover:text-primary'
                 }`}
               >
                 {t.homeDecor}
