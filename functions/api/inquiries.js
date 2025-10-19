@@ -1,4 +1,4 @@
-// Cloudflare Pages Function - Inquiries API
+// Cloudflare Pages Function - Inquiries API with D1 Database
 // Endpoint: /api/inquiries
 
 export async function onRequest(context) {
@@ -15,12 +15,24 @@ export async function onRequest(context) {
     return new Response(null, { headers: corsHeaders });
   }
 
+  const { DB } = env;
+  
+  if (!DB) {
+    return new Response(JSON.stringify({
+      error: 'Database not configured',
+      message: 'D1 database binding not found'
+    }), {
+      status: 500,
+      headers: corsHeaders
+    });
+  }
+
   try {
-    // POST - Yeni talep oluştur
+    // POST - Create new inquiry
     if (request.method === 'POST') {
       const inquiry = await request.json();
       
-      // Validasyon
+      // Validation
       if (!inquiry.name || !inquiry.email || !inquiry.message) {
         return new Response(JSON.stringify({ 
           error: 'Missing required fields: name, email, message' 
@@ -30,40 +42,47 @@ export async function onRequest(context) {
         });
       }
 
-      // Burada Google Sheets'e yazılabilir veya KV'ye kaydedilebilir
-      // Şimdilik sadece başarılı response dönelim
-      const savedInquiry = {
-        id: Date.now().toString(),
-        ...inquiry,
-        created_at: new Date().toISOString(),
-        status: 'pending'
-      };
+      // Insert into D1 database
+      const result = await DB.prepare(`
+        INSERT INTO inquiries (name, company, email, phone, country, message, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, datetime('now'))
+      `).bind(
+        inquiry.name,
+        inquiry.company || null,
+        inquiry.email,
+        inquiry.phone || null,
+        inquiry.country || null,
+        inquiry.message
+      ).run();
 
-      // TODO: Gerçek uygulamada buraya email gönderimi eklenebilir
-      // await sendEmailNotification(inquiry);
+      const savedInquiry = {
+        id: result.meta.last_row_id.toString(),
+        ...inquiry,
+        created_at: new Date().toISOString()
+      };
 
       return new Response(JSON.stringify(savedInquiry), {
         headers: corsHeaders,
-        status: 200
+        status: 201
       });
     }
 
-    // GET - Tüm talepleri listele
+    // GET - List all inquiries
     if (request.method === 'GET') {
-      // Mock data - gerçek uygulamada KV veya D1'den çekilir
-      const inquiries = [
-        {
-          id: "1",
-          name: "John Doe",
-          email: "john@example.com",
-          company: "ABC Corp",
-          phone: "+1 555 1234",
-          product_category: "Bathrobes",
-          message: "Interested in wholesale pricing",
-          created_at: "2025-01-15T10:30:00Z",
-          status: "pending"
-        }
-      ];
+      const { results } = await DB.prepare(
+        'SELECT * FROM inquiries ORDER BY created_at DESC'
+      ).all();
+
+      const inquiries = results.map(row => ({
+        id: row.id.toString(),
+        name: row.name,
+        company: row.company,
+        email: row.email,
+        phone: row.phone,
+        country: row.country,
+        message: row.message,
+        created_at: row.created_at
+      }));
 
       return new Response(JSON.stringify(inquiries), {
         headers: corsHeaders,
@@ -77,7 +96,10 @@ export async function onRequest(context) {
     });
 
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
+    return new Response(JSON.stringify({ 
+      error: 'Internal server error',
+      message: error.message 
+    }), {
       headers: corsHeaders,
       status: 500
     });
