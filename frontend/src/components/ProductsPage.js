@@ -305,27 +305,27 @@ const ProductsPage = ({ language }) => {
               <p className="text-gray-600 text-lg">{t.noProductsFound}</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {filteredProducts.map(product => {
                 const productName = product.name[language] || product.name.en;
                 return (
-                  <div key={product.id} className="group">
-                    <div className="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-all duration-300">
+                  <div key={product.id} className="group flex flex-col">
+                    <div className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 flex flex-col h-full border border-gray-100">
                       {/* Product Image */}
-                      <div className="relative aspect-w-4 aspect-h-3">
+                      <div className="relative w-full h-64 bg-gray-100">
                         <img
                           src={product.image}
                           alt={product.name[language] || product.name.en}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         />
                         
                         {/* Badges */}
-                        {product.badges && (
+                        {product.badges && product.badges.length > 0 && (
                           <div className="absolute top-3 left-3 flex flex-wrap gap-2">
                             {product.badges.map((badge) => (
                               <span
                                 key={badge}
-                                className={`px-3 py-1 text-xs font-medium rounded-full shadow-sm ${getBadgeColors(badge)}`}
+                                className={`px-3 py-1 text-xs font-medium rounded-full shadow-md ${getBadgeColors(badge)}`}
                               >
                                 {badgeTranslations[badge]?.[language] || badgeTranslations[badge]?.en || badge}
                               </span>
@@ -334,16 +334,16 @@ const ProductsPage = ({ language }) => {
                         )}
                         
                         {/* Stock Status */}
-                        <div className={`absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-medium shadow-sm
-                          ${product.in_stock ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
+                        <div className={`absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-semibold shadow-md backdrop-blur-sm
+                          ${product.in_stock ? 'bg-green-500/90 text-white' : 'bg-red-500/90 text-white'}`}
                         >
                           {product.in_stock ? t.inStock : t.outOfStock}
                         </div>
                       </div>
                       
                       {/* Product Info */}
-                      <div className="p-4">
-                        <h3 className="text-lg font-semibold mb-2 group-hover:text-primary transition-colors">
+                      <div className="p-5 flex flex-col flex-grow">
+                        <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-primary transition-colors line-clamp-2 min-h-[3.5rem]">
                           {product.name[language] || product.name.en}
                         </h3>
                       
