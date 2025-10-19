@@ -348,65 +348,63 @@ const ProductsPage = ({ language }) => {
                         </h3>
                       
                         {/* Features */}
-                        {product.features && product.features[language] && (
-                          <ul className="text-gray-600 mb-4 space-y-1">
+                        {product.features && product.features[language] && product.features[language].length > 0 && (
+                          <ul className="text-gray-600 mb-4 space-y-2">
                             {product.features[language].slice(0, 3).map((feature, index) => (
-                              <li key={index} className="flex items-center text-sm">
-                                <div className="w-1.5 h-1.5 bg-primary rounded-full mr-2"></div>
-                                {feature}
+                              <li key={index} className="flex items-start text-sm">
+                                <svg className="w-4 h-4 text-primary mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
+                                </svg>
+                                <span className="flex-1">{feature}</span>
                               </li>
                             ))}
                           </ul>
                         )}
                         
-                        {/* Price Info - Alibaba Style */}
-                        <div className="mb-4">
+                        {/* Price Info - Modern Style */}
+                        <div className="mb-4 mt-auto">
                           {product.priceTiers && product.priceTiers.length > 0 ? (
-                            <div className="border rounded-lg overflow-hidden">
-                              <table className="w-full">
-                                <thead className="bg-gray-50 border-b">
-                                  <tr>
-                                    <th className="px-4 py-2 text-sm text-gray-600">{t.orderQuantity}</th>
-                                    <th className="px-4 py-2 text-sm text-gray-600">{t.unitPrice}</th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  {product.priceTiers.map((tier, index) => (
-                                    <tr key={index} className="border-b last:border-b-0">
-                                      <td className="px-4 py-2 text-sm text-gray-800">
-                                        ≥ {tier.quantity} {t.pieces}
-                                      </td>
-                                      <td className="px-4 py-2 text-sm font-semibold text-primary">
-                                        ${tier.price.toFixed(2)}
-                                      </td>
-                                    </tr>
-                                  ))}
-                                </tbody>
-                              </table>
+                            <div className="border-2 border-gray-200 rounded-lg overflow-hidden">
+                              <div className="bg-gradient-to-r from-primary/10 to-primary/5 px-3 py-2 border-b border-gray-200">
+                                <p className="text-xs font-semibold text-gray-700 uppercase tracking-wide">Toptan Fiyatlar</p>
+                              </div>
+                              <div className="divide-y divide-gray-200">
+                                {product.priceTiers.slice(0, 3).map((tier, index) => (
+                                  <div key={index} className="px-4 py-2 flex justify-between items-center hover:bg-gray-50 transition-colors">
+                                    <span className="text-sm text-gray-700 font-medium">
+                                      ≥ {tier.quantity} {t.pieces || 'adet'}
+                                    </span>
+                                    <span className="text-base font-bold text-primary">
+                                      ${tier.price.toFixed(2)}
+                                    </span>
+                                  </div>
+                                ))}
+                              </div>
                             </div>
                           ) : (
-                            <>
+                            <div className="bg-gray-50 rounded-lg p-4 border-2 border-gray-200">
                               {product.retail_price && (
-                                <div className="text-lg font-semibold text-primary">
-                                  ${product.retail_price}
+                                <div className="flex justify-between items-center mb-2">
+                                  <span className="text-sm text-gray-600">Fiyat:</span>
+                                  <span className="text-2xl font-bold text-primary">${product.retail_price}</span>
                                 </div>
                               )}
                               {product.min_wholesale_quantity && (
-                                <div className="text-sm text-gray-600">
-                                  Min. {product.min_wholesale_quantity} {t.pieces}
+                                <div className="text-xs text-gray-500 text-center">
+                                  Min. {product.min_wholesale_quantity} {t.pieces || 'adet'}
                                 </div>
                               )}
-                            </>
+                            </div>
                           )}
                         </div>
                         
                         {/* WhatsApp Button */}
                         <button 
                           onClick={() => handleWhatsAppClick(product)}
-                          className="w-full bg-primary text-white rounded-lg py-3 px-4 flex items-center justify-center gap-2 hover:bg-primary/90 transition-colors"
+                          className="w-full bg-gradient-to-r from-primary to-orange-600 text-white rounded-lg py-3 px-4 flex items-center justify-center gap-2 hover:from-primary/90 hover:to-orange-600/90 transition-all shadow-md hover:shadow-lg font-semibold"
                         >
                           <ShoppingCart size={20} />
-                          <span>{t.getQuote}</span>
+                          <span>{t.getQuote || 'Teklif Al'}</span>
                         </button>
                       </div>
                     </div>
