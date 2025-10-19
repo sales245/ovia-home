@@ -50,11 +50,8 @@ export async function onRequest(context) {
           is_active: Boolean(category.is_active)
         }));
 
-        return new Response(JSON.stringify({
-          success: true,
-          data: categories,
-          count: categories.length
-        }), {
+        // Return array directly for frontend compatibility
+        return new Response(JSON.stringify(categories), {
           status: 200,
           headers: corsHeaders
         });
