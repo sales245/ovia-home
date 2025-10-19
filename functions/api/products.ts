@@ -56,10 +56,6 @@ export async function onRequest(context: any) {
     }
 
     if (request.method === 'POST') {
-      // Require admin auth for write operations
-      const auth = basicAuth(request, env as any);
-      if (!auth.ok) return auth.response;
-
       const body = await request.json() as ProductData;
       const insert = await DB.prepare(`INSERT INTO products (
         category, name_en, name_tr, name_de, image, features_en, features_tr, badges, retail_price, min_wholesale_quantity, stock_quantity, in_stock, price_tiers, created_at
@@ -83,9 +79,6 @@ export async function onRequest(context: any) {
     }
 
     if (request.method === 'PUT') {
-      const auth = basicAuth(request, env as any);
-      if (!auth.ok) return auth.response;
-
       const body = await request.json() as ProductData & { id: string };
       if (!body.id) return new Response(JSON.stringify({ error: 'ID required' }), { status: 400, headers: { ...corsHeaders, 'Content-Type':'application/json' } });
 
