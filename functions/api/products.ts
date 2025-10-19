@@ -51,7 +51,8 @@ export async function onRequest(context: any) {
         priceTiers: JSON.parse(r.price_tiers || '[]')
       }));
 
-      return new Response(JSON.stringify({ success: true, data, count: data.length }), { status: 200, headers: { ...corsHeaders, 'Content-Type':'application/json' } });
+      // Return array directly for frontend compatibility
+      return new Response(JSON.stringify(data), { status: 200, headers: { ...corsHeaders, 'Content-Type':'application/json' } });
     }
 
     if (request.method === 'POST') {
