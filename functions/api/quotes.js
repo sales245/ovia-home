@@ -1,79 +1,110 @@
-// Cloudflare Pages Function - Quotes Endpoint
+// Cloudflare Pages Function - Quotes API with D1 Database
 // Endpoint: /api/quotes
-// Quote (teklif) isteklerini yönetir
 
 export async function onRequest(context) {
-  const { request } = context;
-  const method = request.method;
+  const { request, env } = context;
+  
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Content-Type': 'application/json',
+  };
 
-  // GET: Tüm teklifleri listele
-  if (method === 'GET') {
-    // Mock data - ileride Google Sheets'ten çekilecek
-    const quotes = [
-      {
-        id: '1',
-        customer_name: 'Ahmet Yılmaz',
-        company: 'ABC Otel',
-        email: 'ahmet@abcotel.com',
-        phone: '+90 532 111 2233',
-        product_id: '1',
-        product_name: 'Premium Pamuk Bornoz',
-        quantity: 100,
-        message: '100 adet bornoz için fiyat teklifi istiyorum',
-        status: 'pending', // pending, responded, rejected
-        created_at: new Date().toISOString(),
-        responded_at: null
-      }
-    ];
+  if (request.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
 
-    return new Response(JSON.stringify(quotes), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' }
+  const { DB } = env;
+  
+  if (!DB) {
+    return new Response(JSON.stringify({
+      error: 'Database not configured',
+      message: 'D1 database binding not found'
+    }), {
+      status: 500,
+      headers: corsHeaders
     });
   }
 
-  // POST: Yeni teklif oluştur
-  if (method === 'POST') {
-    try {
-      const data = await request.json();
-      
-      // Validate required fields
-      const required = ['customer_name', 'email', 'product_id', 'quantity'];
-      for (const field of required) {
-        if (!data[field]) {
-          return new Response(JSON.stringify({
-            error: 'Validation error',
-            message: `${field} is required`
-          }), {
-            status: 400,
-            headers: { 'Content-Type': 'application/json' }
-          });
-        }
-      }
+  try {
+    // GET - List all quotes
+    if (request.method === 'GET') {
+      const { results } = await DB.prepare(
+        'SELECT * FROM quotes ORDER BY created_at DESC'
+      ).all();
 
-      // Mock response - ileride Google Sheets'e kaydedilecek
-      const newQuote = {
-        id: String(Date.now()),
-        ...data,
-        status: 'pending',
-        created_at: new Date().toISOString(),
-        responded_at: null
-      };
+      const quotes = results.map(row => ({
+        id: row.id.toString(),
+        name: row.name,
+        company: row.company,
+        email: row.email,
+        phone: row.phone,
+        product_category: row.product_category,
+        quantity: row.quantity,
+        message: row.message,
+        created_at: row.created_at
+      }));
 
-      return new Response(JSON.stringify(newQuote), {
-        status: 201,
-        headers: { 'Content-Type': 'application/json' }
-      });
-    } catch (error) {
-      return new Response(JSON.stringify({
-        error: 'Internal server error',
-        message: error.message
-      }), {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' }
+      return new Response(JSON.stringify(quotes), {
+        headers: corsHeaders,
+        status: 200
       });
     }
-  }
 
-  return new Response('Method not allowed', { status: 405 });
+    // POST - Create new quote
+    if (request.method === 'POST') {
+      const quote = await request.json();
+      
+      // Validation
+      if (!quote.name || !quote.email) {
+        return new Response(JSON.stringify({
+          error: 'Validation error',
+          message: 'name and email are required'
+        }), {
+          status: 422,
+          headers: corsHeaders
+        });
+      }
+
+      // Insert into D1 database
+      const result = await DB.prepare(`
+        INSERT INTO quotes (name, company, email, phone, product_category, quantity, message, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'))
+      `).bind(
+        quote.name,
+        quote.company || null,
+        quote.email,
+        quote.phone || null,
+        quote.product_category || null,
+        quote.quantity || null,
+        quote.message || null
+      ).run();
+
+      const savedQuote = {
+        id: result.meta.last_row_id.toString(),
+        ...quote,
+        created_at: new Date().toISOString()
+      };
+
+      return new Response(JSON.stringify(savedQuote), {
+        status: 201,
+        headers: corsHeaders
+      });
+    }
+
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+      status: 405,
+      headers: corsHeaders
+    });
+
+  } catch (error) {
+    return new Response(JSON.stringify({
+      error: 'Internal server error',
+      message: error.message
+    }), {
+      status: 500,
+      headers: corsHeaders
+    });
+  }
 }
