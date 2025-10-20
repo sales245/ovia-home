@@ -123,7 +123,7 @@ function App() {
                       <Route path="contact" element={<ContactPage language={language} />} />
                       <Route path="cart" element={<CartPage language={language} />} />
                       <Route path="checkout" element={<CheckoutPage language={language} />} />
-                      <Route path="customer-panel" element={<CustomerPanel language={language} />} />
+                      <Route path="customer-panel" element={<NewCustomerPanel language={language} />} />
                       <Route path="admin" element={<AdminPage language={language} />} />
                     </Routes>
                   </Layout>
