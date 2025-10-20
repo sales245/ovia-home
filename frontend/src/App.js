@@ -108,28 +108,30 @@ function App() {
 
   return (
     <div className="App">
-      <SettingsProvider>
-        <CartProvider>
-          <BrowserRouter>
-            <Routes>
-              <Route path="/*" element={
-                <Layout language={language} setLanguage={setLanguage}>
-                  <Routes>
-                    <Route index element={<HomePage language={language} stats={stats} />} />
-                    <Route path="products" element={<ProductsPage language={language} />} />
-                    <Route path="about" element={<AboutPage language={language} />} />
-                    <Route path="contact" element={<ContactPage language={language} />} />
-                    <Route path="cart" element={<CartPage language={language} />} />
-                    <Route path="checkout" element={<CheckoutPage language={language} />} />
-                    <Route path="customer-panel" element={<CustomerPanel language={language} />} />
-                    <Route path="admin" element={<AdminPage language={language} />} />
-                  </Routes>
-                </Layout>
-              } />
-            </Routes>
-          </BrowserRouter>
-        </CartProvider>
-      </SettingsProvider>
+      <AuthProvider>
+        <SettingsProvider>
+          <CartProvider>
+            <BrowserRouter>
+              <Routes>
+                <Route path="/*" element={
+                  <Layout language={language} setLanguage={setLanguage}>
+                    <Routes>
+                      <Route index element={<HomePage language={language} stats={stats} />} />
+                      <Route path="products" element={<ProductsPage language={language} />} />
+                      <Route path="about" element={<AboutPage language={language} />} />
+                      <Route path="contact" element={<ContactPage language={language} />} />
+                      <Route path="cart" element={<CartPage language={language} />} />
+                      <Route path="checkout" element={<CheckoutPage language={language} />} />
+                      <Route path="customer-panel" element={<CustomerPanel language={language} />} />
+                      <Route path="admin" element={<AdminPage language={language} />} />
+                    </Routes>
+                  </Layout>
+                } />
+              </Routes>
+            </BrowserRouter>
+          </CartProvider>
+        </SettingsProvider>
+      </AuthProvider>
     </div>
   );
 }
