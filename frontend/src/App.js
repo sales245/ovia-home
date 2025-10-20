@@ -104,22 +104,24 @@ function App() {
 
   return (
     <div className="App">
-      <BrowserRouter>
-        <Routes>
-          <Route path="/*" element={
-            <Layout language={language} setLanguage={setLanguage}>
-              <Routes>
-                <Route index element={<HomePage language={language} stats={stats} />} />
-                <Route path="products" element={<ProductsPage language={language} />} />
-                <Route path="about" element={<AboutPage language={language} />} />
-                <Route path="contact" element={<ContactPage language={language} />} />
-                <Route path="customer-panel" element={<CustomerPanel language={language} />} />
-                <Route path="admin" element={<AdminPage language={language} />} />
-              </Routes>
-            </Layout>
-          } />
-        </Routes>
-      </BrowserRouter>
+      <CartProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/*" element={
+              <Layout language={language} setLanguage={setLanguage}>
+                <Routes>
+                  <Route index element={<HomePage language={language} stats={stats} />} />
+                  <Route path="products" element={<ProductsPage language={language} />} />
+                  <Route path="about" element={<AboutPage language={language} />} />
+                  <Route path="contact" element={<ContactPage language={language} />} />
+                  <Route path="customer-panel" element={<CustomerPanel language={language} />} />
+                  <Route path="admin" element={<AdminPage language={language} />} />
+                </Routes>
+              </Layout>
+            } />
+          </Routes>
+        </BrowserRouter>
+      </CartProvider>
     </div>
   );
 }
