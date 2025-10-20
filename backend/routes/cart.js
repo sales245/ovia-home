@@ -45,10 +45,30 @@ router.get('/', (req, res) => {
   });
 });
 
+// Helper function to calculate price based on quantity and price tiers
+function calculatePrice(quantity, priceTiers, basePrice) {
+  if (!priceTiers || priceTiers.length === 0) {
+    return basePrice;
+  }
+  
+  // Sort tiers by quantity descending to get the best matching tier
+  const sortedTiers = [...priceTiers].sort((a, b) => b.quantity - a.quantity);
+  
+  // Find the applicable tier
+  for (const tier of sortedTiers) {
+    if (quantity >= tier.quantity) {
+      return tier.price;
+    }
+  }
+  
+  // If no tier matches, use the lowest tier or base price
+  return priceTiers[0]?.price || basePrice;
+}
+
 // POST /api/cart
 router.post('/', (req, res) => {
   try {
-    const { productId, name, image, price, quantity, category } = req.body;
+    const { productId, name, image, price, quantity, category, priceTiers } = req.body;
     
     if (!productId || !name || price === undefined || !quantity) {
       return res.status(400).json({
@@ -64,14 +84,25 @@ router.post('/', (req, res) => {
     
     if (existingIndex >= 0) {
       cart.items[existingIndex].quantity += quantity;
+      // Recalculate price based on new quantity
+      if (cart.items[existingIndex].priceTiers) {
+        cart.items[existingIndex].price = calculatePrice(
+          cart.items[existingIndex].quantity,
+          cart.items[existingIndex].priceTiers,
+          price
+        );
+      }
     } else {
+      const actualPrice = calculatePrice(quantity, priceTiers, price);
       cart.items.push({
         productId,
         name,
         image: image || '',
-        price,
+        price: actualPrice,
+        basePrice: price,
         quantity,
         category: category || '',
+        priceTiers: priceTiers || [],
         addedAt: Date.now()
       });
     }
