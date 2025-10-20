@@ -30,6 +30,7 @@ app.use('/api/cart', cartRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/addresses', addressesRoutes);
 app.use('/api/paypal', paypalRoutes);
+app.use('/api/orders', ordersRoutes);
 
 // Health check
 app.get('/api', (req, res) => {
