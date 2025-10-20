@@ -126,6 +126,7 @@ function App() {
                       <Route path="checkout" element={<CheckoutPage language={language} />} />
                       <Route path="customer-panel" element={<NewCustomerPanel language={language} />} />
                       <Route path="admin" element={<AdminPage language={language} />} />
+                      <Route path="admin/orders" element={<AdminOrdersPanel language={language} />} />
                     </Routes>
                   </Layout>
                 } />
