@@ -50,6 +50,7 @@ function Layout({ children, language, setLanguage }) {
       </main>
       <Footer language={language} />
       <WhatsAppButton />
+      <MiniCart language={language} />
     </>
   );
 }
