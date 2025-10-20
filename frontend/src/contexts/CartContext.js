@@ -48,13 +48,18 @@ export const CartProvider = ({ children }) => {
   const addToCart = async (product, quantity = 1) => {
     try {
       setLoading(true);
+      
+      // Get base price and price tiers
+      const basePrice = product.retail_price || product.priceTiers?.[0]?.price || 0;
+      
       const response = await axios.post(`${API}/cart`, {
         productId: product.id,
         name: product.name,
         image: product.image,
-        price: product.retail_price || product.priceTiers?.[0]?.price || 0,
+        price: basePrice,
         quantity,
-        category: product.category
+        category: product.category,
+        priceTiers: product.priceTiers || []
       }, {
         withCredentials: true
       });
