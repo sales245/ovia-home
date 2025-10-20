@@ -143,9 +143,19 @@ const CartPage = ({ language }) => {
                           >
                             {item.quantity <= 1 ? <Trash2 size={16} /> : <Minus size={16} />}
                           </button>
-                          <span className="px-3 font-semibold min-w-[40px] text-center">
-                            {item.quantity}
-                          </span>
+                          <input
+                            type="number"
+                            min="1"
+                            value={item.quantity}
+                            onChange={(e) => {
+                              const newQty = parseInt(e.target.value) || 1;
+                              if (newQty > 0 && newQty <= 9999) {
+                                updateQuantity(item.productId, newQty);
+                              }
+                            }}
+                            disabled={loading}
+                            className="w-16 px-2 py-1 text-center font-semibold bg-transparent border-0 focus:outline-none disabled:opacity-50"
+                          />
                           <button
                             onClick={() => updateQuantity(item.productId, item.quantity + 1)}
                             disabled={loading}
