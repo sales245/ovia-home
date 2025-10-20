@@ -156,15 +156,47 @@ const CheckoutPage = ({ language }) => {
       return;
     }
 
-    // Generate order number
-    const orderNum = `OV${Date.now().toString().slice(-8)}`;
-    setOrderNumber(orderNum);
-    setOrderPlaced(true);
-    
-    // Clear cart
-    await clearCart();
-    
-    window.scrollTo(0, 0);
+    try {
+      // Create order via API
+      const orderData = {
+        items: cart.items,
+        customerInfo: {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          phone: formData.phone,
+          company: formData.company
+        },
+        shippingAddress: {
+          address: formData.address,
+          city: formData.city,
+          state: formData.state,
+          postalCode: formData.postalCode,
+          country: formData.country
+        },
+        paymentMethod: formData.paymentMethod,
+        subtotal: cart.subtotal,
+        shipping,
+        tax,
+        total
+      };
+
+      const response = await axios.post(`${API}/orders`, orderData, {
+        withCredentials: true
+      });
+
+      const order = response.data;
+      setOrderNumber(order.orderNumber);
+      setOrderPlaced(true);
+      
+      // Clear cart
+      await clearCart();
+      
+      window.scrollTo(0, 0);
+    } catch (error) {
+      console.error('Order creation error:', error);
+      alert(language === 'tr' ? 'Sipariş oluşturulurken hata oluştu' : 'Error creating order');
+    }
   };
 
   if (orderPlaced) {
