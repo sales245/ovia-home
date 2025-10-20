@@ -53,30 +53,30 @@ const HeroSlider = ({ slides, autoPlayInterval = 5000, language }) => {
             className="w-full h-full object-cover"
           />
           
-          {/* Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-transparent" />
+          {/* Overlay - Improved readability */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-transparent" />
           
           {/* Content */}
           <div className="absolute inset-0 flex items-center">
             <div className="container mx-auto px-4">
               <div className="max-w-2xl text-white">
                 {slide.subtitle && (
-                  <p className="text-sm md:text-base font-medium mb-2 text-orange-300 uppercase tracking-wider">
+                  <p className="text-sm md:text-base font-semibold mb-3 text-orange-400 uppercase tracking-wider animate-fade-in">
                     {slide.subtitle[language] || slide.subtitle.en}
                   </p>
                 )}
-                <h2 className="text-3xl md:text-5xl font-bold mb-4 leading-tight">
+                <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight drop-shadow-lg">
                   {slide.title[language] || slide.title.en}
                 </h2>
                 {slide.description && (
-                  <p className="text-base md:text-xl mb-6 text-gray-200">
+                  <p className="text-base md:text-xl mb-8 text-gray-100 leading-relaxed drop-shadow-md">
                     {slide.description[language] || slide.description.en}
                   </p>
                 )}
                 {slide.buttonText && slide.buttonLink && (
                   <a
                     href={slide.buttonLink}
-                    className="inline-block bg-primary hover:bg-orange-600 text-white font-semibold px-8 py-3 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                    className="inline-block bg-primary hover:bg-orange-600 text-white font-bold px-8 py-4 rounded-lg transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-105 hover:-translate-y-1"
                   >
                     {slide.buttonText[language] || slide.buttonText.en}
                   </a>
