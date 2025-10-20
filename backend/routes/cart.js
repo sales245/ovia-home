@@ -155,6 +155,15 @@ router.put('/', (req, res) => {
       cart.items.splice(itemIndex, 1);
     } else {
       cart.items[itemIndex].quantity = quantity;
+      
+      // Recalculate price based on new quantity if price tiers exist
+      if (cart.items[itemIndex].priceTiers && cart.items[itemIndex].priceTiers.length > 0) {
+        cart.items[itemIndex].price = calculatePrice(
+          quantity,
+          cart.items[itemIndex].priceTiers,
+          cart.items[itemIndex].basePrice || cart.items[itemIndex].price
+        );
+      }
     }
     
     cart.updatedAt = Date.now();
