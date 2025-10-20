@@ -171,12 +171,28 @@ const Header = ({ language, setLanguage }) => {
           </div>
 
           {/* Mobile Menu Button */}
-          <button
-            onClick={toggleMenu}
-            className="md:hidden p-2 text-ink-2 hover:text-primary"
-          >
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          <div className="md:hidden flex items-center gap-3">
+            {/* Mobile Cart Icon */}
+            <button
+              onClick={toggleCart}
+              className="relative p-2 text-ink-2 hover:text-primary transition-colors"
+              title="Shopping Cart"
+            >
+              <ShoppingCart size={20} />
+              {cart.itemCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-primary text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                  {cart.itemCount}
+                </span>
+              )}
+            </button>
+            
+            <button
+              onClick={toggleMenu}
+              className="p-2 text-ink-2 hover:text-primary"
+            >
+              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
         </div>
 
         {/* Mobile Navigation */}
