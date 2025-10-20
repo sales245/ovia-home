@@ -12,6 +12,7 @@ import ProductsPage from './components/ProductsPage';
 import AboutPage from './components/AboutPage';
 import ContactPage from './components/ContactPage';
 import CustomerPanel from './components/CustomerPanel';
+import NewCustomerPanel from './components/NewCustomerPanel';
 import AdminPage from './components/AdminPage';
 import MiniCart from './components/MiniCart';
 import CartPage from './components/CartPage';
