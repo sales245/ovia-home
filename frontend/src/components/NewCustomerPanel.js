@@ -597,10 +597,141 @@ const NewCustomerPanel = ({ language }) => {
                 {activeTab === 'orders' && (
                   <div>
                     <h1 className="text-2xl font-bold mb-6">{t.myOrders}</h1>
-                    <div className="text-center py-12">
-                      <Package size={64} className="mx-auto mb-4 text-gray-300" />
-                      <p className="text-gray-500">{t.noOrders}</p>
-                    </div>
+                    
+                    {orders.length === 0 ? (
+                      <div className="text-center py-12">
+                        <Package size={64} className="mx-auto mb-4 text-gray-300" />
+                        <p className="text-gray-500">{t.noOrders}</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {orders.map((order) => (
+                          <div key={order.id} className="bg-gray-50 rounded-lg p-6 hover:shadow-md transition-shadow">
+                            <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
+                              <div>
+                                <h3 className="font-bold text-lg">{order.orderNumber}</h3>
+                                <p className="text-sm text-gray-500">
+                                  {new Date(order.createdAt).toLocaleDateString(language === 'tr' ? 'tr-TR' : 'en-US')}
+                                </p>
+                              </div>
+                              <div className="flex items-center gap-3">
+                                <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                                  order.status === 'delivered' ? 'bg-green-100 text-green-800' :
+                                  order.status === 'shipped' ? 'bg-blue-100 text-blue-800' :
+                                  order.status === 'confirmed' ? 'bg-orange-100 text-orange-800' :
+                                  'bg-yellow-100 text-yellow-800'
+                                }`}>
+                                  {t[order.status] || order.status}
+                                </span>
+                                <span className="font-bold text-lg text-primary">
+                                  ${order.total.toFixed(2)}
+                                </span>
+                              </div>
+                            </div>
+                            
+                            <div className="grid grid-cols-2 gap-3 text-sm mb-4">
+                              <div>
+                                <span className="text-gray-600">{t.items}:</span>
+                                <span className="ml-2 font-medium">{order.items.length}</span>
+                              </div>
+                              <div>
+                                <span className="text-gray-600">{t.paymentMethod}:</span>
+                                <span className="ml-2 font-medium">{order.paymentMethod}</span>
+                              </div>
+                            </div>
+                            
+                            <button
+                              onClick={() => setSelectedOrder(order)}
+                              className="text-primary hover:text-orange-600 font-semibold text-sm"
+                            >
+                              {t.viewDetails} →
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Order Details Modal */}
+                    {selectedOrder && (
+                      <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+                        <div className="bg-white rounded-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+                          <div className="sticky top-0 bg-white border-b p-6 flex items-center justify-between">
+                            <h2 className="text-2xl font-bold">{t.orderDetails}</h2>
+                            <button
+                              onClick={() => setSelectedOrder(null)}
+                              className="p-2 hover:bg-gray-100 rounded-full"
+                            >
+                              <X size={24} />
+                            </button>
+                          </div>
+                          
+                          <div className="p-6 space-y-6">
+                            {/* Order Info */}
+                            <div>
+                              <h3 className="font-bold mb-2">{selectedOrder.orderNumber}</h3>
+                              <p className="text-sm text-gray-500">
+                                {new Date(selectedOrder.createdAt).toLocaleString(language === 'tr' ? 'tr-TR' : 'en-US')}
+                              </p>
+                            </div>
+
+                            {/* Items */}
+                            <div>
+                              <h3 className="font-bold mb-3">{t.items}</h3>
+                              <div className="space-y-3">
+                                {selectedOrder.items.map((item, idx) => (
+                                  <div key={idx} className="flex gap-4 bg-gray-50 p-3 rounded-lg">
+                                    {item.image && (
+                                      <img src={item.image} alt="" className="w-16 h-16 object-cover rounded" />
+                                    )}
+                                    <div className="flex-1">
+                                      <p className="font-medium">{typeof item.name === 'object' ? (item.name[language] || item.name.en) : item.name}</p>
+                                      <p className="text-sm text-gray-600">
+                                        {t.quantity}: {item.quantity} × ${item.price.toFixed(2)}
+                                      </p>
+                                    </div>
+                                    <div className="font-bold">
+                                      ${(item.price * item.quantity).toFixed(2)}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+
+                            {/* Totals */}
+                            <div className="border-t pt-4 space-y-2">
+                              <div className="flex justify-between">
+                                <span>{t.subtotal}</span>
+                                <span>${selectedOrder.subtotal.toFixed(2)}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span>{t.shipping}</span>
+                                <span>${selectedOrder.shipping.toFixed(2)}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span>{t.tax}</span>
+                                <span>${selectedOrder.tax.toFixed(2)}</span>
+                              </div>
+                              <div className="flex justify-between font-bold text-lg border-t pt-2">
+                                <span>{t.total}</span>
+                                <span className="text-primary">${selectedOrder.total.toFixed(2)}</span>
+                              </div>
+                            </div>
+
+                            {/* Shipping Address */}
+                            <div>
+                              <h3 className="font-bold mb-2">{t.shippingAddress}</h3>
+                              <div className="bg-gray-50 p-4 rounded-lg text-sm">
+                                <p className="font-medium">{selectedOrder.customerInfo.firstName} {selectedOrder.customerInfo.lastName}</p>
+                                <p>{selectedOrder.shippingAddress.address}</p>
+                                <p>{selectedOrder.shippingAddress.city}, {selectedOrder.shippingAddress.state} {selectedOrder.shippingAddress.postalCode}</p>
+                                <p>{selectedOrder.shippingAddress.country}</p>
+                                <p className="mt-2">{selectedOrder.customerInfo.phone}</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
 
