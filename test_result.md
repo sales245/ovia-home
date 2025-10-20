@@ -312,10 +312,13 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Backend API comprehensive testing completed"
-    - "All CRUD operations verified"
-    - "Admin endpoints functional"
-  stuck_tasks: []
+    - "Settings API deployment issue"
+    - "Cart API deployment issue"
+    - "Auth API deployment issue"
+    - "Addresses API deployment issue"
+    - "PayPal API deployment issue"
+  stuck_tasks:
+    - "All new API endpoints - Cloudflare deployment issue"
   test_all: false
   test_priority: "high_first"
 
