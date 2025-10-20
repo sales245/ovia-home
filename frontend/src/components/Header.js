@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Globe, Mail, MessageCircle, Instagram } from 'lucide-react';
+import { Menu, X, Globe, Mail, MessageCircle, Instagram, ShoppingCart } from 'lucide-react';
 import { translations } from '../translations';
+import { useCart } from '../contexts/CartContext';
 
 const Header = ({ language, setLanguage }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
