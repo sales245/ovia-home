@@ -22,6 +22,7 @@ const cartRoutes = require('./routes/cart');
 const authRoutes = require('./routes/auth');
 const addressesRoutes = require('./routes/addresses');
 const paypalRoutes = require('./routes/paypal');
+const ordersRoutes = require('./routes/orders');
 
 // Routes
 app.use('/api/settings', settingsRoutes);
