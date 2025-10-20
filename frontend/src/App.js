@@ -51,8 +51,38 @@ function Layout({ children, language, setLanguage }) {
 }
 
 function App() {
-  const [language, setLanguage] = useState('en');
+  // Initialize language from localStorage/cookie
+  const getInitialLanguage = () => {
+    // Try localStorage first
+    const savedLang = localStorage.getItem('preferred_language');
+    if (savedLang) {
+      return savedLang;
+    }
+    
+    // Try cookie
+    const cookies = document.cookie.split(';');
+    const langCookie = cookies.find(c => c.trim().startsWith('lang='));
+    if (langCookie) {
+      return langCookie.split('=')[1];
+    }
+    
+    // Default to English
+    return 'en';
+  };
+
+  const [language, setLanguage] = useState(getInitialLanguage);
   const [stats, setStats] = useState({});
+
+  // Persist language selection
+  useEffect(() => {
+    // Save to localStorage
+    localStorage.setItem('preferred_language', language);
+    
+    // Save to cookie (30 days)
+    const expires = new Date();
+    expires.setDate(expires.getDate() + 30);
+    document.cookie = `lang=${language}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
+  }, [language]);
 
   useEffect(() => {
     const fetchStats = async () => {
