@@ -99,39 +99,10 @@ const HomePage = ({ stats = {}, language }) => {
 
   return (
     <div className="header-spacing">
-      {/* Hero Section */}
+      {/* Hero Section with Slider */}
       <section className="section section-light relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <img
-            src="https://images.unsplash.com/photo-1638368888223-4efbc65b1153?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2Nzh8MHwxfHNlYXJjaHwxfHxUdXJraXNoJTIwdGV4dGlsZXN8ZW58MHx8fHwxNzU3ODY5NDQ4fDA&ixlib=rb-4.1.0&q=85"
-            alt="Turkish Textiles"
-            className="w-full h-full object-cover"
-          />
-        </div>
         <div className="container relative z-10">
-          <div className="grid-2">
-            <div className="fade-in-up">
-              <h1 className="mb-6">{t.heroTitle}</h1>
-              <p className="text-xl mb-8 leading-relaxed">
-                {t.heroSubtitle}
-              </p>
-              <div className="flex space-x-4">
-                <Link to="/contact" className="btn-primary">
-                  {t.getQuote} <ArrowRight className="inline ml-2" size={20} />
-                </Link>
-                <Link to="/products" className="btn-secondary">
-                  {t.exploreProducts}
-                </Link>
-              </div>
-            </div>
-            <div className="fade-in-up">
-              <img
-                src="https://images.unsplash.com/photo-1610643073583-332a16a0968a?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2Nzh8MHwxfHNlYXJjaHwyfHxUdXJraXNoJTIwdGV4dGlsZXN8ZW58MHx8fHwxNzU3ODY5NDQ4fDA&ixlib=rb-4.1.0&q=85"
-                alt="Premium Textiles"
-                className="w-full h-96 object-cover rounded-2xl shadow-2xl"
-              />
-            </div>
-          </div>
+          <HeroSlider slides={heroSlides} language={language} autoPlayInterval={6000} />
         </div>
       </section>
 
