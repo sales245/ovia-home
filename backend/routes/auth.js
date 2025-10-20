@@ -138,66 +138,63 @@ router.post('/login', async (req, res) => {
 // POST /api/auth/google
 router.post('/google', (req, res) => {
   try {
-    const { credential } = req.body;
+    const { credential, userData } = req.body;
     
-    if (!credential) {
+    if (!userData || !userData.email) {
       return res.status(400).json({
         error: 'Validation error',
-        message: 'Google credential is required'
+        message: 'User data is required'
       });
     }
 
-    try {
-      const parts = credential.split('.');
-      const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString());
+    const googleEmail = userData.email;
+    const googleName = userData.name;
+    const googlePicture = userData.picture;
+    const googleId = userData.id;
+
+    let foundUser = null;
+    for (const [, user] of users) {
+      if (user.email === googleEmail) {
+        foundUser = user;
+        break;
+      }
+    }
+
+    if (!foundUser) {
+      const userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       
-      const googleEmail = payload.email;
-      const googleName = payload.name;
-      const googlePicture = payload.picture;
-      const googleId = payload.sub;
+      foundUser = {
+        id: userId,
+        email: googleEmail,
+        name: googleName,
+        picture: googlePicture,
+        googleId,
+        authProvider: 'google',
+        company: '',
+        phone: '',
+        country: '',
+        createdAt: Date.now(),
+        updatedAt: Date.now()
+      };
 
-      let foundUser = null;
-      for (const [, user] of users) {
-        if (user.email === googleEmail && user.authProvider === 'google') {
-          foundUser = user;
-          break;
-        }
+      users.set(userId, foundUser);
+    } else {
+      // Update picture if it changed
+      if (googlePicture && foundUser.picture !== googlePicture) {
+        foundUser.picture = googlePicture;
+        foundUser.updatedAt = Date.now();
+        users.set(foundUser.id, foundUser);
       }
-
-      if (!foundUser) {
-        const userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-        
-        foundUser = {
-          id: userId,
-          email: googleEmail,
-          name: googleName,
-          picture: googlePicture,
-          googleId,
-          authProvider: 'google',
-          company: '',
-          phone: '',
-          country: '',
-          createdAt: Date.now(),
-          updatedAt: Date.now()
-        };
-
-        users.set(userId, foundUser);
-      }
-
-      const token = generateToken(foundUser.id);
-
-      res.cookie('auth_token', token, { maxAge: 7 * 24 * 60 * 60 * 1000, httpOnly: true, sameSite: 'lax' });
-      res.json({
-        user: foundUser,
-        token
-      });
-
-    } catch (error) {
-      return res.status(400).json({
-        error: 'Invalid Google credential',
-        message: error.message
-      });
     }
+
+    const token = generateToken(foundUser.id);
+
+    res.cookie('auth_token', token, { maxAge: 7 * 24 * 60 * 60 * 1000, httpOnly: true, sameSite: 'lax' });
+    res.json({
+      user: foundUser,
+      token
+    });
+
   } catch (error) {
     res.status(500).json({ error: 'Internal server error', message: error.message });
   }
