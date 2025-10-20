@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Star, Globe, Award, Shield, Users } from 'lucide-react';
 import { translations } from '../translations';
+import HeroSlider from './HeroSlider';
 
 
 
