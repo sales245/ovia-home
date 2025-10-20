@@ -577,12 +577,12 @@ const NewCustomerPanel = ({ language }) => {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div className="bg-blue-50 p-6 rounded-lg">
                         <Package className="text-blue-600 mb-2" size={32} />
-                        <h3 className="font-bold text-2xl">0</h3>
+                        <h3 className="font-bold text-2xl">{orders.length}</h3>
                         <p className="text-gray-600">{t.myOrders}</p>
                       </div>
                       <div className="bg-green-50 p-6 rounded-lg">
                         <MapPin className="text-green-600 mb-2" size={32} />
-                        <h3 className="font-bold text-2xl">0</h3>
+                        <h3 className="font-bold text-2xl">{addresses.length}</h3>
                         <p className="text-gray-600">{t.myAddresses}</p>
                       </div>
                       <div className="bg-orange-50 p-6 rounded-lg">
