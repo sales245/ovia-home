@@ -8,6 +8,7 @@ const Header = ({ language, setLanguage }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
   const t = translations[language];
+  const { cart, toggleCart } = useCart();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
