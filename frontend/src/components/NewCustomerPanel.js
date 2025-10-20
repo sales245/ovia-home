@@ -1,6 +1,10 @@
-import React, { useState } from 'react';
-import { User, Package, MapPin, Settings, LogOut, Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { User, Package, MapPin, Settings, LogOut, Mail, Lock, Eye, EyeOff, Plus, Edit, Trash2, Clock, CheckCircle, Truck, X } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import axios from 'axios';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || '';
+const API = BACKEND_URL ? `${BACKEND_URL}/api` : '/api';
 
 const NewCustomerPanel = ({ language }) => {
   const { user, loading: authLoading, login, register, loginWithGoogle, logout } = useAuth();
