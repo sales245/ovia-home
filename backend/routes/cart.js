@@ -1,0 +1,190 @@
+const express = require('express');
+const router = express.Router();
+
+const carts = new Map();
+
+function cleanupOldCarts() {
+  const now = Date.now();
+  const dayInMs = 24 * 60 * 60 * 1000;
+  
+  for (const [sessionId, cart] of carts.entries()) {
+    if (now - cart.updatedAt > dayInMs) {
+      carts.delete(sessionId);
+    }
+  }
+}
+
+setInterval(cleanupOldCarts, 60 * 60 * 1000);
+
+function getSessionId(req) {
+  let sessionId = req.cookies.cart_session;
+  if (!sessionId) {
+    sessionId = req.query.sessionId;
+  }
+  if (!sessionId) {
+    sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  }
+  return sessionId;
+}
+
+// GET /api/cart
+router.get('/', (req, res) => {
+  const sessionId = getSessionId(req);
+  const cart = carts.get(sessionId) || { items: [], updatedAt: Date.now() };
+  
+  const subtotal = cart.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const itemCount = cart.items.reduce((sum, item) => sum + item.quantity, 0);
+  
+  res.cookie('cart_session', sessionId, { maxAge: 24 * 60 * 60 * 1000, httpOnly: false, sameSite: 'lax' });
+  res.json({
+    sessionId,
+    items: cart.items,
+    subtotal,
+    itemCount,
+    updatedAt: cart.updatedAt
+  });
+});
+
+// POST /api/cart
+router.post('/', (req, res) => {
+  try {
+    const { productId, name, image, price, quantity, category } = req.body;
+    
+    if (!productId || !name || price === undefined || !quantity) {
+      return res.status(400).json({
+        error: 'Validation error',
+        message: 'productId, name, price, and quantity are required'
+      });
+    }
+
+    const sessionId = getSessionId(req);
+    const cart = carts.get(sessionId) || { items: [], updatedAt: Date.now() };
+    
+    const existingIndex = cart.items.findIndex(item => item.productId === productId);
+    
+    if (existingIndex >= 0) {
+      cart.items[existingIndex].quantity += quantity;
+    } else {
+      cart.items.push({
+        productId,
+        name,
+        image: image || '',
+        price,
+        quantity,
+        category: category || '',
+        addedAt: Date.now()
+      });
+    }
+    
+    cart.updatedAt = Date.now();
+    carts.set(sessionId, cart);
+
+    const subtotal = cart.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const itemCount = cart.items.reduce((sum, item) => sum + item.quantity, 0);
+
+    res.cookie('cart_session', sessionId, { maxAge: 24 * 60 * 60 * 1000, httpOnly: false, sameSite: 'lax' });
+    res.json({
+      sessionId,
+      items: cart.items,
+      subtotal,
+      itemCount,
+      message: 'Item added to cart'
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error', message: error.message });
+  }
+});
+
+// PUT /api/cart
+router.put('/', (req, res) => {
+  try {
+    const { productId, quantity } = req.body;
+    
+    if (!productId || quantity === undefined) {
+      return res.status(400).json({
+        error: 'Validation error',
+        message: 'productId and quantity are required'
+      });
+    }
+
+    const sessionId = getSessionId(req);
+    const cart = carts.get(sessionId);
+    
+    if (!cart) {
+      return res.status(404).json({ error: 'Cart not found' });
+    }
+
+    const itemIndex = cart.items.findIndex(item => item.productId === productId);
+    
+    if (itemIndex === -1) {
+      return res.status(404).json({ error: 'Item not found in cart' });
+    }
+
+    if (quantity <= 0) {
+      cart.items.splice(itemIndex, 1);
+    } else {
+      cart.items[itemIndex].quantity = quantity;
+    }
+    
+    cart.updatedAt = Date.now();
+    carts.set(sessionId, cart);
+
+    const subtotal = cart.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const itemCount = cart.items.reduce((sum, item) => sum + item.quantity, 0);
+
+    res.json({
+      sessionId,
+      items: cart.items,
+      subtotal,
+      itemCount,
+      message: 'Cart updated'
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error', message: error.message });
+  }
+});
+
+// DELETE /api/cart
+router.delete('/', (req, res) => {
+  try {
+    const sessionId = getSessionId(req);
+    const productId = req.query.productId;
+    
+    if (productId) {
+      const cart = carts.get(sessionId);
+      
+      if (!cart) {
+        return res.status(404).json({ error: 'Cart not found' });
+      }
+
+      cart.items = cart.items.filter(item => item.productId !== productId);
+      cart.updatedAt = Date.now();
+      carts.set(sessionId, cart);
+
+      const subtotal = cart.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      const itemCount = cart.items.reduce((sum, item) => sum + item.quantity, 0);
+
+      res.json({
+        sessionId,
+        items: cart.items,
+        subtotal,
+        itemCount,
+        message: 'Item removed from cart'
+      });
+    } else {
+      carts.delete(sessionId);
+      
+      res.json({
+        sessionId,
+        items: [],
+        subtotal: 0,
+        itemCount: 0,
+        message: 'Cart cleared'
+      });
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error', message: error.message });
+  }
+});
+
+module.exports = router;
