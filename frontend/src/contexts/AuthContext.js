@@ -20,7 +20,17 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
 
   useEffect(() => {
-    checkAuth();
+    // Check for Google OAuth callback first
+    if (window.location.hash.includes('session_id=')) {
+      processGoogleAuth().then(() => {
+        // After processing Google auth, check regular auth
+        if (!user) {
+          checkAuth();
+        }
+      });
+    } else {
+      checkAuth();
+    }
   }, []);
 
   const checkAuth = async () => {
