@@ -120,6 +120,104 @@ const NewCustomerPanel = ({ language }) => {
 
   const t = translations[language] || translations.en;
 
+  // Fetch orders
+  useEffect(() => {
+    if (user) {
+      fetchOrders();
+      fetchAddresses();
+    }
+  }, [user]);
+
+  const fetchOrders = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(`${API}/orders`, {
+        withCredentials: true
+      });
+      setOrders(response.data);
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchAddresses = async () => {
+    try {
+      const response = await axios.get(`${API}/addresses`, {
+        withCredentials: true
+      });
+      setAddresses(response.data);
+    } catch (error) {
+      console.error('Error fetching addresses:', error);
+    }
+  };
+
+  const handleAddAddress = async () => {
+    try {
+      await axios.post(`${API}/addresses`, addressForm, {
+        withCredentials: true
+      });
+      fetchAddresses();
+      setShowAddressForm(false);
+      resetAddressForm();
+    } catch (error) {
+      console.error('Error adding address:', error);
+      alert('Failed to add address');
+    }
+  };
+
+  const handleUpdateAddress = async () => {
+    try {
+      await axios.put(`${API}/addresses`, { ...addressForm, id: editingAddress }, {
+        withCredentials: true
+      });
+      fetchAddresses();
+      setShowAddressForm(false);
+      setEditingAddress(null);
+      resetAddressForm();
+    } catch (error) {
+      console.error('Error updating address:', error);
+      alert('Failed to update address');
+    }
+  };
+
+  const handleDeleteAddress = async (id) => {
+    if (!window.confirm(language === 'tr' ? 'Adresi silmek istediğinize emin misiniz?' : 'Are you sure you want to delete this address?')) {
+      return;
+    }
+    
+    try {
+      await axios.delete(`${API}/addresses?id=${id}`, {
+        withCredentials: true
+      });
+      fetchAddresses();
+    } catch (error) {
+      console.error('Error deleting address:', error);
+      alert('Failed to delete address');
+    }
+  };
+
+  const resetAddressForm = () => {
+    setAddressForm({
+      title: '',
+      fullName: '',
+      phone: '',
+      address: '',
+      city: '',
+      state: '',
+      postalCode: '',
+      country: '',
+      isDefault: false
+    });
+  };
+
+  const startEditAddress = (address) => {
+    setEditingAddress(address.id);
+    setAddressForm(address);
+    setShowAddressForm(true);
+  };
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoginError('');
