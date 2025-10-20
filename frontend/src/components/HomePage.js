@@ -12,35 +12,35 @@ const HomePage = ({ stats = {}, language }) => {
   // Hero slider slides
   const heroSlides = [
     {
-      image: 'https://images.unsplash.com/photo-1610643073583-332a16a0968a?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2Nzh8MHwxfHNlYXJjaHwyfHxUdXJraXNoJTIwdGV4dGlsZXN8ZW58MHx8fHwxNzU3ODY5NDQ4fDA&ixlib=rb-4.1.0&q=85',
+      image: 'https://images.unsplash.com/photo-1631889993959-41b4e9c6e3c5?w=1920&q=80',
       title: {
-        en: 'Premium Turkish Textiles',
-        tr: 'Premium Türk Tekstilleri',
-        de: 'Premium Türkische Textilien',
-        fr: 'Textiles Turcs Premium'
+        en: 'Premium Turkish Home Textiles',
+        tr: 'Premium Türk Ev Tekstilleri',
+        de: 'Premium Türkische Heimtextilien',
+        fr: 'Textiles de Maison Turcs Premium'
       },
       subtitle: {
-        en: 'Quality You Can Trust',
-        tr: 'Güvenebileceğiniz Kalite',
-        de: 'Qualität, der Sie vertrauen können',
-        fr: 'Qualité en laquelle vous pouvez avoir confiance'
+        en: 'Quality & Comfort',
+        tr: 'Kalite ve Konfor',
+        de: 'Qualität und Komfort',
+        fr: 'Qualité et Confort'
       },
       description: {
-        en: 'Wholesale supplier of premium bathrobes, towels, and home textiles',
-        tr: 'Premium bornoz, havlu ve ev tekstili toptan tedarikçisi',
-        de: 'Großhändler für Premium-Bademäntel, Handtücher und Heimtextilien',
-        fr: 'Fournisseur en gros de peignoirs, serviettes et textiles de maison premium'
+        en: 'Experience luxury with our handcrafted bathrobes, towels, and home textiles',
+        tr: 'El yapımı bornozlarımız, havlularımız ve ev tekstillerimizle lüksü deneyimleyin',
+        de: 'Erleben Sie Luxus mit unseren handgefertigten Bademänteln, Handtüchern und Heimtextilien',
+        fr: 'Découvrez le luxe avec nos peignoirs, serviettes et textiles de maison faits à la main'
       },
       buttonText: {
-        en: 'View Products',
-        tr: 'Ürünleri Görüntüle',
-        de: 'Produkte ansehen',
-        fr: 'Voir les produits'
+        en: 'Explore Collection',
+        tr: 'Koleksiyonu Keşfet',
+        de: 'Kollektion Erkunden',
+        fr: 'Explorer la Collection'
       },
       buttonLink: '/products'
     },
     {
-      image: 'https://images.unsplash.com/photo-1638368888223-4efbc65b1153?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2Nzh8MHwxfHNlYXJjaHwxfHxUdXJraXNoJTIwdGV4dGlsZXN8ZW58MHx8fHwxNzU3ODY5NDQ4fDA&ixlib=rb-4.1.0&q=85',
+      image: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=1920&q=80',
       title: {
         en: '100% Organic Cotton',
         tr: '%100 Organik Pamuk',
@@ -48,50 +48,50 @@ const HomePage = ({ stats = {}, language }) => {
         fr: '100% Coton Biologique'
       },
       subtitle: {
-        en: 'Sustainable & Natural',
-        tr: 'Sürdürülebilir ve Doğal',
-        de: 'Nachhaltig & Natürlich',
-        fr: 'Durable et Naturel'
+        en: 'Sustainable & Soft',
+        tr: 'Sürdürülebilir ve Yumuşak',
+        de: 'Nachhaltig & Weich',
+        fr: 'Durable et Doux'
       },
       description: {
-        en: 'Certified organic materials for the most discerning customers',
-        tr: 'En seçici müşteriler için sertifikalı organik malzemeler',
-        de: 'Zertifizierte Bio-Materialien für anspruchsvollste Kunden',
-        fr: 'Matériaux biologiques certifiés pour les clients les plus exigeants'
+        en: 'Eco-friendly materials, certified quality, exceptional comfort for your home',
+        tr: 'Çevre dostu malzemeler, sertifikalı kalite, eviniz için olağanüstü konfor',
+        de: 'Umweltfreundliche Materialien, zertifizierte Qualität, außergewöhnlicher Komfort',
+        fr: 'Matériaux écologiques, qualité certifiée, confort exceptionnel'
+      },
+      buttonText: {
+        en: 'Learn More',
+        tr: 'Daha Fazla Bilgi',
+        de: 'Mehr Erfahren',
+        fr: 'En Savoir Plus'
+      },
+      buttonLink: '/about'
+    },
+    {
+      image: 'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=1920&q=80',
+      title: {
+        en: 'Wholesale & Retail',
+        tr: 'Toptan ve Perakende',
+        de: 'Großhandel & Einzelhandel',
+        fr: 'Vente en Gros et au Détail'
+      },
+      subtitle: {
+        en: 'Flexible Solutions',
+        tr: 'Esnek Çözümler',
+        de: 'Flexible Lösungen',
+        fr: 'Solutions Flexibles'
+      },
+      description: {
+        en: 'Custom orders for hotels, resorts, and retail customers with competitive pricing',
+        tr: 'Oteller, tatil köyleri ve perakende müşteriler için rekabetçi fiyatlarla özel siparişler',
+        de: 'Individuelle Bestellungen für Hotels, Resorts und Privatkunden mit wettbewerbsfähigen Preisen',
+        fr: 'Commandes personnalisées pour hôtels, complexes hôteliers et clients de détail à prix compétitifs'
       },
       buttonText: {
         en: 'Get Quote',
         tr: 'Teklif Al',
         de: 'Angebot Erhalten',
         fr: 'Obtenir un Devis'
-      },
-      buttonLink: '/contact'
-    },
-    {
-      image: 'https://images.unsplash.com/photo-1713881676551-b16f22ce4719?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDF8MHwxfHNlYXJjaHwxfHxjb3R0b24lMjBiYXRocm9iZXN8ZW58MHx8fHwxNzU3ODY5NDU1fDA&ixlib=rb-4.1.0&q=85',
-      title: {
-        en: 'Wholesale Solutions',
-        tr: 'Toptan Çözümler',
-        de: 'Großhandelslösungen',
-        fr: 'Solutions en Gros'
-      },
-      subtitle: {
-        en: 'For Hotels & Resorts',
-        tr: 'Oteller ve Tesisler İçin',
-        de: 'Für Hotels & Resorts',
-        fr: 'Pour Hôtels et Complexes'
-      },
-      description: {
-        en: 'Custom bulk orders with competitive pricing for hospitality industry',
-        tr: 'Konaklama sektörü için rekabetçi fiyatlarla özel toplu siparişler',
-        de: 'Maßgeschneiderte Großbestellungen mit wettbewerbsfähigen Preisen für die Hotellerie',
-        fr: 'Commandes groupées personnalisées à prix compétitifs pour l\'hôtellerie'
-      },
-      buttonText: {
-        en: 'Contact Us',
-        tr: 'İletişime Geç',
-        de: 'Kontaktieren Sie Uns',
-        fr: 'Contactez-Nous'
       },
       buttonLink: '/contact'
     }
