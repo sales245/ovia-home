@@ -36,6 +36,9 @@ const ProductsPage = ({ language }) => {
   const [error, setError] = useState(null);
   const [showFilters, setShowFilters] = useState(false);
   
+  const { addToCart } = useCart();
+  const { settings } = useSettings();
+  
   const t = translations[language] || translations.en;
 
   // Badge translations
