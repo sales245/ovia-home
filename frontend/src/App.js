@@ -17,6 +17,7 @@ import MiniCart from './components/MiniCart';
 
 // Import contexts
 import { CartProvider } from './contexts/CartContext';
+import { SettingsProvider } from './contexts/SettingsContext';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 const API = `${BACKEND_URL}/api`;
