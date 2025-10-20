@@ -319,6 +319,66 @@ test_plan:
   test_all: false
   test_priority: "high_first"
 
+  - task: "Settings API"
+    implemented: true
+    working: false
+    file: "/app/functions/api/settings.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "❌ CRITICAL: Settings API not accessible - 502 Bad Gateway error. Function code is properly structured (100% structure validation passed) but Cloudflare Pages Functions are not deployed or accessible at the production URL."
+
+  - task: "Cart API"
+    implemented: true
+    working: false
+    file: "/app/functions/api/cart.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "❌ CRITICAL: Cart API not accessible - 502 Bad Gateway error. Function code is properly structured with session management, CRUD operations, and validation, but deployment issue prevents access."
+
+  - task: "Auth API"
+    implemented: true
+    working: false
+    file: "/app/functions/api/auth.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "❌ CRITICAL: Auth API not accessible - 502 Bad Gateway error. Function includes all required endpoints (/register, /login, /google, /me, /logout) with proper JWT handling and validation, but deployment issue prevents testing."
+
+  - task: "Addresses API"
+    implemented: true
+    working: false
+    file: "/app/functions/api/addresses.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "❌ CRITICAL: Addresses API not accessible - 502 Bad Gateway error. Function code properly implements CRUD operations with authentication checks, but deployment issue prevents access."
+
+  - task: "PayPal API"
+    implemented: true
+    working: false
+    file: "/app/functions/api/paypal.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "❌ CRITICAL: PayPal API not accessible - 502 Bad Gateway error. Function includes /config and /create-order endpoints with proper PayPal integration structure, but deployment issue prevents testing."
+
 agent_communication:
   - agent: "main"
     message: "Successfully implemented vibrant & dynamic color palette across all components. All amber/brown colors replaced with primary orange (#FF6F3C) and secondary coral (#FF4E50). Updated CSS variables, Tailwind config, and all React components. Ready for visual testing."
@@ -326,3 +386,5 @@ agent_communication:
     message: "Comprehensive backend testing completed successfully. All 30 tests passed with 100% success rate. Database connection verified, all CRUD operations working, admin endpoints functional, URL import working for Amazon/Alibaba, error handling proper. Backend is fully functional and ready for production use."
   - agent: "testing"
     message: "COMPREHENSIVE BACKEND RE-TESTING COMPLETED: Executed 41 detailed tests covering ALL critical endpoints as requested. Fixed ObjectId serialization issue in login endpoint. Results: 100% success rate (41/41 tests passed). All endpoints validated: /api/stats (with field validation), /api/products (JSON format verified), /api/categories (JSON format verified), /api/customers (serialization verified), /api/inquiries, /api/quotes, /api/import-product-from-url (Amazon/Alibaba/generic URLs), all CRUD operations, admin endpoints, form endpoints, customer login, error handling (404/422/400 responses). Backend is production-ready with no critical issues."
+  - agent: "testing"
+    message: "CRITICAL DEPLOYMENT ISSUE IDENTIFIED: All new API endpoints (Settings, Cart, Auth, Addresses, PayPal) are returning 502 Bad Gateway errors. Code structure analysis shows 100% compliance (48/48 checks passed) - all functions are properly implemented with CORS headers, error handling, and correct HTTP methods. Issue is deployment-related: Cloudflare Pages Functions are not accessible at production URL. Frontend is working (200 status) but /api/* endpoints fail. URGENT: Main agent must investigate Cloudflare deployment configuration and ensure functions are properly deployed."
