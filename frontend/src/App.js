@@ -13,6 +13,10 @@ import AboutPage from './components/AboutPage';
 import ContactPage from './components/ContactPage';
 import CustomerPanel from './components/CustomerPanel';
 import AdminPage from './components/AdminPage';
+import MiniCart from './components/MiniCart';
+
+// Import contexts
+import { CartProvider } from './contexts/CartContext';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 const API = `${BACKEND_URL}/api`;
