@@ -3,6 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { CreditCard, Building2, FileText, Lock, CheckCircle } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 import { useSettings } from '../contexts/SettingsContext';
+import { useAuth } from '../contexts/AuthContext';
+import axios from 'axios';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || '';
+const API = BACKEND_URL ? `${BACKEND_URL}/api` : '/api';
 
 const CheckoutPage = ({ language }) => {
   const navigate = useNavigate();
