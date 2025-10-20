@@ -13,6 +13,7 @@ const CheckoutPage = ({ language }) => {
   const navigate = useNavigate();
   const { cart, clearCart } = useCart();
   const { settings } = useSettings();
+  const { user } = useAuth();
   
   const [step, setStep] = useState(1); // 1: Info, 2: Shipping, 3: Payment
   const [formData, setFormData] = useState({
