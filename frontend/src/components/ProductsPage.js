@@ -8,6 +8,8 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { translations } from '../translations';
+import { useCart } from '../contexts/CartContext';
+import { useSettings } from '../contexts/SettingsContext';
 
 // Badge colors helper
 const getBadgeColors = (badge) => {
