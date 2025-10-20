@@ -737,11 +737,202 @@ const NewCustomerPanel = ({ language }) => {
 
                 {activeTab === 'addresses' && (
                   <div>
-                    <h1 className="text-2xl font-bold mb-6">{t.myAddresses}</h1>
-                    <div className="text-center py-12">
-                      <MapPin size={64} className="mx-auto mb-4 text-gray-300" />
-                      <p className="text-gray-500">{t.noAddresses}</p>
+                    <div className="flex items-center justify-between mb-6">
+                      <h1 className="text-2xl font-bold">{t.myAddresses}</h1>
+                      <button
+                        onClick={() => {
+                          resetAddressForm();
+                          setShowAddressForm(true);
+                        }}
+                        className="btn-primary flex items-center gap-2"
+                      >
+                        <Plus size={20} />
+                        {t.addAddress}
+                      </button>
                     </div>
+
+                    {addresses.length === 0 ? (
+                      <div className="text-center py-12">
+                        <MapPin size={64} className="mx-auto mb-4 text-gray-300" />
+                        <p className="text-gray-500">{t.noAddresses}</p>
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {addresses.map((addr) => (
+                          <div key={addr.id} className={`bg-gray-50 rounded-lg p-4 ${addr.isDefault ? 'border-2 border-primary' : ''}`}>
+                            <div className="flex items-start justify-between mb-2">
+                              <h3 className="font-bold">{addr.title}</h3>
+                              {addr.isDefault && (
+                                <span className="text-xs bg-primary text-white px-2 py-1 rounded">
+                                  {language === 'tr' ? 'Varsayılan' : 'Default'}
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-sm mb-1">{addr.fullName}</p>
+                            <p className="text-sm text-gray-600">{addr.address}</p>
+                            <p className="text-sm text-gray-600">{addr.city}, {addr.state} {addr.postalCode}</p>
+                            <p className="text-sm text-gray-600">{addr.country}</p>
+                            <p className="text-sm text-gray-600 mt-1">{addr.phone}</p>
+                            
+                            <div className="flex gap-2 mt-4">
+                              <button
+                                onClick={() => startEditAddress(addr)}
+                                className="text-primary hover:text-orange-600 text-sm font-medium flex items-center gap-1"
+                              >
+                                <Edit size={16} />
+                                {t.edit}
+                              </button>
+                              <button
+                                onClick={() => handleDeleteAddress(addr.id)}
+                                className="text-red-600 hover:text-red-700 text-sm font-medium flex items-center gap-1"
+                              >
+                                <Trash2 size={16} />
+                                {t.delete}
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Address Form Modal */}
+                    {showAddressForm && (
+                      <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+                        <div className="bg-white rounded-xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
+                          <div className="sticky top-0 bg-white border-b p-6 flex items-center justify-between">
+                            <h2 className="text-xl font-bold">
+                              {editingAddress ? t.editAddress : t.addAddress}
+                            </h2>
+                            <button
+                              onClick={() => {
+                                setShowAddressForm(false);
+                                setEditingAddress(null);
+                                resetAddressForm();
+                              }}
+                              className="p-2 hover:bg-gray-100 rounded-full"
+                            >
+                              <X size={20} />
+                            </button>
+                          </div>
+                          
+                          <div className="p-6 space-y-4">
+                            <div>
+                              <label className="block text-sm font-medium mb-2">{t.title}</label>
+                              <input
+                                type="text"
+                                value={addressForm.title}
+                                onChange={(e) => setAddressForm({...addressForm, title: e.target.value})}
+                                placeholder={language === 'tr' ? 'Örn: Ev, İş' : 'e.g. Home, Work'}
+                                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="block text-sm font-medium mb-2">{t.fullName}</label>
+                              <input
+                                type="text"
+                                value={addressForm.fullName}
+                                onChange={(e) => setAddressForm({...addressForm, fullName: e.target.value})}
+                                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="block text-sm font-medium mb-2">{t.phone}</label>
+                              <input
+                                type="tel"
+                                value={addressForm.phone}
+                                onChange={(e) => setAddressForm({...addressForm, phone: e.target.value})}
+                                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="block text-sm font-medium mb-2">{t.address}</label>
+                              <textarea
+                                value={addressForm.address}
+                                onChange={(e) => setAddressForm({...addressForm, address: e.target.value})}
+                                rows="3"
+                                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                              />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                              <div>
+                                <label className="block text-sm font-medium mb-2">{t.city}</label>
+                                <input
+                                  type="text"
+                                  value={addressForm.city}
+                                  onChange={(e) => setAddressForm({...addressForm, city: e.target.value})}
+                                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                                />
+                              </div>
+
+                              <div>
+                                <label className="block text-sm font-medium mb-2">{t.state}</label>
+                                <input
+                                  type="text"
+                                  value={addressForm.state}
+                                  onChange={(e) => setAddressForm({...addressForm, state: e.target.value})}
+                                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                                />
+                              </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                              <div>
+                                <label className="block text-sm font-medium mb-2">{t.postalCode}</label>
+                                <input
+                                  type="text"
+                                  value={addressForm.postalCode}
+                                  onChange={(e) => setAddressForm({...addressForm, postalCode: e.target.value})}
+                                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                                />
+                              </div>
+
+                              <div>
+                                <label className="block text-sm font-medium mb-2">{t.country}</label>
+                                <input
+                                  type="text"
+                                  value={addressForm.country}
+                                  onChange={(e) => setAddressForm({...addressForm, country: e.target.value})}
+                                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                                />
+                              </div>
+                            </div>
+
+                            <label className="flex items-center gap-2">
+                              <input
+                                type="checkbox"
+                                checked={addressForm.isDefault}
+                                onChange={(e) => setAddressForm({...addressForm, isDefault: e.target.checked})}
+                                className="w-4 h-4"
+                              />
+                              <span className="text-sm">{t.makeDefault}</span>
+                            </label>
+
+                            <div className="flex gap-3 pt-4">
+                              <button
+                                onClick={() => {
+                                  setShowAddressForm(false);
+                                  setEditingAddress(null);
+                                  resetAddressForm();
+                                }}
+                                className="flex-1 px-4 py-2 border rounded-lg hover:bg-gray-50"
+                              >
+                                {t.cancel}
+                              </button>
+                              <button
+                                onClick={editingAddress ? handleUpdateAddress : handleAddAddress}
+                                className="flex-1 btn-primary"
+                              >
+                                {t.save}
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
 
