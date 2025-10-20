@@ -41,6 +41,22 @@ const ProductsPage = ({ language }) => {
   
   const t = translations[language] || translations.en;
 
+  // Handle add to cart
+  const handleAddToCart = async (product) => {
+    const price = product.retail_price || (product.priceTiers && product.priceTiers[0]?.price) || 0;
+    const productWithPrice = {
+      ...product,
+      retail_price: price
+    };
+    
+    const success = await addToCart(productWithPrice, 1);
+    if (success) {
+      // Cart will auto-open via context
+    } else {
+      alert('Failed to add item to cart. Please try again.');
+    }
+  };
+
   // Badge translations
   const badgeTranslations = {
     organicCotton: {
