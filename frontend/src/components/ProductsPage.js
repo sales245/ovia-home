@@ -419,14 +419,32 @@ const ProductsPage = ({ language }) => {
                           )}
                         </div>
                         
-                        {/* WhatsApp Button */}
-                        <button 
-                          onClick={() => handleWhatsAppClick(product)}
-                          className="w-full bg-gradient-to-r from-primary to-orange-600 text-white rounded-lg py-3 px-4 flex items-center justify-center gap-2 hover:from-primary/90 hover:to-orange-600/90 transition-all shadow-md hover:shadow-lg font-semibold"
-                        >
-                          <ShoppingCart size={20} />
-                          <span>{t.getQuote || 'Teklif Al'}</span>
-                        </button>
+                        {/* Action Buttons - Based on Sales Mode */}
+                        <div className="space-y-2">
+                          {(settings.salesMode === 'retail' || settings.salesMode === 'hybrid') && (
+                            <button 
+                              onClick={() => handleAddToCart(product)}
+                              className="w-full bg-gradient-to-r from-primary to-orange-600 text-white rounded-lg py-3 px-4 flex items-center justify-center gap-2 hover:from-primary/90 hover:to-orange-600/90 transition-all shadow-md hover:shadow-lg font-semibold"
+                            >
+                              <ShoppingCart size={20} />
+                              <span>{t.addToCart || 'Sepete Ekle'}</span>
+                            </button>
+                          )}
+                          
+                          {(settings.salesMode === 'wholesale' || settings.salesMode === 'hybrid') && (
+                            <button 
+                              onClick={() => handleWhatsAppClick(product)}
+                              className={`w-full rounded-lg py-3 px-4 flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-lg font-semibold ${
+                                settings.salesMode === 'hybrid' 
+                                  ? 'bg-white border-2 border-primary text-primary hover:bg-primary hover:text-white' 
+                                  : 'bg-gradient-to-r from-primary to-orange-600 text-white hover:from-primary/90 hover:to-orange-600/90'
+                              }`}
+                            >
+                              <ShoppingCart size={20} />
+                              <span>{t.getQuote || 'Teklif Al'}</span>
+                            </button>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
