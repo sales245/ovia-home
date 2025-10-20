@@ -14,6 +14,8 @@ import ContactPage from './components/ContactPage';
 import CustomerPanel from './components/CustomerPanel';
 import AdminPage from './components/AdminPage';
 import MiniCart from './components/MiniCart';
+import CartPage from './components/CartPage';
+import CheckoutPage from './components/CheckoutPage';
 
 // Import contexts
 import { CartProvider } from './contexts/CartContext';
