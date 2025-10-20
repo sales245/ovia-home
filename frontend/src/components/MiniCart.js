@@ -84,7 +84,7 @@ const MiniCart = ({ language }) => {
 
                     {/* Quantity Controls */}
                     <div className="flex items-center justify-between mt-auto">
-                      <div className="flex items-center gap-2 bg-white rounded-lg border">
+                      <div className="flex items-center gap-1 bg-white rounded-lg border">
                         <button
                           onClick={() => updateQuantity(item.productId, item.quantity - 1)}
                           disabled={loading || item.quantity <= 1}
@@ -92,9 +92,19 @@ const MiniCart = ({ language }) => {
                         >
                           {item.quantity <= 1 ? <Trash2 size={14} /> : <Minus size={14} />}
                         </button>
-                        <span className="px-2 text-sm font-semibold min-w-[30px] text-center">
-                          {item.quantity}
-                        </span>
+                        <input
+                          type="number"
+                          min="1"
+                          value={item.quantity}
+                          onChange={(e) => {
+                            const newQty = parseInt(e.target.value) || 1;
+                            if (newQty > 0 && newQty <= 9999) {
+                              updateQuantity(item.productId, newQty);
+                            }
+                          }}
+                          disabled={loading}
+                          className="w-12 px-1 text-center text-sm font-semibold bg-transparent border-0 focus:outline-none disabled:opacity-50"
+                        />
                         <button
                           onClick={() => updateQuantity(item.productId, item.quantity + 1)}
                           disabled={loading}
