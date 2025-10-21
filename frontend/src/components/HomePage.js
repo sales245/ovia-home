@@ -9,27 +9,27 @@ import HeroSlider from './HeroSlider';
 const HomePage = ({ stats = {}, language }) => {
   const t = translations[language];
 
-  // Hero slider slides - Home Textile themed (Bedroom, Bathroom, Living Room)
+  // Hero slider slides - Premium Home Textile Images
   const heroSlides = [
     {
-      image: 'https://images.unsplash.com/photo-1540518614846-7eded433c457?w=1920&q=85',
+      image: 'https://images.unsplash.com/photo-1631889993959-41b4e9c6e3c5?w=1920&q=90',
       title: {
-        en: 'Luxurious Bedding',
-        tr: 'Lüks Yatak Takımları',
-        de: 'Luxuriöse Bettwäsche',
-        fr: 'Literie Luxueuse'
+        en: 'Premium Bedding Collection',
+        tr: 'Premium Yatak Takımları',
+        de: 'Premium Bettwäsche Kollektion',
+        fr: 'Collection de Literie Premium'
       },
       subtitle: {
-        en: 'Sleep in Comfort',
-        tr: 'Konforlu Uyku',
-        de: 'Komfortabel Schlafen',
-        fr: 'Dormir Confortablement'
+        en: 'Luxury Comfort',
+        tr: 'Lüks Konfor',
+        de: 'Luxus Komfort',
+        fr: 'Confort Luxueux'
       },
       description: {
-        en: 'Premium bed linens, duvets, and pillows for the perfect night\'s sleep',
-        tr: 'Mükemmel bir gece uykusu için premium yatak takımları, yorganlar ve yastıklar',
-        de: 'Premium-Bettwäsche, Bettdecken und Kissen für den perfekten Schlaf',
-        fr: 'Linge de lit, couettes et oreillers premium pour un sommeil parfait'
+        en: 'Indulge in the finest Egyptian cotton sheets, duvets and pillowcases for your bedroom',
+        tr: 'Yatak odanız için en iyi Mısır pamuğu çarşaflar, yorganlar ve yastık kılıfları',
+        de: 'Gönnen Sie sich feinste ägyptische Baumwolllaken, Bettdecken und Kissenbezüge',
+        fr: 'Offrez-vous les plus beaux draps en coton égyptien, couettes et taies d\'oreiller'
       },
       buttonText: {
         en: 'Shop Bedding',
@@ -40,58 +40,58 @@ const HomePage = ({ stats = {}, language }) => {
       buttonLink: '/products'
     },
     {
-      image: 'https://images.unsplash.com/photo-1552346154-21d32810aba3?w=1920&q=85',
+      image: 'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=1920&q=90',
       title: {
-        en: 'Spa-Quality Towels',
-        tr: 'Spa Kalitesinde Havlular',
-        de: 'Handtücher in Spa-Qualität',
-        fr: 'Serviettes Qualité Spa'
+        en: 'Luxury Bath Towels',
+        tr: 'Lüks Banyo Havluları',
+        de: 'Luxus Badetücher',
+        fr: 'Serviettes de Bain de Luxe'
       },
       subtitle: {
-        en: 'Bathroom Essentials',
-        tr: 'Banyo Ürünleri',
-        de: 'Badezimmer-Essentials',
-        fr: 'Essentiels de Salle de Bain'
+        en: 'Spa Experience at Home',
+        tr: 'Evde Spa Deneyimi',
+        de: 'Spa-Erlebnis zu Hause',
+        fr: 'Expérience Spa à Domicile'
       },
       description: {
-        en: 'Soft, absorbent towels and bathrobes crafted from 100% premium Turkish cotton',
-        tr: '%100 premium Türk pamuğundan üretilmiş yumuşak, emici havlular ve bornozlar',
-        de: 'Weiche, saugfähige Handtücher und Bademäntel aus 100% Premium-Baumwolle',
-        fr: 'Serviettes et peignoirs doux et absorbants en 100% coton turc premium'
+        en: 'Ultra-soft Turkish cotton towels and bathrobes that wrap you in comfort',
+        tr: 'Sizi konforda saran ultra yumuşak Türk pamuklu havlular ve bornozlar',
+        de: 'Ultraweiche türkische Baumwollhandtücher und Bademäntel für höchsten Komfort',
+        fr: 'Serviettes et peignoirs en coton turc ultra-doux qui vous enveloppent de confort'
       },
       buttonText: {
-        en: 'Explore Towels',
-        tr: 'Havluları Keşfet',
-        de: 'Handtücher Entdecken',
-        fr: 'Découvrir les Serviettes'
+        en: 'View Towels',
+        tr: 'Havluları Gör',
+        de: 'Handtücher Ansehen',
+        fr: 'Voir les Serviettes'
       },
       buttonLink: '/products'
     },
     {
-      image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1920&q=85',
+      image: 'https://images.unsplash.com/photo-1556228852-80898cdf4adf?w=1920&q=90',
       title: {
-        en: 'Elegant Living Spaces',
-        tr: 'Zarif Yaşam Alanları',
-        de: 'Elegante Wohnräume',
-        fr: 'Espaces de Vie Élégants'
+        en: 'Cozy Living Room Textiles',
+        tr: 'Rahat Oturma Odası Tekstilleri',
+        de: 'Gemütliche Wohnzimmertextilien',
+        fr: 'Textiles Confortables pour Salon'
       },
       subtitle: {
-        en: 'Home Comfort',
-        tr: 'Ev Konforu',
-        de: 'Wohnkomfort',
-        fr: 'Confort Maison'
+        en: 'Style Meets Comfort',
+        tr: 'Stil ve Konfor',
+        de: 'Stil trifft Komfort',
+        fr: 'Style et Confort'
       },
       description: {
-        en: 'Transform your living room with decorative cushions, throws, and home textiles',
-        tr: 'Dekoratif yastıklar, örtüler ve ev tekstilleri ile oturma odanızı dönüştürün',
-        de: 'Verwandeln Sie Ihr Wohnzimmer mit dekorativen Kissen, Decken und Heimtextilien',
-        fr: 'Transformez votre salon avec des coussins décoratifs, des plaids et des textiles'
+        en: 'Decorative cushions, throws and curtains to complete your perfect living space',
+        tr: 'Mükemmel yaşam alanınızı tamamlayacak dekoratif yastıklar, örtüler ve perdeler',
+        de: 'Dekorative Kissen, Decken und Vorhänge für Ihren perfekten Wohnraum',
+        fr: 'Coussins décoratifs, plaids et rideaux pour compléter votre espace de vie parfait'
       },
       buttonText: {
-        en: 'View Collection',
-        tr: 'Koleksiyonu Gör',
-        de: 'Kollektion Ansehen',
-        fr: 'Voir la Collection'
+        en: 'Explore Collection',
+        tr: 'Koleksiyonu Keşfet',
+        de: 'Kollektion Entdecken',
+        fr: 'Découvrir la Collection'
       },
       buttonLink: '/products'
     }
