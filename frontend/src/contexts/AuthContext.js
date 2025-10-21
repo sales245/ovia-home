@@ -92,13 +92,18 @@ export const AuthProvider = ({ children }) => {
   // Process Google OAuth session_id from URL fragment
   const processGoogleAuth = async () => {
     const hash = window.location.hash;
+    console.log('Checking for Google OAuth callback, hash:', hash);
+    
     if (!hash.includes('session_id=')) {
       return;
     }
 
     // Extract session_id
     const sessionId = hash.split('session_id=')[1]?.split('&')[0];
+    console.log('Found session_id:', sessionId);
+    
     if (!sessionId) {
+      console.error('Session ID not found in hash');
       return;
     }
 
@@ -106,6 +111,8 @@ export const AuthProvider = ({ children }) => {
     setLoading(true);
 
     try {
+      console.log('Fetching session data from Emergent...');
+      
       // Exchange session_id for session data
       const response = await axios.get(
         'https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data',
@@ -116,15 +123,21 @@ export const AuthProvider = ({ children }) => {
         }
       );
 
+      console.log('Session data received:', response.data);
+
       const { id, email, name, picture, session_token } = response.data;
 
       // Save session to our backend
+      console.log('Saving to our backend...');
+      
       const loginResponse = await axios.post(`${API}/auth/google`, {
         credential: session_token,
         userData: { id, email, name, picture }
       }, {
         withCredentials: true
       });
+
+      console.log('Login successful:', loginResponse.data);
 
       setUser(loginResponse.data.user);
       setToken(loginResponse.data.token);
@@ -134,9 +147,13 @@ export const AuthProvider = ({ children }) => {
 
       return { success: true };
     } catch (error) {
-      console.error('Google auth error:', error);
+      console.error('Google auth error details:', error);
+      console.error('Error response:', error.response?.data);
+      
       // Clean URL even on error
       window.history.replaceState({}, document.title, window.location.pathname);
+      
+      alert('Google authentication failed. Please try again.');
       return { success: false, error: 'Google authentication failed' };
     } finally {
       setLoading(false);
