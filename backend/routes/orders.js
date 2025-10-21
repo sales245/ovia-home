@@ -84,8 +84,8 @@ router.get('/:id', (req, res) => {
   }
 });
 
-// POST /api/orders - Create new order
-router.post('/', requireAuth, (req, res) => {
+// POST /api/orders - Create new order (guest or authenticated)
+router.post('/', (req, res) => {
   try {
     const {
       items,
@@ -113,6 +113,9 @@ router.post('/', requireAuth, (req, res) => {
       });
     }
 
+    // Get userId if authenticated (optional for guests)
+    const userId = getUserIdFromRequest(req);
+
     // Generate order number
     const orderNumber = `OV${Date.now().toString().slice(-8)}`;
     const orderId = `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -120,7 +123,7 @@ router.post('/', requireAuth, (req, res) => {
     const newOrder = {
       id: orderId,
       orderNumber,
-      userId: req.userId,
+      userId: userId || 'guest', // Allow guest orders
       items,
       customerInfo,
       shippingAddress,
