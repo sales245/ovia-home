@@ -9,89 +9,89 @@ import HeroSlider from './HeroSlider';
 const HomePage = ({ stats = {}, language }) => {
   const t = translations[language];
 
-  // Hero slider slides
+  // Hero slider slides - Home Textile themed
   const heroSlides = [
     {
-      image: 'https://images.unsplash.com/photo-1631889993959-41b4e9c6e3c5?w=1920&q=80',
+      image: 'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=1920&q=85',
       title: {
-        en: 'Premium Turkish Home Textiles',
-        tr: 'Premium Türk Ev Tekstilleri',
-        de: 'Premium Türkische Heimtextilien',
-        fr: 'Textiles de Maison Turcs Premium'
+        en: 'Luxury Home Textiles',
+        tr: 'Lüks Ev Tekstilleri',
+        de: 'Luxus-Heimtextilien',
+        fr: 'Textiles de Maison de Luxe'
       },
       subtitle: {
-        en: 'Quality & Comfort',
-        tr: 'Kalite ve Konfor',
-        de: 'Qualität und Komfort',
-        fr: 'Qualité et Confort'
+        en: 'Comfort Meets Elegance',
+        tr: 'Konfor ve Zarafet Bir Arada',
+        de: 'Komfort trifft Eleganz',
+        fr: 'Le Confort Rencontre l\'Élégance'
       },
       description: {
-        en: 'Experience luxury with our handcrafted bathrobes, towels, and home textiles',
-        tr: 'El yapımı bornozlarımız, havlularımız ve ev tekstillerimizle lüksü deneyimleyin',
-        de: 'Erleben Sie Luxus mit unseren handgefertigten Bademänteln, Handtüchern und Heimtextilien',
-        fr: 'Découvrez le luxe avec nos peignoirs, serviettes et textiles de maison faits à la main'
+        en: 'Transform your home with premium Turkish bathrobes, plush towels, and elegant bedding',
+        tr: 'Evinizi premium Türk bornozları, pelüş havlular ve zarif yatak takımları ile dönüştürün',
+        de: 'Verwandeln Sie Ihr Zuhause mit Premium-Bademänteln, Plüschhandtüchern und eleganter Bettwäsche',
+        fr: 'Transformez votre maison avec des peignoirs turcs premium, des serviettes moelleuses et une literie élégante'
       },
       buttonText: {
-        en: 'Explore Collection',
-        tr: 'Koleksiyonu Keşfet',
-        de: 'Kollektion Erkunden',
-        fr: 'Explorer la Collection'
+        en: 'Shop Now',
+        tr: 'Alışverişe Başla',
+        de: 'Jetzt Einkaufen',
+        fr: 'Acheter Maintenant'
       },
       buttonLink: '/products'
     },
     {
-      image: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=1920&q=80',
+      image: 'https://images.unsplash.com/photo-1584100936595-c0654b55a2e2?w=1920&q=85',
       title: {
+        en: 'Soft & Sustainable',
+        tr: 'Yumuşak ve Sürdürülebilir',
+        de: 'Weich & Nachhaltig',
+        fr: 'Doux et Durable'
+      },
+      subtitle: {
         en: '100% Organic Cotton',
         tr: '%100 Organik Pamuk',
         de: '100% Bio-Baumwolle',
         fr: '100% Coton Biologique'
       },
-      subtitle: {
-        en: 'Sustainable & Soft',
-        tr: 'Sürdürülebilir ve Yumuşak',
-        de: 'Nachhaltig & Weich',
-        fr: 'Durable et Doux'
-      },
       description: {
-        en: 'Eco-friendly materials, certified quality, exceptional comfort for your home',
-        tr: 'Çevre dostu malzemeler, sertifikalı kalite, eviniz için olağanüstü konfor',
-        de: 'Umweltfreundliche Materialien, zertifizierte Qualität, außergewöhnlicher Komfort',
-        fr: 'Matériaux écologiques, qualité certifiée, confort exceptionnel'
+        en: 'Eco-friendly towels and linens that feel amazing and care for the planet',
+        tr: 'Harika hissettiren ve gezegene özen gösteren çevre dostu havlular ve çarşaflar',
+        de: 'Umweltfreundliche Handtücher und Bettwäsche, die sich fantastisch anfühlen',
+        fr: 'Serviettes et draps écologiques qui se sentent incroyables'
       },
       buttonText: {
-        en: 'Learn More',
-        tr: 'Daha Fazla Bilgi',
-        de: 'Mehr Erfahren',
-        fr: 'En Savoir Plus'
+        en: 'Discover',
+        tr: 'Keşfet',
+        de: 'Entdecken',
+        fr: 'Découvrir'
       },
-      buttonLink: '/about'
+      buttonLink: '/products'
     },
     {
-      image: 'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=1920&q=80',
+      image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=1920&q=85',
       title: {
-        en: 'Wholesale & Retail',
-        tr: 'Toptan ve Perakende',
-        de: 'Großhandel & Einzelhandel',
-        fr: 'Vente en Gros et au Détail'
+        en: 'Cozy Living Spaces',
+        tr: 'Rahat Yaşam Alanları',
+        de: 'Gemütliche Wohnräume',
+        fr: 'Espaces de Vie Confortables'
       },
       subtitle: {
-        en: 'Flexible Solutions',
-        tr: 'Esnek Çözümler',
-        de: 'Flexible Lösungen',
-        fr: 'Solutions Flexibles'
+        en: 'For Hotels & Homes',
+        tr: 'Oteller ve Evler İçin',
+        de: 'Für Hotels & Zuhause',
+        fr: 'Pour Hôtels et Maisons'
       },
       description: {
-        en: 'Custom orders for hotels, resorts, and retail customers with competitive pricing',
-        tr: 'Oteller, tatil köyleri ve perakende müşteriler için rekabetçi fiyatlarla özel siparişler',
-        de: 'Individuelle Bestellungen für Hotels, Resorts und Privatkunden mit wettbewerbsfähigen Preisen',
-        fr: 'Commandes personnalisées pour hôtels, complexes hôteliers et clients de détail à prix compétitifs'
+        en: 'Wholesale and retail solutions for creating comfortable, stylish living environments',
+        tr: 'Rahat ve şık yaşam alanları oluşturmak için toptan ve perakende çözümler',
+        de: 'Großhandels- und Einzelhandelslösungen für komfortable, stilvolle Wohnumgebungen',
+        fr: 'Solutions en gros et au détail pour créer des environnements de vie confortables et élégants'
       },
       buttonText: {
-        en: 'Get Quote',
-        tr: 'Teklif Al',
-        de: 'Angebot Erhalten',
-        fr: 'Obtenir un Devis'
+        en: 'Contact Us',
+        tr: 'Bize Ulaşın',
+        de: 'Kontakt',
+        fr: 'Contactez-Nous'
       },
       buttonLink: '/contact'
     }
