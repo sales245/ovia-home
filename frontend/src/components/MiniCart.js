@@ -75,9 +75,19 @@ const MiniCart = ({ language }) => {
 
                   {/* Details */}
                   <div className="flex-1 flex flex-col">
-                    <h3 className="font-semibold text-sm line-clamp-2 mb-1">
-                      {typeof item.name === 'object' ? (item.name[language] || item.name.en) : item.name}
-                    </h3>
+                    <div className="flex items-start justify-between mb-1">
+                      <h3 className="font-semibold text-sm line-clamp-2 flex-1">
+                        {typeof item.name === 'object' ? (item.name[language] || item.name.en) : item.name}
+                      </h3>
+                      <button
+                        onClick={() => removeFromCart(item.productId)}
+                        disabled={loading}
+                        className="ml-2 p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded disabled:opacity-50"
+                        title={language === 'tr' ? 'Sil' : 'Remove'}
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
                     <p className="text-primary font-bold text-sm mb-2">
                       ${item.price.toFixed(2)}
                     </p>
@@ -87,10 +97,10 @@ const MiniCart = ({ language }) => {
                       <div className="flex items-center gap-1 bg-white rounded-lg border">
                         <button
                           onClick={() => updateQuantity(item.productId, item.quantity - 1)}
-                          disabled={loading || item.quantity <= 1}
+                          disabled={loading}
                           className="p-1 hover:bg-gray-100 rounded-l-lg disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          {item.quantity <= 1 ? <Trash2 size={14} /> : <Minus size={14} />}
+                          <Minus size={14} />
                         </button>
                         <input
                           type="number"
