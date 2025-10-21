@@ -53,30 +53,30 @@ const HeroSlider = ({ slides, autoPlayInterval = 5000, language }) => {
             className="w-full h-full object-cover"
           />
           
-          {/* Overlay - Improved readability */}
-          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-transparent" />
+          {/* Stronger Overlay for better text readability */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-black/30" />
           
-          {/* Content */}
+          {/* Content - Positioned away from navigation arrows */}
           <div className="absolute inset-0 flex items-center">
-            <div className="container mx-auto px-4">
+            <div className="container mx-auto px-16 md:px-20">
               <div className="max-w-2xl text-white">
                 {slide.subtitle && (
-                  <p className="text-sm md:text-base font-semibold mb-3 text-orange-400 uppercase tracking-wider animate-fade-in">
+                  <p className="text-sm md:text-base font-bold mb-3 text-white uppercase tracking-wider animate-fade-in bg-primary px-4 py-1 inline-block rounded">
                     {slide.subtitle[language] || slide.subtitle.en}
                   </p>
                 )}
-                <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight drop-shadow-lg">
+                <h2 className="text-4xl md:text-5xl lg:text-7xl font-extrabold mb-6 leading-tight text-white" style={{textShadow: '2px 2px 8px rgba(0,0,0,0.8)'}}>
                   {slide.title[language] || slide.title.en}
                 </h2>
                 {slide.description && (
-                  <p className="text-base md:text-xl mb-8 text-gray-100 leading-relaxed drop-shadow-md">
+                  <p className="text-lg md:text-2xl mb-10 text-white leading-relaxed font-medium" style={{textShadow: '1px 1px 4px rgba(0,0,0,0.8)'}}>
                     {slide.description[language] || slide.description.en}
                   </p>
                 )}
                 {slide.buttonText && slide.buttonLink && (
                   <a
                     href={slide.buttonLink}
-                    className="inline-block bg-primary hover:bg-orange-600 text-white font-bold px-8 py-4 rounded-lg transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-105 hover:-translate-y-1"
+                    className="inline-block bg-white text-primary hover:bg-primary hover:text-white font-bold px-10 py-5 rounded-xl transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-110 hover:-translate-y-2 text-lg"
                   >
                     {slide.buttonText[language] || slide.buttonText.en}
                   </a>
