@@ -215,46 +215,110 @@ const CheckoutPage = ({ language }) => {
     return (
       <div className="header-spacing min-h-screen bg-gray-50">
         <div className="container py-16">
-          <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-lg p-8 text-center">
-            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <CheckCircle size={48} className="text-green-600" />
+          <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-lg p-8">
+            <div className="text-center mb-8">
+              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <CheckCircle size={48} className="text-green-600" />
+              </div>
+              
+              <h1 className="text-3xl font-bold mb-4">{t.orderSuccess}</h1>
+              <p className="text-xl text-gray-600 mb-6">{t.thankYou}</p>
+              
+              <div className="bg-gray-50 rounded-lg p-6 mb-6">
+                <p className="text-sm text-gray-600 mb-2">{t.orderNumber}</p>
+                <p className="text-2xl font-bold text-primary">{orderNumber}</p>
+              </div>
+              
+              <p className="text-gray-600 mb-2">{t.orderConfirmation}</p>
+              <p className="font-semibold mb-8">{formData.email}</p>
             </div>
             
-            <h1 className="text-3xl font-bold mb-4">{t.orderSuccess}</h1>
-            <p className="text-xl text-gray-600 mb-6">{t.thankYou}</p>
-            
-            <div className="bg-gray-50 rounded-lg p-6 mb-6">
-              <p className="text-sm text-gray-600 mb-2">{t.orderNumber}</p>
-              <p className="text-2xl font-bold text-primary">{orderNumber}</p>
+            {/* Bank Transfer Instructions - Citibank */}
+            <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-8 mb-6">
+              <div className="flex items-center justify-center gap-3 mb-6">
+                <Building2 size={28} className="text-blue-600" />
+                <h3 className="text-2xl font-bold text-gray-800">
+                  {language === 'tr' ? 'Ödeme Bilgileri' : 'Payment Information'}
+                </h3>
+              </div>
+              
+              <div className="bg-white rounded-lg p-6 space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-3">
+                    <div>
+                      <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">
+                        {language === 'tr' ? 'Banka Adı' : 'Bank Name'}
+                      </p>
+                      <p className="font-bold text-lg">Citibank</p>
+                    </div>
+                    
+                    <div>
+                      <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">
+                        {language === 'tr' ? 'Banka Adresi' : 'Bank Address'}
+                      </p>
+                      <p className="font-semibold text-sm">111 Wall Street<br/>New York, NY 10043 USA</p>
+                    </div>
+                    
+                    <div>
+                      <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">
+                        Routing ABA No
+                      </p>
+                      <p className="font-bold text-primary">031100209</p>
+                    </div>
+                    
+                    <div>
+                      <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">
+                        SWIFT {language === 'tr' ? 'Kodu' : 'Code'}
+                      </p>
+                      <p className="font-bold text-primary">CITIUS33</p>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <div>
+                      <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">
+                        {language === 'tr' ? 'Hesap No' : 'Account No'}
+                      </p>
+                      <p className="font-bold text-lg">70580730000320986</p>
+                    </div>
+                    
+                    <div>
+                      <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">
+                        {language === 'tr' ? 'Hesap Türü' : 'Account Type'}
+                      </p>
+                      <p className="font-semibold">CHECKING</p>
+                    </div>
+                    
+                    <div>
+                      <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">
+                        {language === 'tr' ? 'Lehtar Adı' : 'Beneficiary Name'}
+                      </p>
+                      <p className="font-bold text-lg">Muhammet Muculu</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="mt-6 pt-6 border-t border-gray-200">
+                  <div className="flex items-start gap-3 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                    <div className="flex-shrink-0 mt-1">
+                      <svg className="w-6 h-6 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-bold text-yellow-900 mb-1">
+                        {language === 'tr' ? 'Önemli Not' : 'Important Note'}
+                      </p>
+                      <p className="text-sm text-yellow-800">
+                        {language === 'tr' 
+                          ? 'Ödeme gerçekleştikten sonra siparişiniz tamamlanacaktır. Lütfen havale açıklamasına sipariş numaranızı yazınız.' 
+                          : 'Your order will be completed after payment is received. Please include your order number in the payment reference.'}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            
-            <p className="text-gray-600 mb-2">{t.orderConfirmation}</p>
-            <p className="font-semibold mb-8">{formData.email}</p>
-            
-            {/* Payment Instructions */}
-            {formData.paymentMethod === 'bankTransfer' && settings.paymentMethods.bankTransfer.enabled && (
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-left mb-6">
-                <h3 className="font-bold mb-3 flex items-center gap-2">
-                  <Building2 size={20} />
-                  {t.paymentInstructions}
-                </h3>
-                <div className="text-sm whitespace-pre-line text-gray-700">
-                  {settings.paymentMethods.bankTransfer.instructions}
-                </div>
-              </div>
-            )}
-            
-            {formData.paymentMethod === 'letterOfCredit' && settings.paymentMethods.letterOfCredit.enabled && (
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-left mb-6">
-                <h3 className="font-bold mb-3 flex items-center gap-2">
-                  <FileText size={20} />
-                  {t.paymentInstructions}
-                </h3>
-                <div className="text-sm whitespace-pre-line text-gray-700">
-                  {settings.paymentMethods.letterOfCredit.instructions}
-                </div>
-              </div>
-            )}
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
@@ -264,10 +328,10 @@ const CheckoutPage = ({ language }) => {
                 {t.returnHome}
               </button>
               <button
-                onClick={() => navigate('/customer-panel')}
+                onClick={() => navigate('/products')}
                 className="btn-primary"
               >
-                {t.viewOrders}
+                {language === 'tr' ? 'Alışverişe Devam' : 'Continue Shopping'}
               </button>
             </div>
           </div>
