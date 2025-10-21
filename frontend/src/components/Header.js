@@ -92,16 +92,33 @@ const Header = ({ language, setLanguage }) => {
             >
               {t.customerPanel}
             </Link>
-            {/* Discrete Admin Link */}
-            <Link
-              to="/admin"
-              className={`text-xs text-ink-2/50 hover:text-primary transition-colors ${
-                isActive('/admin') ? 'text-primary' : ''
-              }`}
-              title="Admin Panel"
-            >
-              •
-            </Link>
+            {/* Admin Dropdown - Discrete */}
+            <div className="relative group">
+              <Link
+                to="/admin"
+                className={`text-xs text-ink-2/50 hover:text-primary transition-colors ${
+                  isActive('/admin') ? 'text-primary' : ''
+                }`}
+                title="Admin Panel"
+              >
+                •
+              </Link>
+              {/* Dropdown Menu */}
+              <div className="absolute right-0 top-full mt-2 w-48 bg-white shadow-lg rounded-lg overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                <Link
+                  to="/admin"
+                  className="block px-4 py-2 text-sm hover:bg-gray-100 transition-colors"
+                >
+                  Dashboard
+                </Link>
+                <Link
+                  to="/admin/orders"
+                  className="block px-4 py-2 text-sm hover:bg-gray-100 transition-colors"
+                >
+                  Orders Management
+                </Link>
+              </div>
+            </div>
           </nav>
 
           {/* Contact Icons & Language Selector & Cart */}
