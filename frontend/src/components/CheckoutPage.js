@@ -181,9 +181,14 @@ const CheckoutPage = ({ language }) => {
         total
       };
 
+      console.log('Creating order with data:', orderData);
+
       const response = await axios.post(`${API}/orders`, orderData, {
-        withCredentials: true
+        withCredentials: true,
+        timeout: 10000
       });
+
+      console.log('Order created successfully:', response.data);
 
       const order = response.data;
       setOrderNumber(order.orderNumber);
@@ -195,7 +200,14 @@ const CheckoutPage = ({ language }) => {
       window.scrollTo(0, 0);
     } catch (error) {
       console.error('Order creation error:', error);
-      alert(language === 'tr' ? 'Sipariş oluşturulurken hata oluştu' : 'Error creating order');
+      console.error('Error details:', error.response?.data);
+      
+      const errorMessage = error.response?.data?.message || error.message || 'Unknown error';
+      alert(
+        language === 'tr' 
+          ? `Sipariş oluşturulurken hata oluştu: ${errorMessage}` 
+          : `Error creating order: ${errorMessage}`
+      );
     }
   };
 
